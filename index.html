@@ -2,337 +2,342 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEO-GOLD iOS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>NEO-GOLD Premium Station</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* --- iOS THEME VARIABLES --- */
+        /* --- CORE PREMIUM THEME (Your New Colors) --- */
         :root {
-            --ios-bg: #000000;
-            --ios-card: rgba(28, 28, 30, 0.7);
-            --ios-blue: #0A84FF;
-            --ios-green: #30D158;
-            --ios-red: #FF453A;
-            --ios-yellow: #FFD60A;
-            --ios-text: #FFFFFF;
-            --glass-blur: blur(20px);
+            --neon-green: #0AFF00;
+            --orange: #FF8C00;
+            --deep-teal: #007375;
+            --bg-dark: #001212; /* Very dark teal tint */
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #FFFFFF;
+            --text-dim: #88AFAF;
         }
 
         body {
-            background-color: var(--ios-bg);
-            color: var(--ios-text);
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            background-color: var(--bg-dark);
+            background-image: radial-gradient(circle at 50% -20%, var(--deep-teal) 0%, transparent 70%);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
             margin: 0; padding: 0; overflow: hidden; height: 100vh;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
+            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
         }
 
-        /* --- HEAVY ANIMATIONS --- */
-        @keyframes flyRocket { 
-            0%, 100% { transform: translateY(0) rotate(0deg); } 
-            50% { transform: translateY(-20px) rotate(15deg); } 
-        }
-        @keyframes floatCash1 { 0% { opacity: 0; transform: translate(0, 0) scale(0.5); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(-50px, -80px) scale(1.5) rotate(-20deg); } }
-        @keyframes floatCash2 { 0% { opacity: 0; transform: translate(0, 0) scale(0.5); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(50px, -100px) scale(1.5) rotate(20deg); } }
-        @keyframes floatCash3 { 0% { opacity: 0; transform: translate(0, 0) scale(0.5); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(0, -120px) scale(1.5) rotate(5deg); } }
-        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 20px rgba(10, 132, 255, 0.3); } 50% { box-shadow: 0 0 50px rgba(10, 132, 255, 0.7); } }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        /* --- ANIMATIONS --- */
+        @keyframes flyRocket { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-15px) rotate(8deg); } }
+        @keyframes slideInPage { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes glowPulse { 0%, 100% { border-color: var(--glass-border); box-shadow: 0 0 10px rgba(0,230,255,0.1); } 50% { border-color: var(--orange); box-shadow: 0 0 25px rgba(255,140,0,0.3); } }
+        @keyframes subtleGlow { 0%, 100% { text-shadow: 0 0 5px var(--neon-green); } 50% { text-shadow: 0 0 15px var(--neon-green); } }
 
         /* --- PAGES --- */
         .page {
-            position: absolute; top: 0; left: 0; width: 100%; height: calc(100vh - 85px);
-            display: none; padding: 20px; box-sizing: border-box; overflow-y: auto;
-            padding-bottom: 40px;
+            position: absolute; top: 0; left: 0; width: 100%; height: calc(100vh - 90px);
+            display: none; padding: 25px; box-sizing: border-box;
+            overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
         }
-        .page.active { display: block; animation: slideIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+        .page.active { display: block; animation: slideInPage 0.4s ease-out; }
 
-        /* --- iOS CARDS --- */
-        .ios-card {
-            background: var(--ios-card); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border-radius: 20px; padding: 25px; margin-bottom: 20px; text-align: center;
-            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* --- GLASSMORPHISM CARDS --- */
+        .glass-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            text-align: center;
         }
 
-        /* --- DASHBOARD --- */
-        .rocket-emoji { font-size: 65px; display: inline-block; animation: flyRocket 3s ease-in-out infinite; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); }
-        .balance-title { font-size: 13px; color: #8E8E93; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-top: 15px; }
-        .balance-amount { font-size: 45px; font-weight: 800; margin: 5px 0; background: linear-gradient(90deg, #FFF, #E0E0E0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        /* --- DASHBOARD ELEMENTS --- */
+        .balance-label { font-size: 13px; color: var(--neon-green); text-transform: uppercase; letter-spacing: 2.5px; font-weight: 600; animation: subtleGlow 2s infinite; }
+        .balance-val { color: var(--text-main); font-size: 50px; font-weight: 800; margin: 10px 0; text-shadow: 0 0 15px rgba(255,255,255,0.2); }
+        .rocket-fly { font-size: 60px; display: inline-block; animation: flyRocket 3s ease-in-out infinite; margin-top: 15px; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); }
 
-        /* THE MASTER BUTTON */
-        .btn-wrapper { position: relative; display: flex; justify-content: center; margin-top: 40px; margin-bottom: 20px; }
-        .main-btn {
-            width: 220px; height: 220px; border-radius: 50%;
-            background: linear-gradient(145deg, #1A1A1A, #000000);
-            border: 4px solid var(--ios-blue); display: flex; flex-direction: column; justify-content: center; align-items: center;
-            cursor: pointer; transition: 0.2s; position: relative; z-index: 10; animation: pulseGlow 2s infinite;
-        }
-        .main-btn:active:not(.locked) { transform: scale(0.9); }
-        .main-btn.locked { border-color: var(--ios-red); animation: none; opacity: 0.8; cursor: not-allowed; }
-
-        .btn-title { color: var(--ios-blue); font-size: 22px; font-weight: 800; }
-        .btn-session { color: var(--ios-green); font-size: 14px; font-weight: 600; margin-top: 5px; background: rgba(48, 209, 88, 0.15); padding: 5px 12px; border-radius: 20px; }
+        /* THE MASTER SQUARE BUTTON */
+        .btn-container { width: 100%; display: flex; flex-direction: column; align-items: center; margin-top: 30px; }
         
-        .cash-fly { position: absolute; font-size: 40px; pointer-events: none; z-index: 20; opacity: 0; }
-        .fly-1 { animation: floatCash1 1s ease-out infinite; top: 20%; left: 10%; }
-        .fly-2 { animation: floatCash2 1.2s ease-out infinite; top: 10%; right: 10%; animation-delay: 0.2s;}
-        .fly-3 { animation: floatCash3 1.5s ease-out infinite; bottom: 20%; left: 40%; animation-delay: 0.4s;}
-        .locked .cash-fly { display: none; }
-
-        #timer { color: var(--ios-red); font-size: 28px; font-weight: 800; display: none; margin-top: 10px; }
-
-        /* --- STATS GRID --- */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .stat-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
-        .stat-label { font-size: 11px; color: #8E8E93; }
-        .stat-val { font-size: 16px; font-weight: bold; margin-top: 5px; color: var(--ios-yellow); }
-
-        /* --- INPUTS & BUTTONS --- */
-        .ios-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; color: white; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; }
-        .ios-btn { width: 100%; background: var(--ios-blue); color: white; border: none; padding: 16px; border-radius: 14px; font-weight: 600; font-size: 17px; cursor: pointer; transition: 0.2s; }
-        .ios-btn:active { opacity: 0.7; transform: scale(0.98); }
-
-        /* --- BOTTOM NAVIGATION --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 85px;
-            background: rgba(28, 28, 30, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            border-top: 0.5px solid rgba(255,255,255,0.1); display: flex; justify-content: space-around; align-items: center; z-index: 100;
-            padding-bottom: env(safe-area-inset-bottom);
+        /* New User Instruction Note */
+        .user-note {
+            background: rgba(255, 140, 0, 0.1);
+            color: var(--orange);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-size: 11px;
+            margin-bottom: 20px;
+            max-width: 90%;
+            display: flex; align-items: center; gap: 8px;
+            line-height: 1.4;
+            backdrop-filter: blur(5px);
         }
-        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 30%; color: #8E8E93; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--ios-blue); }
-        .nav-icon { font-size: 26px; margin-bottom: 4px; filter: grayscale(1); transition: 0.3s; }
-        .nav-item.active .nav-icon { filter: grayscale(0); transform: scale(1.1); }
-        .nav-text { font-size: 10px; font-weight: 500; }
+
+        .main-btn {
+            width: 180px; height: 180px; /* Square shape */
+            border-radius: 25px;
+            background: linear-gradient(135deg, rgba(0,115,117,0.3) 0%, rgba(0,0,0,0.4) 100%);
+            border: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            position: relative; z-index: 5;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            animation: glowPulse 3s infinite; /* Slow orange glow pulse */
+        }
+
+        /* (Removed Cash Animation CSS) */
+
+        .main-btn:active:not(.locked) { transform: scale(0.95); }
+        .main-btn.locked { border-color: rgba(255, 0, 0, 0.3); animation: none; box-shadow: none; cursor: not-allowed; opacity: 0.6; background: rgba(0,0,0,0.5); }
+
+        .btn-label { color: var(--text-main); font-weight: 800; font-size: 18px; text-transform: uppercase; letter-spacing: 1.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .btn-phase { color: var(--neon-green); font-size: 12px; margin-top: 8px; font-family: monospace; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 10px; }
+        
+        #timer { color: #FF3333; font-size: 28px; font-weight: 800; display: none; margin-top: 10px; font-family: monospace; }
+
+        /* Info Display (Simplified) */
+        .info-card-simple { margin-top: 30px; text-align: center; }
+        .info-label-dim { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        .info-value-big { font-size: 18px; font-weight: bold; color: var(--text-main); margin-top: 5px; }
+
+        /* --- BOTTOM NAVIGATION (iOS Style) --- */
+        .nav-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: calc(80px + env(safe-area-inset-bottom, 20px));
+            background: rgba(0, 18, 18, 0.8);
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border); padding-bottom: env(safe-area-inset-bottom, 20px); z-index: 100;
+        }
+
+        .nav-item {
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            color: var(--text-dim); cursor: pointer; transition: 0.3s;
+        }
+
+        .nav-item.active { color: var(--neon-green); }
+        .nav-item .emoji { font-size: 26px; margin-bottom: 5px; transition: 0.3s; filter: grayscale(1) opacity(0.7); }
+        .nav-item.active .emoji { filter: grayscale(0) opacity(1) drop-shadow(0 0 10px var(--neon-green)); transform: scale(1.1); }
+        .nav-item .label { font-size: 11px; font-weight: 500; }
+
+        /* Referral Page Elements */
+        .ref-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 12px; font-size: 12px; margin-top: 15px; cursor: pointer; color: var(--orange); word-break: break-all; border: 1px solid rgba(255,140,0,0.2); }
+        
+        /* Withdraw Page Elements */
+        .input-group { text-align: left; margin-bottom: 20px; }
+        .ios-input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 12px; padding: 15px; color: white; font-size: 16px; box-sizing: border-box; }
+        .ios-btn { width: 100%; background: var(--orange); color: black; border: none; padding: 16px; border-radius: 14px; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 15px rgba(255,140,0,0.2); }
+        .ios-btn:active { background: #cc7000; transform: scale(0.98); }
+
     </style>
 </head>
 <body>
 
-    <div id="home" class="page active">
-        <div class="ios-card">
-            <div class="rocket-emoji">🚀</div>
-            <div class="balance-title">TOTAL BALANCE</div>
-            <div class="balance-amount">💲<span id="bal">0.00</span></div>
+    <div id="homePage" class="page active">
+        <div class="glass-card">
+            <div class="balance-label">Quantum Balance</div>
+            <div class="balance-val">🪙 <span id="coins">0.00</span></div>
+            <div class="rocket-fly">🚀</div>
         </div>
 
-        <div class="btn-wrapper">
-            <div id="mainButton" class="main-btn" onclick="executeLink()">
-                <div class="cash-fly fly-1">💸</div>
-                <div class="cash-fly fly-2">💵</div>
-                <div class="cash-fly fly-3">💰</div>
-                
-                <span class="btn-title" id="btnTitle">START EARNING</span>
-                <span class="btn-session" id="btnSession">SESSION 1/4 📱</span>
+        <div class="btn-container">
+            <div class="user-note">
+                <span>💸</span>
+                <div><b>NOTE:</b> Stay and scroll on this website for at least 20 sec. to earn the points.</div>
+            </div>
+
+            <div id="masterBtn" class="main-btn" onclick="executeLinkPhase()">
+                <span class="btn-label" id="btnLabel">INITIALIZE</span>
+                <span class="btn-phase" id="btnPhase">Session 1/4 📱</span>
                 <div id="timer">00:00</div>
             </div>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-box">
-                <div class="stat-label">ACTIVE NETWORK ⚡️</div>
-                <div class="stat-val" id="netName">MONETAG</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">CLICKS LEFT 🎯</div>
-                <div class="stat-val"><span id="clicksLeft">5</span> / 5</div>
-            </div>
+        <div class="info-card-simple">
+            <div class="info-label-dim">Node Clicks Remaining</div>
+            <div class="info-value-big"><span id="clicksLeft">5</span> / 5</div>
         </div>
     </div>
 
-    <div id="referral" class="page">
-        <div class="ios-card">
-            <div style="font-size: 55px; margin-bottom: 10px;">🎁</div>
-            <h2 style="margin: 0; font-size: 22px;">Invite & Earn</h2>
-            <p style="color: #8E8E93; font-size: 14px;">Share your link and earn bonus from your friends.</p>
+    <div id="referralPage" class="page">
+        <div class="glass-card">
+            <div style="font-size: 50px;">🎁</div>
+            <p style="font-size: 15px; color: var(--text-dim); margin-top: 15px;">Invite partners to the NEO-GOLD network and earn **10% commission** on their data verification rewards.</p>
         </div>
         
-        <div class="stats-grid" style="margin-bottom: 20px;">
-            <div class="stat-box" style="text-align: center;">
-                <div class="stat-label">TOTAL REFERRALS 👥</div>
-                <div class="stat-val" style="font-size: 24px;">0</div>
-            </div>
-            <div class="stat-box" style="text-align: center;">
-                <div class="stat-label">REWARD EARNED 💰</div>
-                <div class="stat-val" style="font-size: 24px;">$0.00</div>
+        <div class="glass-card" style="padding: 15px;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <div><div class="info-label-dim">Friends Verified</div><div class="info-value-big" style="color:var(--orange);">0</div></div>
+                <div><div class="info-label-dim">Total Commission</div><div class="info-value-big" style="color:var(--neon-green);">🪙 0.00</div></div>
             </div>
         </div>
 
-        <div class="ios-card">
-            <div class="stat-label" style="text-align: left; margin-bottom: 10px;">YOUR INVITE LINK 🔗</div>
-            <div class="ios-input" style="background: rgba(255,255,255,0.1); color: var(--ios-green); font-size: 12px; word-break: break-all;" id="refLink">
-                https://t.me/YourBot?start=ref_123456
-            </div>
-            <button class="ios-btn" onclick="copyRef()">COPY LINK 📝</button>
+        <div class="glass-card">
+            <div class="info-label-dim">Your Unique Invite Link</div>
+            <div class="ref-box" onclick="copyRefLink()">https://t.me/your_bot?start=r_<span id="userId">1234</span></div>
         </div>
     </div>
 
-    <div id="withdraw" class="page">
-        <div class="ios-card">
-            <div style="font-size: 55px; margin-bottom: 10px;">🏦</div>
-            <h2 style="margin: 0; font-size: 22px;">Withdraw Funds</h2>
-            <div style="background: rgba(255, 69, 58, 0.2); color: var(--ios-red); padding: 10px; border-radius: 10px; font-size: 12px; margin-top: 15px; font-weight: bold;">
-                ⚠️ NOTE: Minimum withdraw is $100.
+    <div id="withdrawPage" class="page">
+        <div class="glass-card" style="border-color: var(--orange); background: rgba(255, 140, 0, 0.03);">
+            <div class="info-label-dim" style="color:var(--orange);">Available for Outflow</div>
+            <div class="balance-val" style="font-size: 35px;">🪙 <span id="withdrawCoins">0.00</span></div>
+        </div>
+        
+        <div class="glass-card" style="text-align: left;">
+            <div class="input-group">
+                <label class="info-label-dim">Asset Type</label>
+                <select class="ios-input"><option>Binance USDT (Min 1000 Coins)</option></select>
             </div>
-        </div>
-
-        <div class="ios-card" style="text-align: left;">
-            <div class="stat-label" style="margin-bottom: 10px;">SELECT NETWORK 🌐</div>
-            <select class="ios-input">
-                <option>USDT (TRC20)</option>
-                <option>USDT (BEP20)</option>
-            </select>
-
-            <div class="stat-label" style="margin-bottom: 10px;">WALLET ADDRESS 🔑</div>
-            <input type="text" class="ios-input" placeholder="Paste your USDT address here...">
-
-            <div class="stat-label" style="margin-bottom: 10px;">AMOUNT ($) 💵</div>
-            <input type="number" class="ios-input" placeholder="Enter amount (Min $100)">
-
-            <button class="ios-btn" onclick="requestWithdraw()">SUBMIT WITHDRAW 🚀</button>
-        </div>
-
-        <div class="ios-card">
-            <div style="font-size: 30px;">🎧</div>
-            <div style="font-size: 14px; font-weight: bold; margin: 10px 0;">CUSTOMER SUPPORT</div>
-            <p style="font-size: 12px; color: #8E8E93;">Need help? Contact our support team directly on Telegram.</p>
-            <button class="ios-btn" style="background: #333;" onclick="window.open('https://t.me/YourSupportUsername', '_blank')">CONTACT @SUPPORT 💬</button>
+            <div class="input-group">
+                <label class="info-label-dim">Wallet Address (TRC20)</label>
+                <input type="text" class="ios-input" placeholder="Txyz...">
+            </div>
+            <button class="ios-btn">SUBMIT REQUEST ➡️</button>
+            <p style="font-size: 10px; color: #cc3333; margin-top: 15px; text-align: center;">⚠️ Note: All requests are verified manually. Min. withdraw $10.00.</p>
         </div>
     </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home', this)">
-            <div class="nav-icon">🏠</div><div class="nav-text">HOME</div>
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="switchPage('homePage', this)">
+            <div class="emoji">🏠</div>
+            <div class="label">HOME</div>
         </div>
-        <div class="nav-item" onclick="switchTab('referral', this)">
-            <div class="nav-icon">👥</div><div class="nav-text">REFERRAL</div>
+        <div class="nav-item" onclick="switchPage('referralPage', this)">
+            <div class="emoji">👥</div>
+            <div class="label">REFERRAL</div>
         </div>
-        <div class="nav-item" onclick="switchTab('withdraw', this)">
-            <div class="nav-icon">💳</div><div class="nav-text">WITHDRAW</div>
+        <div class="nav-item" onclick="switchPage('withdrawPage', this)">
+            <div class="emoji">💰</div>
+            <div class="label">WITHDRAW</div>
         </div>
     </div>
 
     <script>
-        // --- TELEGRAM WEB APP INIT ---
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.ready();
 
-        // --- NETWORKS & LINKS (PASTE YOUR SMART LINKS HERE) ---
-        const NETWORKS = {
-            1: { name: "MONETAG", link: "https://monetag-link.com" },
-            2: { name: "ADSTERRA", link: "https://adsterra-link.com" },
-            3: { name: "HILLTOPADS", link: "https://hilltop-link.com" },
-            4: { name: "CLICKADU", link: "https://clickadu-link.com" }
+        // --- 1. CONFIGURATION (PASTE YOUR LINKS HERE) ---
+        // Your logic remains the same (4 Sessions rotate 1->2->3->4)
+        const HUB_LINKS = {
+            1: "YOUR_MONETAG_LINK",
+            2: "YOUR_ADSTERRA_LINK",
+            3: "YOUR_HILLTOPADS_LINK",
+            4: "YOUR_CLICKADU_LINK"
+        };
+        // (Removed HUB_NAMES for user privacy)
+
+        // --- 2. ANTI-CHEAT & STATE LOGIC (LOAD FROM STORAGE) ---
+        let neoState = JSON.parse(localStorage.getItem('neoPremiumState')) || {
+            balance: 0,
+            phase: 1, // Phase 1 to 4
+            clicksInPhase: 0,
+            cooldownUntil: null,
+            uid: Math.floor(1000 + Math.random() * 9000) // Temp ID
         };
 
-        // --- ANTI-CHEAT & DATA LOGIC (Local Storage) ---
-        let appData = JSON.parse(localStorage.getItem('neoAppSecureData')) || {
-            balance: 0.00,
-            session: 1,
-            clicks: 0,
-            cooldownEnd: 0
-        };
+        function saveData() { localStorage.setItem('neoPremiumState', JSON.stringify(neoState)); }
 
-        function saveData() {
-            // Basic Anti-Cheat: Stringify and store
-            localStorage.setItem('neoAppSecureData', JSON.stringify(appData));
-        }
+        // --- UI REFRESH (Master Dashboard) ---
+        function refreshMasterUI() {
+            document.getElementById('coins').innerText = neoState.balance.toFixed(2);
+            document.getElementById('withdrawCoins').innerText = neoState.balance.toFixed(2);
+            document.getElementById('userId').innerText = neoState.uid;
 
-        // --- UI UPDATE ---
-        function updateDashboard() {
-            document.getElementById('bal').innerText = appData.balance.toFixed(2);
-            document.getElementById('netName').innerText = NETWORKS[appData.session].name;
-            document.getElementById('clicksLeft').innerText = 5 - appData.clicks;
-            document.getElementById('btnSession').innerText = `SESSION ${appData.session}/4 📱`;
+            // (Removed currentNet display)
+            document.getElementById('clicksLeft').innerText = 5 - neoState.clicksInPhase;
+            document.getElementById('btnPhase').innerText = `SESSION PHASE ${neoState.phase}/4 📊`;
 
-            const btn = document.getElementById('mainButton');
-            const timerEl = document.getElementById('timer');
-            const titleEl = document.getElementById('btnTitle');
+            const btn = document.getElementById('masterBtn');
+            const timerDiv = document.getElementById('timer');
+            const label = document.getElementById('btnLabel');
 
-            if (appData.cooldownEnd > Date.now()) {
+            if (neoState.cooldownUntil && Date.now() < neoState.cooldownUntil) {
                 btn.classList.add('locked');
-                timerEl.style.display = 'block';
-                titleEl.innerText = "COOLDOWN 🔒";
-                titleEl.style.color = "var(--ios-red)";
+                timerDiv.style.display = 'block';
+                label.innerText = "LOCKED";
+                label.style.color = "#FF3333";
             } else {
                 btn.classList.remove('locked');
-                timerEl.style.display = 'none';
-                titleEl.innerText = "START EARNING";
-                titleEl.style.color = "var(--ios-blue)";
+                timerDiv.style.display = 'none';
+                label.innerText = "EXECUTE";
+                label.style.color = "var(--text-main)";
             }
         }
 
-        // --- CORE LINK LOGIC (4 Sessions Rotate) ---
-        function executeLink() {
-            // Anti-Cheat: Time Check
-            if (appData.cooldownEnd > Date.now()) {
+        // --- CORE ENGINE LOGIC (Phase Rotation) ---
+        // Uses the same 4-Network rotation model (5 clicks -> 1 hour break)
+        function executeLinkPhase() {
+            // Anti-Cheat: Check Cooldown
+            if (neoState.cooldownUntil && Date.now() < neoState.cooldownUntil) {
                 tg.HapticFeedback.notificationOccurred('error');
-                return tg.showAlert("⚠️ Wait for the cooldown to finish!");
+                tg.showAlert("⚠️ Connection Node overheated! Cooling down.");
+                return;
             }
 
-            // Open the current session's Smart Link
-            window.open(NETWORKS[appData.session].link, "_blank");
+            // Anti-Cheat Placeholder: Add server-side verification here later.
 
-            // Update Logic
-            appData.clicks++;
-            appData.balance += 0.50; // Add balance (Change as needed)
-            tg.HapticFeedback.impactOccurred('heavy'); // iPhone Vibration
+            // Open Smart Link
+            window.open(HUB_LINKS[neoState.phase], "_blank");
 
-            // Session Complete Logic
-            if (appData.clicks >= 5) {
-                appData.clicks = 0;
-                appData.session = appData.session >= 4 ? 1 : appData.session + 1; // Rotate 1,2,3,4
-                appData.cooldownEnd = Date.now() + (60 * 60 * 1000); // 1 Hour Timer
-                
+            // Logic Update
+            neoState.clicksInPhase++;
+            neoState.balance += 10; // Reward per click
+            tg.HapticFeedback.impactOccurred('rigid'); // Fast iPhone tap
+
+            // Cooldown Trigger
+            if (neoState.clicksInPhase >= 5) {
+                neoState.clicksInPhase = 0;
+                neoState.phase = (neoState.phase >= 4) ? 1 : neoState.phase + 1; // 1->2->3->4->1
+                neoState.cooldownUntil = Date.now() + (60 * 60 * 1000); // 1 Hour Cooldown
+                tg.showAlert(`✅ Data Cycle Complete. Hub switching in 1 hour.`);
                 tg.HapticFeedback.notificationOccurred('success');
-                tg.showAlert(`✅ Session Complete! Network switching to ${NETWORKS[appData.session].name}. Cooldown active for 1 Hour.`);
             }
 
             saveData();
-            updateDashboard();
+            refreshMasterUI();
         }
 
-        // --- COOLDOWN TIMER ---
+        // --- PAGE SWITCHING ---
+        function switchPage(pageId, navElement) {
+            tg.HapticFeedback.impactOccurred('light');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            navElement.classList.add('active');
+        }
+
+        // --- TIMER & PERSISTENCE ---
         setInterval(() => {
-            if (appData.cooldownEnd > Date.now()) {
-                let left = appData.cooldownEnd - Date.now();
-                let m = Math.floor(left / 60000);
-                let s = Math.floor((left % 60000) / 1000);
-                document.getElementById('timer').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-            } else if (appData.cooldownEnd !== 0) {
-                appData.cooldownEnd = 0;
-                saveData();
-                updateDashboard();
+            if (neoState.cooldownUntil) {
+                const diff = neoState.cooldownUntil - Date.now();
+                if (diff <= 0) {
+                    neoState.cooldownUntil = null;
+                    saveData();
+                    refreshMasterUI();
+                } else {
+                    const m = Math.floor(diff / 60000);
+                    const s = Math.floor((diff % 60000) / 1000);
+                    document.getElementById('timer').innerText = 
+                        `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                }
             }
         }, 1000);
 
-        // --- NAVIGATION TABS ---
-        function switchTab(tabId, element) {
-            tg.HapticFeedback.selectionChanged();
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            element.classList.add('active');
-        }
-
-        // --- UTILS ---
-        function copyRef() {
-            navigator.clipboard.writeText(document.getElementById('refLink').innerText);
+        // Copy Referral Link
+        function copyRefLink() {
+            const link = document.getElementById('userId').parentNode.innerText;
+            navigator.clipboard.writeText(link);
+            tg.showAlert("✅ Node Invite Link copied!");
             tg.HapticFeedback.notificationOccurred('success');
-            tg.showAlert("✅ Invite link copied to clipboard!");
         }
 
-        function requestWithdraw() {
-            if (appData.balance < 100) {
-                tg.HapticFeedback.notificationOccurred('error');
-                tg.showAlert("❌ Insufficient Balance! Minimum withdrawal is $100.");
-            } else {
-                tg.showAlert("✅ Withdrawal request submitted successfully!");
-            }
-        }
-
-        // Initialize App
-        updateDashboard();
+        // Initialize
+        refreshMasterUI();
+        tg.ready();
     </script>
 </body>
-                                        </html>
-                                        
+    </html>
+    
