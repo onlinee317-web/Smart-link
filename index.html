@@ -2,385 +2,282 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NEO-GOLD LUXURY</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Earn Stream TMA Pro 💎</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        /* --- 🏆 LUXURY GOLDEN THEME (All New) --- */
-        :root {
-            /* Main Palette */
-            --gold-primary: #FFD700;    /* Solid Gold */
-            --gold-glow: #FFC300;       /* Lighter Gold for Glows */
-            --bg-dark: #000000;         /* Deep Black for contrast */
-            --ios-card: #1C1C1E;        /* iOS Dark Gray for base */
-            
-            /* Glassmorphism */
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 215, 0, 0.15); /* Soft Gold Border */
-            --blur: blur(25px);
-            
-            /* Typography */
-            --text-main: #FFFFFF;
-            --text-dim: #A1A1A6;
-            --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at 50% -20%, #2C2C2E 0%, #000000 70%);
-            color: var(--text-main);
-            font-family: var(--font-family);
-            margin: 0; padding: 0; overflow: hidden; height: 100vh;
-            -webkit-font-smoothing: antialiased;
-            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
-            padding-top: env(safe-area-inset-top);
-        }
-
-        /* --- ✨ LUXURY ANIMATIONS --- */
-        @keyframes flyRocket { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-20px) rotate(5deg); } }
-        @keyframes wingFly { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.7) translateY(2px); } }
-        @keyframes goldenPulse { 0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); border-color: var(--glass-border); } 50% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); border-color: var(--gold-primary); } }
-        @keyframes fadeSlideIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-        /* --- PAGES --- */
-        .page {
-            position: absolute; top: 0; left: 0; width: 100%; height: calc(100vh - 90px - env(safe-area-inset-bottom));
-            display: none; padding: 25px; box-sizing: border-box;
-            overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
-        }
-        .page.active { display: block; animation: fadeSlideIn 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
-
-        /* --- 🔥 LUXURY GLASS CARDS --- */
-        .glass-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 25px;
-            padding: 30px;
-            backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
-            margin-bottom: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            text-align: center;
-            transition: 0.3s;
-        }
-
-        /* --- DASHBOARD ELEMENTS (Big Fonts) --- */
-        .rocket-box { font-size: 70px; display: inline-block; animation: flyRocket 4s ease-in-out infinite; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6)); }
-        .balance-label { font-size: 14px; color: var(--gold-glow); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-top: 15px; }
-        .balance-val { color: var(--text-main); font-size: 55px; font-weight: 900; margin: 10px 0; letter-spacing: -1px; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
-
-        /* THE WINGED CASH BUTTON (Redesigned) */
-        .btn-container { width: 100%; display: flex; justify-content: center; margin: 40px 0; position: relative; }
+        /* --- ANIMATIONS --- */
+        @keyframes rocket-fly { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-20px) rotate(8deg); } }
+        @keyframes cash-float { 0%, 100% { transform: translateY(0) scale(1.1); } 50% { transform: translateY(-30px) scale(1.3); filter: drop-shadow(0 0 20px #fbbf24); } }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         
-        .main-btn {
-            width: 160px; height: 160px; border-radius: 40px; /* Luxury Square */
-            background: linear-gradient(135deg, #1C1C1E 0%, #000000 100%);
-            border: 2px solid var(--glass-border);
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-            position: relative; z-index: 10;
-            animation: goldenPulse 3s infinite;
-        }
-
-        .main-btn:active:not(.locked) { transform: scale(0.9); }
-        .main-btn.locked { border-color: rgba(255, 69, 58, 0.2); animation: none; opacity: 0.6; cursor: not-allowed; }
-
-        /* Winged Cash Emoji */
-        .cash-winged-wrapper { position: relative; display: flex; align-items: center; justify-content: center; font-size: 85px; pointer-events: none; }
-        .cash-wings { position: absolute; font-size: 70px; animation: wingFly 1s ease-in-out infinite; transform-origin: center bottom; }
-        .wing-left { left: -35px; top: 10px; }
-        .wing-right { right: -35px; top: 10px; transform: scaleX(-1); }
-        /* When locked, change emoji and stop animation */
-        .locked .cash-winged-wrapper { font-size: 60px; }
-        .locked .cash-wings { display: none; }
-
-        #timer { color: #FF453A; font-size: 32px; font-weight: 800; display: none; position: absolute; z-index: 15; font-family: monospace; }
-
-        /* --- NEW DAILY CHECK-IN SECTION --- */
-        .daily-checkin {
-            background: rgba(255, 215, 0, 0.05);
-            border: 1px solid rgba(255, 215, 0, 0.1);
-            border-radius: 20px;
-            padding: 20px;
-            display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 25px; cursor: pointer; transition: 0.2s;
-        }
-        .daily-checkin:active { background: rgba(255, 215, 0, 0.1); transform: scale(0.98); }
-        .daily-checkin .left { display: flex; align-items: center; gap: 15px; }
-        .daily-checkin .🗓️ { font-size: 30px; }
-        .daily-checkin .title { font-size: 16px; font-weight: 700; color: var(--gold-primary); }
-        .daily-checkin .sub { font-size: 12px; color: var(--text-dim); }
-        .daily-checkin .status { font-size: 12px; font-weight: 600; color: var(--text-dim); background: rgba(255,255,255,0.05); padding: 5px 10px; border-radius: 10px; }
-        .daily-checkin.claimed .status { color: #30D158; background: rgba(48, 209, 88, 0.1); }
-
-        /* Simplified Stats */
-        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; }
-        .stat-label-dim { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-        .stat-value-lux { font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 5px; }
-
-        /* --- BOTTOM NAVIGATION (iOS Luxury) --- */
-        .nav-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: calc(85px + env(safe-area-inset-bottom, 20px));
-            background: rgba(28, 28, 30, 0.8);
-            display: grid; grid-template-columns: 1fr 1fr 1fr;
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border-top: 0.5px solid rgba(255,255,255,0.1); padding-bottom: env(safe-area-inset-bottom, 20px); z-index: 100;
-        }
-
-        .nav-item { display: flex; flex-direction: column; justify-content: center; align-items: center; color: #8E8E93; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--gold-primary); }
-        .nav-item .emoji { font-size: 26px; margin-bottom: 5px; transition: 0.3s; filter: grayscale(1) opacity(0.6); }
-        .nav-item.active .emoji { filter: grayscale(0) opacity(1) drop-shadow(0 0 10px var(--gold-primary)); transform: scale(1.1); }
-        .nav-item .label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Referral Page */
-        .ref-box { background: rgba(0,0,0,0.4); padding: 18px; border-radius: 15px; font-size: 12px; margin-top: 15px; cursor: pointer; color: var(--gold-primary); word-break: break-all; border: 1px solid rgba(255,215,0,0.2); }
+        .rocket-anim { animation: rocket-fly 3s infinite ease-in-out; }
+        .cash-master-anim { animation: cash-float 2.5s infinite ease-in-out; cursor: pointer; transition: 0.2s; }
+        .cash-master-anim:active { transform: scale(0.9); }
+        .spin-anim { animation: spin 1s linear infinite; }
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); }
+        .nav-active { color: #fbbf24; transform: scale(1.15); filter: drop-shadow(0 0 5px #fbbf24); }
         
-        /* Withdraw Page */
-        .input-group { text-align: left; margin-bottom: 20px; }
-        .lux-input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 14px; padding: 18px; color: white; font-size: 16px; box-sizing: border-box; }
-        .lux-btn { width: 100%; background: var(--gold-primary); color: black; border: none; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 17px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 20px rgba(255,215,0,0.3); }
-        .lux-btn:active { background: #ccaf00; transform: scale(0.98); }
-
+        /* Hidden Pages */
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.4s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body>
+<body class="bg-[#020617] text-white select-none overflow-x-hidden font-sans">
 
-    <div id="homePage" class="page active">
-        <div class="glass-card">
-            <div class="rocket-box">🚀</div>
-            <div class="balance-label">Lux Balance</div>
-            <div class="balance-val">🪙 <span id="coins">0.00</span></div>
+    <div class="p-8 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 rounded-b-[50px] shadow-2xl mb-8 relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none text-6xl">💵 💸 🪙 💴 🤑</div>
+        <div class="flex justify-between items-center relative z-10">
+            <div>
+                <p class="text-[10px] font-black opacity-90 uppercase tracking-[0.2em] mb-1">Your Fortune 👑</p>
+                <h1 class="text-5xl font-black flex items-center gap-2 tracking-tighter">
+                    💰 <span id="balance">0</span>
+                </h1>
+            </div>
+            <div class="rocket-anim text-6xl">🚀</div>
         </div>
+    </div>
 
-        <div class="daily-checkin" id="dailyCheckin" onclick="claimDaily()">
-            <div class="left">
-                <div class="🗓️">🗓️</div>
-                <div>
-                    <div class="title">Daily Check-in</div>
-                    <div class="sub">Claim your daily 🪙 50.00 bonus</div>
+    <div class="px-5 space-y-8 pb-32">
+        
+        <div id="homePage" class="page active space-y-8">
+            
+            <div class="glass p-6 rounded-[35px] border border-white/10 shadow-2xl relative overflow-hidden">
+                <div class="flex justify-between items-center mb-5">
+                    <h2 class="text-xl font-black flex items-center gap-2">📅 DAILY REWARD</h2>
+                    <span id="checkinStatus" class="text-[10px] bg-green-500 text-white px-3 py-1 rounded-full font-black">READY ✅</span>
+                </div>
+                <button onclick="claimDaily()" id="checkinBtn" class="w-full py-5 bg-white text-black font-black text-xl rounded-2xl active:scale-90 transition-all shadow-[0_10px_20px_rgba(255,255,255,0.2)]">
+                    COLLECT 500 COINS 🎁
+                </button>
+            </div>
+
+            <div class="flex flex-col items-center justify-center py-10 relative">
+                <div class="text-[10px] font-bold text-slate-400 mb-10 tracking-[0.3em] uppercase">Tap to Synchronize</div>
+                
+                <div id="masterCashBtn" class="cash-master-anim text-[120px]" onclick="handleMainClick()">
+                    💸
+                </div>
+                
+                <div id="cooldownTimer" class="hidden mt-5 text-center">
+                    <p class="text-red-500 font-black text-2xl tracking-widest" id="timerDisplay">00:00</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase">System Overheated - Cooling Down</p>
+                </div>
+
+                <div class="mt-10 text-center">
+                    <p class="text-[10px] font-black text-yellow-500 uppercase tracking-widest">Node Status</p>
+                    <p class="text-lg font-black" id="phaseDisplay">SESSION 1/4</p>
+                    <p class="text-[10px] text-slate-500 font-bold uppercase mt-1">Clicks: <span id="clicksLeft">0</span>/5</p>
                 </div>
             </div>
-            <div class="status" id="dailyStatus">CLAIM</div>
-        </div>
 
-        <div class="btn-container">
-            <div id="masterBtn" class="main-btn" onclick="executeLinkPhase()">
-                <div class="cash-winged-wrapper" id="cashEmoji">
-                    <span class="cash-wings wing-left">💸</span>
-                    <span>💸</span>
-                    <span class="cash-wings wing-right">💸</span>
+            <div class="glass p-6 rounded-[35px] border border-white/10 relative overflow-hidden">
+                <h2 class="text-xl font-black mb-5 flex items-center gap-2">📺 QUICK BOOST</h2>
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-2xl border border-white/5">
+                    <div>
+                        <p class="font-black text-blue-400 tracking-tight">BONUS AD 🎥</p>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase mt-1">Earn 100 Extra Coins</p>
+                    </div>
+                    <button onclick="handleWatchAd()" class="bg-blue-600 px-7 py-3 rounded-2xl font-black text-sm active:scale-95 transition-all shadow-lg shadow-blue-600/30">WATCH</button>
                 </div>
-                <div id="timer">00:00</div>
             </div>
         </div>
 
-        <div class="stats-row">
-            <div><div class="stat-label-dim">Cycle Phase</div><div class="stat-value-lux" id="btnPhase">Session 1/4</div></div>
-            <div><div class="stat-label-dim">Node Clicks</div><div class="stat-value-lux"><span id="clicksLeft">5</span> / 5</div></div>
-        </div>
-    </div>
-
-    <div id="referralPage" class="page">
-        <div class="glass-card">
-            <div style="font-size: 55px;">🎁</div>
-            <h1 style="margin: 15px 0 5px 0; font-size: 24px; font-weight: 800;">Affiliate Rewards</h1>
-            <p style="font-size: 15px; color: var(--text-dim); line-height: 1.5;">Invite partners to the NEO-GOLD network and earn a **10% commission** on their data verification rewards.</p>
-        </div>
-        
-        <div class="stats-row" style="margin-bottom: 25px;">
-            <div class="glass-card" style="margin:0; padding: 20px;"><div class="stat-label-dim">Partners Verified</div><div class="stat-value-lux" style="color:var(--gold-primary); font-size: 24px;">0</div></div>
-            <div class="glass-card" style="margin:0; padding: 20px;"><div class="stat-label-dim">Total Commission</div><div class="stat-value-lux" style="color:var(--gold-glow); font-size: 24px;">🪙 0.00</div></div>
-        </div>
-
-        <div class="glass-card">
-            <div class="stat-label-dim">Your Unique Invite Link</div>
-            <div class="ref-box" onclick="copyRefLink()">https://t.me/your_bot?start=r_<span id="userId">1234</span></div>
-        </div>
-    </div>
-
-    <div id="withdrawPage" class="page">
-        <div class="glass-card" style="border-color: var(--gold-primary); background: rgba(255, 215, 0, 0.03);">
-            <div class="stat-label-dim" style="color:var(--gold-glow);">Available to Cash Out</div>
-            <div class="balance-val" style="font-size: 38px;">🪙 <span id="withdrawCoins">0.00</span></div>
-        </div>
-        
-        <div class="glass-card" style="text-align: left;">
-            <div class="input-group">
-                <label class="stat-label-dim">Asset Type</label>
-                <select class="lux-input"><option>Binance USDT (Min $10.00)</option></select>
+        <div id="referralPage" class="page space-y-6">
+            <div class="glass p-8 rounded-[35px] text-center border border-white/10">
+                <span class="text-7xl block mb-4">🎁</span>
+                <h2 class="text-2xl font-black mb-2">Invite Legends</h2>
+                <p class="text-slate-400 text-sm font-bold">Earn 10% commission on every click your friend makes! 🚀</p>
+                <div class="mt-6 p-4 bg-black/40 rounded-2xl border border-yellow-500/20 text-yellow-500 font-mono text-xs break-all" id="refLink">
+                    https://t.me/share/url?url=https://t.me/YourBot?start=ref_1234
+                </div>
+                <button onclick="copyRef()" class="mt-4 w-full py-4 bg-yellow-500 text-black font-black rounded-2xl uppercase text-sm active:scale-95">Copy Invite Link 🔗</button>
             </div>
-            <div class="input-group">
-                <label class="stat-label-dim">Wallet Address (TRC20)</label>
-                <input type="text" class="lux-input" placeholder="Txyz...">
-            </div>
-            <button class="lux-btn">SUBMIT REQUEST ➡️</button>
-            <p style="font-size: 11px; color: #cc3333; margin-top: 15px; text-align: center; line-height: 1.4;">⚠️ Note: All requests are verified manually by agents. Processing time 24-48h.</p>
         </div>
+
+        <div id="withdrawPage" class="page space-y-6">
+            <div class="glass p-8 rounded-[35px] border border-white/10 text-center">
+                <p class="text-slate-500 font-black text-[10px] uppercase mb-1">Available for Payout</p>
+                <h2 class="text-4xl font-black text-green-400">💰 <span id="withBalance">0</span></h2>
+            </div>
+            <div class="glass p-6 rounded-[35px] border border-white/10 space-y-4">
+                <input type="text" placeholder="Wallet Address (USDT/TRC20)" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-yellow-500">
+                <input type="number" placeholder="Amount of Coins" class="w-full bg-white/5 border border-white/10 p-4 rounded-xl text-white outline-none focus:border-yellow-500">
+                <button class="w-full py-5 bg-gradient-to-r from-orange-500 to-red-600 rounded-2xl font-black text-lg active:scale-95 transition-all shadow-xl">SUBMIT WITHDRAW 💳</button>
+            </div>
+        </div>
+
     </div>
 
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="switchPage('homePage', this)">
-            <div class="emoji">🏠</div>
-            <div class="label">HOME</div>
-        </div>
-        <div class="nav-item" onclick="switchPage('referralPage', this)">
-            <div class="emoji">👥</div>
-            <div class="label">REFERRAL</div>
-        </div>
-        <div class="nav-item" onclick="switchPage('withdrawPage', this)">
-            <div class="emoji">💰</div>
-            <div class="label">WITHDRAW</div>
-        </div>
+    <div class="fixed bottom-0 left-0 right-0 p-5 bg-[#020617]/90 backdrop-blur-2xl border-t border-white/5 flex justify-around items-center z-50">
+        <button onclick="switchTab('home')" id="nav-home" class="nav-item flex flex-col items-center gap-1 nav-active transition-all">
+            <span class="text-3xl">🏠</span>
+            <span class="text-[9px] font-black uppercase tracking-widest">Home</span>
+        </button>
+        <button onclick="switchTab('referral')" id="nav-ref" class="nav-item flex flex-col items-center gap-1 opacity-40 transition-all">
+            <span class="text-3xl">👥</span>
+            <span class="text-[9px] font-black uppercase tracking-widest">Referral</span>
+        </button>
+        <button onclick="switchTab('withdraw')" id="nav-with" class="nav-item flex flex-col items-center gap-1 opacity-40 transition-all">
+            <span class="text-3xl">💳</span>
+            <span class="text-[9px] font-black uppercase tracking-widest">Withdraw</span>
+        </button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // --- 1. CONFIGURATION (PASTE YOUR LINKS HERE) ---
-        // Rotates through your 4 networks (5 clicks -> 1 hour cooldown)
+        // 🔗 NETWORK CONFIG (Replace with your links)
         const HUB_LINKS = {
             1: "YOUR_MONETAG_LINK",
             2: "YOUR_ADSTERRA_LINK",
-            3: "YOUR_HILLTOPADS_LINK",
+            3: "YOUR_HILLTOP_LINK",
             4: "YOUR_CLICKADU_LINK"
         };
 
-        // --- 2. STATE LOGIC (LOAD FROM STORAGE) ---
-        let neoState = JSON.parse(localStorage.getItem('neoLuxuryState')) || {
+        // 💾 STATE
+        let state = JSON.parse(localStorage.getItem('earnStreamState')) || {
             balance: 0,
-            phase: 1, // Phase 1 to 4
+            phase: 1,
             clicksInPhase: 0,
             cooldownUntil: null,
-            uid: Math.floor(1000 + Math.random() * 9000), // Temp ID
-            lastCheckin: 0
+            lastCheckIn: ""
         };
 
-        function saveData() { localStorage.setItem('neoLuxuryState', JSON.stringify(neoState)); }
+        function save() { 
+            localStorage.setItem('earnStreamState', JSON.stringify(state)); 
+            updateUI();
+        }
 
-        // --- UI REFRESH (Master Dashboard) ---
-        function refreshMasterUI() {
-            document.getElementById('coins').innerText = neoState.balance.toFixed(2);
-            document.getElementById('withdrawCoins').innerText = neoState.balance.toFixed(2);
-            document.getElementById('userId').innerText = neoState.uid;
-
-            document.getElementById('clicksLeft').innerText = 5 - neoState.clicksInPhase;
-            document.getElementById('btnPhase').innerText = `Session ${neoState.phase}/4`;
-
-            const btn = document.getElementById('masterBtn');
-            const timerDiv = document.getElementById('timer');
-            const cashEmoji = document.getElementById('cashEmoji');
-
-            if (neoState.cooldownUntil && Date.now() < neoState.cooldownUntil) {
-                btn.classList.add('locked');
-                timerDiv.style.display = 'block';
-                cashEmoji.innerText = "🔒"; // Change emoji when locked
-            } else {
-                btn.classList.remove('locked');
-                timerDiv.style.display = 'none';
-                cashEmoji.innerHTML = '<span class="cash-wings wing-left">💸</span><span>💸</span><span class="cash-wings wing-right">💸</span>'; // Restore flying cash
+        function updateUI() {
+            document.getElementById('balance').innerText = state.balance.toLocaleString();
+            document.getElementById('withBalance').innerText = state.balance.toLocaleString();
+            document.getElementById('clicksLeft').innerText = state.clicksInPhase;
+            document.getElementById('phaseDisplay').innerText = `SESSION ${state.phase}/4`;
+            
+            // Checkin UI
+            const today = new Date().toLocaleDateString();
+            if(state.lastCheckIn === today) {
+                document.getElementById('checkinStatus').innerText = "CLAIMED ✅";
+                document.getElementById('checkinStatus').classList.remove('animate-pulse', 'bg-green-500');
+                document.getElementById('checkinStatus').classList.add('bg-slate-700');
+                document.getElementById('checkinBtn').disabled = true;
+                document.getElementById('checkinBtn').style.opacity = "0.5";
             }
 
-            // Update Check-in UI
-            const today = new Date().toDateString();
-            const last = new Date(neoState.lastCheckin).toDateString();
-            const checkinCard = document.getElementById('dailyCheckin');
-            const checkinStatus = document.getElementById('dailyStatus');
-            
-            if (today === last) {
-                checkinCard.classList.add('claimed');
-                checkinStatus.innerText = "CLAIMED ✅";
+            // Cooldown UI
+            const masterBtn = document.getElementById('masterCashBtn');
+            const timerDiv = document.getElementById('cooldownTimer');
+            if(state.cooldownUntil && Date.now() < state.cooldownUntil) {
+                masterBtn.innerText = "🔒";
+                masterBtn.classList.remove('cash-master-anim');
+                timerDiv.classList.remove('hidden');
             } else {
-                checkinCard.classList.remove('claimed');
-                checkinStatus.innerText = "CLAIM";
+                masterBtn.innerText = "💸";
+                masterBtn.classList.add('cash-master-anim');
+                timerDiv.classList.add('hidden');
             }
         }
 
-        // --- CORE ENGINE LOGIC (Phase Rotation) ---
-        // Uses the same 4-Network rotation model (5 clicks -> 1 hour break)
-        function executeLinkPhase() {
-            if (neoState.cooldownUntil && Date.now() < neoState.cooldownUntil) {
-                tg.HapticFeedback.notificationOccurred('error');
-                tg.showAlert("⚠️ System overheated! Hub is cooling down.");
+        // 💸 MAIN CLICK LOGIC
+        function handleMainClick() {
+            if(state.cooldownUntil && Date.now() < state.cooldownUntil) {
+                tg.showAlert("⏳ System is cooling down. Please wait!");
                 return;
             }
 
-            // Open the session's Smart Link
-            window.open(HUB_LINKS[neoState.phase], "_blank");
+            // Open the Link
+            tg.openLink(HUB_LINKS[state.phase]);
 
-            // Logic Update
-            neoState.clicksInPhase++;
-            neoState.balance += 10; // Reward per click
-            tg.HapticFeedback.impactOccurred('rigid'); // Fast iPhone tap
+            // Update Logic
+            state.balance += 100;
+            state.clicksInPhase++;
+            tg.HapticFeedback.impactOccurred('heavy');
 
-            // Cooldown Trigger
-            if (neoState.clicksInPhase >= 5) {
-                neoState.clicksInPhase = 0;
-                neoState.phase = (neoState.phase >= 4) ? 1 : neoState.phase + 1;
-                neoState.cooldownUntil = Date.now() + (60 * 60 * 1000); // 1 Hour Cooldown
-                tg.showAlert(`✅ Cycle Complete. Next Hub switches in 1 hour.`);
-                tg.HapticFeedback.notificationOccurred('success');
+            if(state.clicksInPhase >= 5) {
+                state.clicksInPhase = 0;
+                state.phase = (state.phase >= 4) ? 1 : state.phase + 1;
+                state.cooldownUntil = Date.now() + (60 * 60 * 1000); // 1 Hour
+                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                tg.showAlert("✅ Session Complete! Take a 1 hour break.");
             }
-
-            saveData();
-            refreshMasterUI();
+            save();
         }
 
-        // --- NEW: DAILY CHECK-IN LOGIC ---
+        // 🎁 DAILY CHECKIN
         function claimDaily() {
-            const today = new Date().toDateString();
-            const last = new Date(neoState.lastCheckin).toDateString();
+            const today = new Date().toLocaleDateString();
+            if(state.lastCheckIn === today) return;
 
-            if (today === last) {
-                tg.HapticFeedback.notificationOccurred('warning');
-                tg.showAlert("⚠️ You already claimed your bonus today!");
-            } else {
-                neoState.balance += 50; // Daily Bonus
-                neoState.lastCheckin = Date.now();
-                tg.HapticFeedback.notificationOccurred('success');
-                tg.showAlert("🎁 Congratulations! You received 🪙 50.00 Daily Bonus.");
-                saveData();
-                refreshMasterUI();
+            state.balance += 500;
+            state.lastCheckIn = today;
+            confetti({ particleCount: 100, spread: 70, colors: ['#fbbf24', '#ffffff'] });
+            tg.HapticFeedback.notificationOccurred('success');
+            save();
+        }
+
+        // 🎥 AD WATCH (SIMPLE)
+        function handleWatchAd() {
+            tg.showConfirm("Watch ad for 100 bonus coins?", (ok) => {
+                if(ok) {
+                    tg.openLink(HUB_LINKS[1]); // Opens link 1 for bonus
+                    state.balance += 100;
+                    save();
+                }
+            });
+        }
+
+        // 📑 TAB SWITCHING
+        function switchTab(tab) {
+            tg.HapticFeedback.impactOccurred('medium');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => {
+                n.classList.add('opacity-40');
+                n.classList.remove('nav-active');
+            });
+
+            if(tab === 'home') {
+                document.getElementById('homePage').classList.add('active');
+                document.getElementById('nav-home').classList.remove('opacity-40');
+                document.getElementById('nav-home').classList.add('nav-active');
+            } else if(tab === 'referral') {
+                document.getElementById('referralPage').classList.add('active');
+                document.getElementById('nav-ref').classList.remove('opacity-40');
+                document.getElementById('nav-ref').classList.add('nav-active');
+            } else if(tab === 'withdraw') {
+                document.getElementById('withdrawPage').classList.add('active');
+                document.getElementById('nav-with').classList.remove('opacity-40');
+                document.getElementById('nav-with').classList.add('nav-active');
             }
         }
 
-        // --- PAGE SWITCHING ---
-        function switchPage(pageId, navElement) {
-            tg.HapticFeedback.impactOccurred('light');
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            navElement.classList.add('active');
-        }
-
-        // --- TIMER & PERSISTENCE ---
+        // ⏳ TIMER TICK
         setInterval(() => {
-            if (neoState.cooldownUntil) {
-                const diff = neoState.cooldownUntil - Date.now();
-                if (diff <= 0) {
-                    neoState.cooldownUntil = null;
-                    saveData();
-                    refreshMasterUI();
+            if(state.cooldownUntil) {
+                const diff = state.cooldownUntil - Date.now();
+                if(diff <= 0) {
+                    state.cooldownUntil = null;
+                    save();
                 } else {
                     const m = Math.floor(diff / 60000);
                     const s = Math.floor((diff % 60000) / 1000);
-                    document.getElementById('timer').innerText = 
+                    document.getElementById('timerDisplay').innerText = 
                         `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
                 }
             }
         }, 1000);
 
-        // Copy Referral Link
-        function copyRefLink() {
-            const link = document.getElementById('userId').parentNode.innerText;
-            navigator.clipboard.writeText(link);
-            tg.showAlert("✅ Node Invite Link copied!");
-            tg.HapticFeedback.notificationOccurred('success');
+        function copyRef() {
+            navigator.clipboard.writeText("https://t.me/YourBot?start=ref_" + (state.uid || 1234));
+            tg.showAlert("Link Copied! 🔗");
         }
 
-        // Initialize
-        refreshMasterUI();
-        tg.ready();
+        // Init
+        updateUI();
     </script>
 </body>
     </html>
