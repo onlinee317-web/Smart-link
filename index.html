@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NEO-GOLD iOS</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* --- iOS THEME VARIABLES --- */
+        :root {
+            --ios-bg: #000000;
+            --ios-card: rgba(28, 28, 30, 0.7);
+            --ios-blue: #0A84FF;
+            --ios-green: #30D158;
+            --ios-red: #FF453A;
+            --ios-yellow: #FFD60A;
+            --ios-text: #FFFFFF;
+            --glass-blur: blur(20px);
+        }
+
+        body {
+            background-color: var(--ios-bg);
+            color: var(--ios-text);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+            margin: 0; padding: 0; overflow: hidden; height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        /* --- HEAVY ANIMATIONS --- */
+        @keyframes flyRocket { 
+            0%, 100% { transform: translateY(0) rotate(0deg); } 
+            50% { transform: translateY(-20px) rotate(15deg); } 
+        }
+        @keyframes floatCash1 { 0% { opacity: 0; transform: translate(0, 0) scale(0.5); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(-50px, -80px) scale(1.5) rotate(-20deg); } }
+        @keyframes floatCash2 { 0% { opacity: 0; transform: translate(0, 0) scale(0.5); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(50px, -100px) scale(1.5) rotate(20deg); } }
+        @keyframes floatCash3 { 0% { opacity: 0; transform: translate(0, 0) scale(0.5); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(0, -120px) scale(1.5) rotate(5deg); } }
+        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 20px rgba(10, 132, 255, 0.3); } 50% { box-shadow: 0 0 50px rgba(10, 132, 255, 0.7); } }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* --- PAGES --- */
+        .page {
+            position: absolute; top: 0; left: 0; width: 100%; height: calc(100vh - 85px);
+            display: none; padding: 20px; box-sizing: border-box; overflow-y: auto;
+            padding-bottom: 40px;
+        }
+        .page.active { display: block; animation: slideIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
+
+        /* --- iOS CARDS --- */
+        .ios-card {
+            background: var(--ios-card); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border-radius: 20px; padding: 25px; margin-bottom: 20px; text-align: center;
+            border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* --- DASHBOARD --- */
+        .rocket-emoji { font-size: 65px; display: inline-block; animation: flyRocket 3s ease-in-out infinite; filter: drop-shadow(0 10px 10px rgba(0,0,0,0.5)); }
+        .balance-title { font-size: 13px; color: #8E8E93; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-top: 15px; }
+        .balance-amount { font-size: 45px; font-weight: 800; margin: 5px 0; background: linear-gradient(90deg, #FFF, #E0E0E0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* THE MASTER BUTTON */
+        .btn-wrapper { position: relative; display: flex; justify-content: center; margin-top: 40px; margin-bottom: 20px; }
+        .main-btn {
+            width: 220px; height: 220px; border-radius: 50%;
+            background: linear-gradient(145deg, #1A1A1A, #000000);
+            border: 4px solid var(--ios-blue); display: flex; flex-direction: column; justify-content: center; align-items: center;
+            cursor: pointer; transition: 0.2s; position: relative; z-index: 10; animation: pulseGlow 2s infinite;
+        }
+        .main-btn:active:not(.locked) { transform: scale(0.9); }
+        .main-btn.locked { border-color: var(--ios-red); animation: none; opacity: 0.8; cursor: not-allowed; }
+
+        .btn-title { color: var(--ios-blue); font-size: 22px; font-weight: 800; }
+        .btn-session { color: var(--ios-green); font-size: 14px; font-weight: 600; margin-top: 5px; background: rgba(48, 209, 88, 0.15); padding: 5px 12px; border-radius: 20px; }
+        
+        .cash-fly { position: absolute; font-size: 40px; pointer-events: none; z-index: 20; opacity: 0; }
+        .fly-1 { animation: floatCash1 1s ease-out infinite; top: 20%; left: 10%; }
+        .fly-2 { animation: floatCash2 1.2s ease-out infinite; top: 10%; right: 10%; animation-delay: 0.2s;}
+        .fly-3 { animation: floatCash3 1.5s ease-out infinite; bottom: 20%; left: 40%; animation-delay: 0.4s;}
+        .locked .cash-fly { display: none; }
+
+        #timer { color: var(--ios-red); font-size: 28px; font-weight: 800; display: none; margin-top: 10px; }
+
+        /* --- STATS GRID --- */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .stat-box { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-label { font-size: 11px; color: #8E8E93; }
+        .stat-val { font-size: 16px; font-weight: bold; margin-top: 5px; color: var(--ios-yellow); }
+
+        /* --- INPUTS & BUTTONS --- */
+        .ios-input { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 15px; color: white; font-size: 16px; margin-bottom: 15px; box-sizing: border-box; }
+        .ios-btn { width: 100%; background: var(--ios-blue); color: white; border: none; padding: 16px; border-radius: 14px; font-weight: 600; font-size: 17px; cursor: pointer; transition: 0.2s; }
+        .ios-btn:active { opacity: 0.7; transform: scale(0.98); }
+
+        /* --- BOTTOM NAVIGATION --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 85px;
+            background: rgba(28, 28, 30, 0.85); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            border-top: 0.5px solid rgba(255,255,255,0.1); display: flex; justify-content: space-around; align-items: center; z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 30%; color: #8E8E93; cursor: pointer; transition: 0.3s; }
+        .nav-item.active { color: var(--ios-blue); }
+        .nav-icon { font-size: 26px; margin-bottom: 4px; filter: grayscale(1); transition: 0.3s; }
+        .nav-item.active .nav-icon { filter: grayscale(0); transform: scale(1.1); }
+        .nav-text { font-size: 10px; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <div id="home" class="page active">
+        <div class="ios-card">
+            <div class="rocket-emoji">🚀</div>
+            <div class="balance-title">TOTAL BALANCE</div>
+            <div class="balance-amount">💲<span id="bal">0.00</span></div>
+        </div>
+
+        <div class="btn-wrapper">
+            <div id="mainButton" class="main-btn" onclick="executeLink()">
+                <div class="cash-fly fly-1">💸</div>
+                <div class="cash-fly fly-2">💵</div>
+                <div class="cash-fly fly-3">💰</div>
+                
+                <span class="btn-title" id="btnTitle">START EARNING</span>
+                <span class="btn-session" id="btnSession">SESSION 1/4 📱</span>
+                <div id="timer">00:00</div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-label">ACTIVE NETWORK ⚡️</div>
+                <div class="stat-val" id="netName">MONETAG</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">CLICKS LEFT 🎯</div>
+                <div class="stat-val"><span id="clicksLeft">5</span> / 5</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="referral" class="page">
+        <div class="ios-card">
+            <div style="font-size: 55px; margin-bottom: 10px;">🎁</div>
+            <h2 style="margin: 0; font-size: 22px;">Invite & Earn</h2>
+            <p style="color: #8E8E93; font-size: 14px;">Share your link and earn bonus from your friends.</p>
+        </div>
+        
+        <div class="stats-grid" style="margin-bottom: 20px;">
+            <div class="stat-box" style="text-align: center;">
+                <div class="stat-label">TOTAL REFERRALS 👥</div>
+                <div class="stat-val" style="font-size: 24px;">0</div>
+            </div>
+            <div class="stat-box" style="text-align: center;">
+                <div class="stat-label">REWARD EARNED 💰</div>
+                <div class="stat-val" style="font-size: 24px;">$0.00</div>
+            </div>
+        </div>
+
+        <div class="ios-card">
+            <div class="stat-label" style="text-align: left; margin-bottom: 10px;">YOUR INVITE LINK 🔗</div>
+            <div class="ios-input" style="background: rgba(255,255,255,0.1); color: var(--ios-green); font-size: 12px; word-break: break-all;" id="refLink">
+                https://t.me/YourBot?start=ref_123456
+            </div>
+            <button class="ios-btn" onclick="copyRef()">COPY LINK 📝</button>
+        </div>
+    </div>
+
+    <div id="withdraw" class="page">
+        <div class="ios-card">
+            <div style="font-size: 55px; margin-bottom: 10px;">🏦</div>
+            <h2 style="margin: 0; font-size: 22px;">Withdraw Funds</h2>
+            <div style="background: rgba(255, 69, 58, 0.2); color: var(--ios-red); padding: 10px; border-radius: 10px; font-size: 12px; margin-top: 15px; font-weight: bold;">
+                ⚠️ NOTE: Minimum withdraw is $100.
+            </div>
+        </div>
+
+        <div class="ios-card" style="text-align: left;">
+            <div class="stat-label" style="margin-bottom: 10px;">SELECT NETWORK 🌐</div>
+            <select class="ios-input">
+                <option>USDT (TRC20)</option>
+                <option>USDT (BEP20)</option>
+            </select>
+
+            <div class="stat-label" style="margin-bottom: 10px;">WALLET ADDRESS 🔑</div>
+            <input type="text" class="ios-input" placeholder="Paste your USDT address here...">
+
+            <div class="stat-label" style="margin-bottom: 10px;">AMOUNT ($) 💵</div>
+            <input type="number" class="ios-input" placeholder="Enter amount (Min $100)">
+
+            <button class="ios-btn" onclick="requestWithdraw()">SUBMIT WITHDRAW 🚀</button>
+        </div>
+
+        <div class="ios-card">
+            <div style="font-size: 30px;">🎧</div>
+            <div style="font-size: 14px; font-weight: bold; margin: 10px 0;">CUSTOMER SUPPORT</div>
+            <p style="font-size: 12px; color: #8E8E93;">Need help? Contact our support team directly on Telegram.</p>
+            <button class="ios-btn" style="background: #333;" onclick="window.open('https://t.me/YourSupportUsername', '_blank')">CONTACT @SUPPORT 💬</button>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home', this)">
+            <div class="nav-icon">🏠</div><div class="nav-text">HOME</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('referral', this)">
+            <div class="nav-icon">👥</div><div class="nav-text">REFERRAL</div>
+        </div>
+        <div class="nav-item" onclick="switchTab('withdraw', this)">
+            <div class="nav-icon">💳</div><div class="nav-text">WITHDRAW</div>
+        </div>
+    </div>
+
+    <script>
+        // --- TELEGRAM WEB APP INIT ---
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+        // --- NETWORKS & LINKS (PASTE YOUR SMART LINKS HERE) ---
+        const NETWORKS = {
+            1: { name: "MONETAG", link: "https://monetag-link.com" },
+            2: { name: "ADSTERRA", link: "https://adsterra-link.com" },
+            3: { name: "HILLTOPADS", link: "https://hilltop-link.com" },
+            4: { name: "CLICKADU", link: "https://clickadu-link.com" }
+        };
+
+        // --- ANTI-CHEAT & DATA LOGIC (Local Storage) ---
+        let appData = JSON.parse(localStorage.getItem('neoAppSecureData')) || {
+            balance: 0.00,
+            session: 1,
+            clicks: 0,
+            cooldownEnd: 0
+        };
+
+        function saveData() {
+            // Basic Anti-Cheat: Stringify and store
+            localStorage.setItem('neoAppSecureData', JSON.stringify(appData));
+        }
+
+        // --- UI UPDATE ---
+        function updateDashboard() {
+            document.getElementById('bal').innerText = appData.balance.toFixed(2);
+            document.getElementById('netName').innerText = NETWORKS[appData.session].name;
+            document.getElementById('clicksLeft').innerText = 5 - appData.clicks;
+            document.getElementById('btnSession').innerText = `SESSION ${appData.session}/4 📱`;
+
+            const btn = document.getElementById('mainButton');
+            const timerEl = document.getElementById('timer');
+            const titleEl = document.getElementById('btnTitle');
+
+            if (appData.cooldownEnd > Date.now()) {
+                btn.classList.add('locked');
+                timerEl.style.display = 'block';
+                titleEl.innerText = "COOLDOWN 🔒";
+                titleEl.style.color = "var(--ios-red)";
+            } else {
+                btn.classList.remove('locked');
+                timerEl.style.display = 'none';
+                titleEl.innerText = "START EARNING";
+                titleEl.style.color = "var(--ios-blue)";
+            }
+        }
+
+        // --- CORE LINK LOGIC (4 Sessions Rotate) ---
+        function executeLink() {
+            // Anti-Cheat: Time Check
+            if (appData.cooldownEnd > Date.now()) {
+                tg.HapticFeedback.notificationOccurred('error');
+                return tg.showAlert("⚠️ Wait for the cooldown to finish!");
+            }
+
+            // Open the current session's Smart Link
+            window.open(NETWORKS[appData.session].link, "_blank");
+
+            // Update Logic
+            appData.clicks++;
+            appData.balance += 0.50; // Add balance (Change as needed)
+            tg.HapticFeedback.impactOccurred('heavy'); // iPhone Vibration
+
+            // Session Complete Logic
+            if (appData.clicks >= 5) {
+                appData.clicks = 0;
+                appData.session = appData.session >= 4 ? 1 : appData.session + 1; // Rotate 1,2,3,4
+                appData.cooldownEnd = Date.now() + (60 * 60 * 1000); // 1 Hour Timer
+                
+                tg.HapticFeedback.notificationOccurred('success');
+                tg.showAlert(`✅ Session Complete! Network switching to ${NETWORKS[appData.session].name}. Cooldown active for 1 Hour.`);
+            }
+
+            saveData();
+            updateDashboard();
+        }
+
+        // --- COOLDOWN TIMER ---
+        setInterval(() => {
+            if (appData.cooldownEnd > Date.now()) {
+                let left = appData.cooldownEnd - Date.now();
+                let m = Math.floor(left / 60000);
+                let s = Math.floor((left % 60000) / 1000);
+                document.getElementById('timer').innerText = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            } else if (appData.cooldownEnd !== 0) {
+                appData.cooldownEnd = 0;
+                saveData();
+                updateDashboard();
+            }
+        }, 1000);
+
+        // --- NAVIGATION TABS ---
+        function switchTab(tabId, element) {
+            tg.HapticFeedback.selectionChanged();
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            element.classList.add('active');
+        }
+
+        // --- UTILS ---
+        function copyRef() {
+            navigator.clipboard.writeText(document.getElementById('refLink').innerText);
+            tg.HapticFeedback.notificationOccurred('success');
+            tg.showAlert("✅ Invite link copied to clipboard!");
+        }
+
+        function requestWithdraw() {
+            if (appData.balance < 100) {
+                tg.HapticFeedback.notificationOccurred('error');
+                tg.showAlert("❌ Insufficient Balance! Minimum withdrawal is $100.");
+            } else {
+                tg.showAlert("✅ Withdrawal request submitted successfully!");
+            }
+        }
+
+        // Initialize App
+        updateDashboard();
+    </script>
+</body>
+                                        </html>
+                                        
