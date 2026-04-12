@@ -1,342 +1,207 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NEO-GOLD Luxury Station</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        /* --- 🏆 LUXURY GOLDEN THEME --- */
-        :root {
-            /* Main Palette */
-            --gold-primary: #FFD700;    /* Solid Gold */
-            --gold-glow: #FFC300;       /* Lighter Gold for Glows */
-            --bg-dark: #000000;         /* Deep Black */
-            
-            /* Glassmorphism */
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --glass-border: rgba(255, 215, 0, 0.15); /* Soft Gold Border */
-            --blur: blur(25px);
-            
-            /* Typography */
-            --text-main: #FFFFFF;
-            --text-dim: #A1A1A6;
-            --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earn Stream Pro 💎</title>
 
-        body {
-            background-color: var(--bg-dark);
-            background-image: radial-gradient(circle at 50% -20%, #1C1C1E 0%, #000000 70%);
-            color: var(--text-main);
-            font-family: var(--font-family);
-            margin: 0; padding: 0; overflow: hidden; height: 100vh;
-            -webkit-font-smoothing: antialiased;
-            -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;
-            padding-top: env(safe-area-inset-top);
-        }
+<script src="https://cdn.tailwindcss.com"></script>
 
-        /* --- ✨ LUXURY ANIMATIONS --- */
-        @keyframes flyRocket { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-20px) rotate(5deg); } }
-        @keyframes wingFly { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(0.7) translateY(2px); } }
-        @keyframes goldenPulse { 0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.2); border-color: var(--glass-border); } 50% { box-shadow: 0 0 50px rgba(255, 215, 0, 0.5); border-color: var(--gold-primary); } }
-        @keyframes fadeSlideIn { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-        /* --- PAGES --- */
-        .page {
-            position: absolute; top: 0; left: 0; width: 100%; height: calc(100vh - 90px - env(safe-area-inset-bottom));
-            display: none; padding: 25px; box-sizing: border-box;
-            overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch;
-        }
-        .page.active { display: block; animation: fadeSlideIn 0.4s cubic-bezier(0.23, 1, 0.32, 1); }
+<style>
+body{background:#020617;color:white}
+.glass{background:rgba(255,255,255,0.05);backdrop-filter:blur(12px)}
 
-        /* --- 🔥 LUXURY GLASS CARDS --- */
-        .glass-card {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 25px;
-            padding: 30px;
-            backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
-            margin-bottom: 25px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            text-align: center;
-        }
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.pulse{animation:pulse 1s infinite}
 
-        /* --- DASHBOARD ELEMENTS (Big Fonts) --- */
-        .rocket-box { font-size: 60px; display: inline-block; animation: flyRocket 4s ease-in-out infinite; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6)); }
-        .balance-label { font-size: 14px; color: var(--gold-glow); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-top: 15px; }
-        .balance-val { color: var(--text-main); font-size: 55px; font-weight: 900; margin: 10px 0; letter-spacing: -1px; text-shadow: 0 0 20px rgba(255,255,255,0.3); }
+@keyframes float{
+0%{transform:translateY(0);opacity:1}
+100%{transform:translateY(-80px);opacity:0}
+}
+.float{position:absolute;animation:float 0.8s}
+</style>
 
-        /* THE MASTER BUTTON (Winged Cash) */
-        .btn-container { width: 100%; display: flex; justify-content: center; margin: 40px 0; position: relative; }
-        
-        .main-btn {
-            width: 180px; height: 180px; border-radius: 45px; /* Luxury Square */
-            background: linear-gradient(135deg, #1C1C1E 0%, #000000 100%);
-            border: 2px solid var(--glass-border);
-            display: flex; justify-content: center; align-items: center;
-            cursor: pointer; transition: 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
-            position: relative; z-index: 10;
-            animation: goldenPulse 3s infinite;
-        }
-
-        .main-btn:active:not(.locked) { transform: scale(0.9); }
-        .main-btn.locked { border-color: rgba(255, 69, 58, 0.2); animation: none; opacity: 0.6; cursor: not-allowed; }
-
-        /* Flying Wings Cash Emoji (New Logic) */
-        .cash-winged-wrapper { position: relative; display: flex; align-items: center; justify-content: center; font-size: 90px; pointer-events: none; }
-        .cash-wings { position: absolute; font-size: 75px; animation: wingFly 1s ease-in-out infinite; transform-origin: center bottom; }
-        .wing-left { left: -38px; top: 12px; }
-        .wing-right { right: -38px; top: 12px; transform: scaleX(-1); }
-        /* When locked, change emoji and stop animation */
-        .locked .cash-winged-wrapper { font-size: 60px; }
-        .locked .cash-wings { display: none; }
-
-        #timer { color: #FF453A; font-size: 32px; font-weight: 800; display: none; position: absolute; z-index: 15; font-family: monospace; }
-
-        /* Simplified Stats */
-        .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; }
-        .stat-label-dim { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
-        .stat-value-lux { font-size: 18px; font-weight: 700; color: var(--text-main); margin-top: 5px; }
-
-        /* --- QUICK BOOST SECTION (Updated Reward) --- */
-        .boost-card { background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; margin-top: 25px; border: 1px solid rgba(255,255,255,0.03); }
-        .boost-title { font-size: 16px; font-weight: 700; color: white; }
-        .boost-reward { font-size: 12px; color: var(--gold-primary); font-weight: 600; }
-        .boost-btn { background: var(--gold-primary); color: black; border: none; padding: 10px 20px; border-radius: 12px; font-weight: bold; font-size: 12px; cursor: pointer; transition: 0.2s; }
-        .boost-btn:active { transform: scale(0.95); }
-
-        /* --- BOTTOM NAVIGATION (iOS Luxury) --- */
-        .nav-bar {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: calc(85px + env(safe-area-inset-bottom, 20px));
-            background: rgba(28, 28, 30, 0.8);
-            display: grid; grid-template-columns: 1fr 1fr 1fr;
-            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            border-top: 0.5px solid rgba(255,255,255,0.1); padding-bottom: env(safe-area-inset-bottom, 20px); z-index: 100;
-        }
-
-        .nav-item { display: flex; flex-direction: column; justify-content: center; align-items: center; color: #8E8E93; cursor: pointer; transition: 0.3s; }
-        .nav-item.active { color: var(--gold-primary); }
-        .nav-item .emoji { font-size: 26px; margin-bottom: 5px; transition: 0.3s; filter: grayscale(1) opacity(0.6); }
-        .nav-item.active .emoji { filter: grayscale(0) opacity(1) drop-shadow(0 0 10px var(--gold-primary)); transform: scale(1.1); }
-        .nav-item .label { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-
-        /* Referral Page */
-        .ref-box { background: rgba(0,0,0,0.4); padding: 18px; border-radius: 15px; font-size: 12px; margin-top: 15px; cursor: pointer; color: var(--gold-primary); word-break: break-all; border: 1px solid rgba(255,215,0,0.2); }
-        
-        /* Withdraw Page */
-        .input-group { text-align: left; margin-bottom: 20px; }
-        .lux-input { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 14px; padding: 18px; color: white; font-size: 16px; box-sizing: border-box; }
-        .lux-btn { width: 100%; background: var(--gold-primary); color: black; border: none; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 17px; cursor: pointer; transition: 0.2s; box-shadow: 0 5px 20px rgba(255,215,0,0.3); }
-        .lux-btn:active { background: #ccaf00; transform: scale(0.98); }
-
-    </style>
 </head>
-<body>
 
-    <div id="homePage" class="page active">
-        <div class="glass-card">
-            <div class="rocket-box">🚀</div>
-            <div class="balance-label">Lux Balance</div>
-            <div class="balance-val">🪙 <span id="coins">0.00</span></div>
-        </div>
+<body class="select-none">
 
-        <div class="btn-container">
-            <div id="masterBtn" class="main-btn" onclick="executeLinkPhase()">
-                <div class="cash-winged-wrapper" id="cashEmoji">
-                    <span class="cash-wings wing-left">💸</span>
-                    <span>💸</span>
-                    <span class="cash-wings wing-right">💸</span>
-                </div>
-                <div id="timer">00:00</div>
-            </div>
-        </div>
+<!-- HEADER -->
 
-        <div class="stats-row">
-            <div><div class="stat-label-dim">Cycle Phase</div><div class="stat-value-lux" id="btnPhase">Session 1/4</div></div>
-            <div><div class="stat-label-dim">Node Clicks</div><div class="stat-value-lux"><span id="clicksLeft">5</span> / 5</div></div>
-        </div>
+<div class="p-6 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 rounded-b-[40px] shadow-xl">
+<div class="flex justify-between items-center">
+<div>
+<p class="text-xs uppercase font-bold opacity-80">Your Balance</p>
+<h1 class="text-4xl font-black">💰 <span id="balance">0</span></h1>
+<p class="text-sm">$<span id="dollar">0.00</span></p>
+</div>
+<div class="text-5xl">🚀</div>
+</div>
+</div>
 
-        <div class="boost-card">
-            <div>
-                <div class="boost-title">QUICK BOOST 🎥</div>
-                <div class="boost-reward">Earn 30 Extra Coins</div>
-            </div>
-            <button class="boost-btn">WATCH</button>
-        </div>
-    </div>
+<div class="p-5 space-y-6">
 
-    <div id="referralPage" class="page">
-        <div class="glass-card">
-            <div style="font-size: 50px;">🎁</div>
-            <h1 style="margin: 15px 0 5px 0; font-size: 22px; font-weight: 800;">Invite Partners</h1>
-            <p style="font-size: 14px; color: var(--text-dim); line-height: 1.5;">Share your link and earn bonus from your friends. Get **10%** commission on their verification rewards.</p>
-        </div>
-        
-        <div class="stats-row" style="margin-bottom: 25px;">
-            <div class="glass-card" style="margin:0;"><div class="stat-label-dim">Friends Verified</div><div class="stat-value-lux" style="color:var(--gold-primary); font-size: 24px;">0</div></div>
-            <div class="glass-card" style="margin:0;"><div class="stat-label-dim">Total Commission</div><div class="stat-value-lux" style="color:var(--gold-glow); font-size: 24px;">🪙 0.00</div></div>
-        </div>
+<!-- DAILY -->
 
-        <div class="glass-card">
-            <div class="stat-label-dim">Your Unique Invite Link</div>
-            <div class="ref-box" onclick="copyRefLink()">https://t.me/your_bot?start=r_<span id="userId">1234</span></div>
-        </div>
-    </div>
+<button id="dailyBtn" class="w-full py-4 bg-white text-black font-black rounded-2xl">
+CLAIM DAILY 🎁
+</button>
 
-    <div id="withdrawPage" class="page">
-        <div class="glass-card" style="border-color: var(--gold-primary); background: rgba(255, 215, 0, 0.03);">
-            <div class="stat-label-dim" style="color:var(--gold-glow);">Available for Outflow</div>
-            <div class="balance-val" style="font-size: 35px;">🪙 <span id="withdrawCoins">0.00</span></div>
-        </div>
-        
-        <div class="glass-card" style="text-align: left;">
-            <div class="input-group">
-                <label class="stat-label-dim">Withdrawal Asset</label>
-                <select class="lux-input"><option>Binance USDT (TRC20)</option><option>Binance USDT (BEP20)</option></select>
-            </div>
-            <div class="input-group">
-                <label class="stat-label-dim">Wallet Address</label>
-                <input type="text" class="lux-input" placeholder="Txyz...">
-            </div>
-            <button class="lux-btn">SUBMIT REQUEST ➡️</button>
-            <p style="font-size: 11px; color: #cc3333; margin-top: 15px; text-align: center; line-height: 1.4;">⚠️ Note: Minimum withdraw is 100$. Requests are verified by agents (24-48h).</p>
-        </div>
-    </div>
+<!-- MAIN -->
 
-    <div class="nav-bar">
-        <div class="nav-item active" onclick="switchPage('homePage', this)">
-            <div class="emoji">🏠</div>
-            <div class="label">HOME</div>
-        </div>
-        <div class="nav-item" onclick="switchPage('referralPage', this)">
-            <div class="emoji">👥</div>
-            <div class="label">REFERRAL</div>
-        </div>
-        <div class="nav-item" onclick="switchPage('withdrawPage', this)">
-            <div class="emoji">💰</div>
-            <div class="label">WITHDRAW</div>
-        </div>
-    </div>
+<div class="glass p-6 rounded-3xl text-center">
+<button id="mainBtn" class="text-7xl pulse">💸</button>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+<div class="mt-4 flex justify-around text-sm">
+<div>Links: <span id="links">0</span>/10</div>
+<div>Ads: <span id="ads">0</span>/20</div>
+</div>
 
-        // --- 1. CONFIGURATION (PASTE YOUR LINKS HERE) ---
-        // Your logic remains the same (4 Sessions rotate 1->2->3->4)
-        const HUB_LINKS = {
-            1: "YOUR_MONETAG_LINK",
-            2: "YOUR_ADSTERRA_LINK",
-            3: "YOUR_HILLTOPADS_LINK",
-            4: "YOUR_CLICKADU_LINK"
-        };
+<!-- PROGRESS -->
 
-        // --- 2. ANTI-CHEAT & STATE LOGIC (LOAD FROM STORAGE) ---
-        let neoState = JSON.parse(localStorage.getItem('neoLuxuryState')) || {
-            balance: 0,
-            phase: 1, // Phase 1 to 4
-            clicksInPhase: 0,
-            cooldownUntil: null,
-            uid: Math.floor(1000 + Math.random() * 9000) // Temp ID
-        };
+<div class="mt-4 bg-white/10 h-3 rounded-full overflow-hidden">
+<div id="progress" class="h-full bg-gradient-to-r from-yellow-400 to-orange-500" style="width:0%"></div>
+</div>
 
-        function saveData() { localStorage.setItem('neoLuxuryState', JSON.stringify(neoState)); }
+<p class="text-[10px] mt-1 text-slate-400">Progress to bonus 🚀</p>
+</div>
 
-        // --- UI REFRESH (Master Dashboard) ---
-        function refreshMasterUI() {
-            document.getElementById('coins').innerText = neoState.balance.toFixed(2);
-            document.getElementById('withdrawCoins').innerText = neoState.balance.toFixed(2);
-            document.getElementById('userId').innerText = neoState.uid;
+<!-- AD -->
 
-            document.getElementById('clicksLeft').innerText = 5 - neoState.clicksInPhase;
-            document.getElementById('btnPhase').innerText = `Session ${neoState.phase}/4`;
+<button id="adBtn" class="w-full py-4 bg-blue-600 rounded-2xl font-black">
+WATCH AD 🎥
+</button>
 
-            const btn = document.getElementById('masterBtn');
-            const timerDiv = document.getElementById('timer');
-            const cashEmoji = document.getElementById('cashEmoji');
+<!-- BONUS -->
 
-            if (neoState.cooldownUntil && Date.now() < neoState.cooldownUntil) {
-                btn.classList.add('locked');
-                timerDiv.style.display = 'block';
-                cashEmoji.innerText = "🔒"; // Change emoji when locked
-            } else {
-                btn.classList.remove('locked');
-                timerDiv.style.display = 'none';
-                cashEmoji.innerHTML = '<span class="cash-wings wing-left">💸</span><span>💸</span><span class="cash-wings wing-right">💸</span>'; // Restore flying cash
-            }
-        }
+<button id="bonusBtn" class="w-full py-4 bg-yellow-500 text-black rounded-2xl font-black">
+BONUS 🔥 (Unlock after 10 ads)
+</button>
 
-        // --- CORE ENGINE LOGIC (Phase Rotation) ---
-        // Uses the same 4-Network rotation model (5 clicks -> 1 hour break)
-        function executeLinkPhase() {
-            // Anti-Cheat: Check Cooldown
-            if (neoState.cooldownUntil && Date.now() < neoState.cooldownUntil) {
-                tg.HapticFeedback.notificationOccurred('error');
-                tg.showAlert("⚠️ Connection Node overheated! Hub is cooling down.");
-                return;
-            }
+</div>
 
-            // Anti-Cheat Placeholder: Add server-side verification here later.
+<script>
+// 🎯 SETTINGS
+const RATE=1000;
+const ADS_LIMIT=20;
+const LINKS_LIMIT=10;
 
-            // Open Smart Link
-            window.open(HUB_LINKS[neoState.phase], "_blank");
+// ⏱️ COOLDOWN
+let lastAd=0;
+let lastLink=0;
 
-            // Logic Update
-            neoState.clicksInPhase++;
-            neoState.balance += 10; // Reward per click
-            tg.HapticFeedback.impactOccurred('rigid'); // Fast iPhone tap
+// 📊 USER DATA (LOCAL DEMO)
+let data={
+balance:0,
+ads:0,
+links:0,
+daily:false
+};
 
-            // Cooldown Trigger
-            if (neoState.clicksInPhase >= 5) {
-                neoState.clicksInPhase = 0;
-                neoState.phase = (neoState.phase >= 4) ? 1 : neoState.phase + 1; // 1->2->3->4->1
-                neoState.cooldownUntil = Date.now() + (60 * 60 * 1000); // 1 Hour Cooldown
-                tg.showAlert(`✅ Data Cycle Complete. Hub switching in 1 hour.`);
-                tg.HapticFeedback.notificationOccurred('success');
-            }
+// 🔄 UI UPDATE
+function updateUI(){
+balance.innerText=data.balance;
+dollar.innerText=(data.balance/RATE).toFixed(2);
+ads.innerText=data.ads;
+links.innerText=data.links;
 
-            saveData();
-            refreshMasterUI();
-        }
+let p=(data.ads/ADS_LIMIT)*100;
+progress.style.width=p+"%";
+}
 
-        // --- PAGE SWITCHING ---
-        function switchPage(pageId, navElement) {
-            tg.HapticFeedback.impactOccurred('light');
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            navElement.classList.add('active');
-        }
+// ✨ EMOJI EFFECT
+function emoji(x,y){
+let e=document.createElement("div");
+e.className="float";
+e.style.left=x+"px";
+e.style.top=y+"px";
+e.innerText=["💸","🔥","✨","🚀"][Math.floor(Math.random()*4)];
+document.body.appendChild(e);
+setTimeout(()=>e.remove(),800);
+}
 
-        // --- TIMER & PERSISTENCE ---
-        setInterval(() => {
-            if (neoState.cooldownUntil) {
-                const diff = neoState.cooldownUntil - Date.now();
-                if (diff <= 0) {
-                    neoState.cooldownUntil = null;
-                    saveData();
-                    refreshMasterUI();
-                } else {
-                    const m = Math.floor(diff / 60000);
-                    const s = Math.floor((diff % 60000) / 1000);
-                    document.getElementById('timer').innerText = 
-                        `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-                }
-            }
-        }, 1000);
+// 🎥 AD
+adBtn.onclick=(e)=>{
+let now=Date.now();
 
-        // Copy Referral Link
-        function copyRefLink() {
-            const link = document.getElementById('userId').parentNode.innerText;
-            navigator.clipboard.writeText(link);
-            tg.showAlert("✅ Node Invite Link copied!");
-            tg.HapticFeedback.notificationOccurred('success');
-        }
+if(now-lastAd<5000){
+alert("Wait ⏳");
+return;
+}
+if(data.ads>=ADS_LIMIT){
+alert("Limit reached 🚫");
+return;
+}
 
-        // Initialize
-        refreshMasterUI();
-        tg.ready();
-    </script>
+window.open("YOUR_AD_LINK");
+
+setTimeout(()=>{
+data.balance+=30;
+data.ads++;
+lastAd=Date.now();
+updateUI();
+},4000);
+
+emoji(e.clientX,e.clientY);
+};
+
+// 🔗 LINK
+mainBtn.onclick=(e)=>{
+let now=Date.now();
+
+if(now-lastLink<4000){
+alert("Slow down ⚠️");
+return;
+}
+if(data.links>=LINKS_LIMIT){
+alert("Limit reached");
+return;
+}
+
+window.open("YOUR_SMARTLINK");
+
+setTimeout(()=>{
+data.balance+=80;
+data.links++;
+lastLink=Date.now();
+updateUI();
+},3000);
+
+emoji(e.clientX,e.clientY);
+};
+
+// 🎁 DAILY
+dailyBtn.onclick=()=>{
+if(data.daily){
+alert("Already claimed");
+return;
+}
+
+data.balance+=300;
+data.daily=true;
+updateUI();
+
+dailyBtn.innerText="CLAIMED ✅";
+dailyBtn.style.opacity="0.5";
+};
+
+// 🔥 BONUS
+bonusBtn.onclick=(e)=>{
+if(data.ads<10){
+alert("Complete 10 ads first");
+return;
+}
+
+data.balance+=50;
+updateUI();
+emoji(e.clientX,e.clientY);
+};
+
+// INIT
+updateUI();
+</script>
+
 </body>
-    </html>
-    
+</html>
