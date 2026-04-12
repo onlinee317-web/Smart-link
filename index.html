@@ -8,20 +8,18 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
 <style>
 body{background:#020617;color:white}
 .glass{background:rgba(255,255,255,0.05);backdrop-filter:blur(12px)}
 
-@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-.pulse{animation:pulse 1s infinite}
+@keyframes wings{0%,100%{transform:scaleY(1)}50%{transform:scaleY(0.5) translateY(5px)}}
+.wing{animation:wings 0.6s infinite;display:inline-block}
 
-@keyframes float{
-0%{transform:translateY(0);opacity:1}
-100%{transform:translateY(-80px);opacity:0}
-}
+@keyframes float{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-80px);opacity:0}}
 .float{position:absolute;animation:float 0.8s}
+
+.page{display:none}
+.page.active{display:block}
 </style>
 
 </head>
@@ -30,177 +28,212 @@ body{background:#020617;color:white}
 
 <!-- HEADER -->
 
-<div class="p-6 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 rounded-b-[40px] shadow-xl">
-<div class="flex justify-between items-center">
-<div>
-<p class="text-xs uppercase font-bold opacity-80">Your Balance</p>
-<h1 class="text-4xl font-black">💰 <span id="balance">0</span></h1>
-<p class="text-sm">$<span id="dollar">0.00</span></p>
-</div>
-<div class="text-5xl">🚀</div>
-</div>
+<div class="p-6 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 rounded-b-[40px]">
+<h1 class="text-3xl font-black">💰 <span id="balance">0</span></h1>
+<p>$<span id="dollar">0.00</span> • 🏆 <span id="level">Beginner</span></p>
 </div>
 
-<div class="p-5 space-y-6">
+<div class="p-5 pb-28">
 
-<!-- DAILY -->
+<!-- HOME -->
 
-<button id="dailyBtn" class="w-full py-4 bg-white text-black font-black rounded-2xl">
-CLAIM DAILY 🎁
-</button>
+<div id="home" class="page active space-y-6">
+
+<!-- MISSION -->
+
+<div class="glass p-4 rounded-2xl text-sm">
+<p class="font-bold mb-2">🎯 Today's Mission</p>
+<p id="m1">⬜ Watch 20 Ads</p>
+<p id="m2">⬜ Open 10 Links</p>
+<p id="m3">🔒 Bonus Locked</p>
+</div>
+
+<!-- TIMER -->
+
+<div class="glass p-3 text-center rounded-xl text-xs">
+⏳ Next Bonus In: <span id="timer">05:00</span>
+</div>
 
 <!-- MAIN -->
 
-<div class="glass p-6 rounded-3xl text-center">
-<button id="mainBtn" class="text-7xl pulse">💸</button>
-
-<div class="mt-4 flex justify-around text-sm">
-<div>Links: <span id="links">0</span>/10</div>
-<div>Ads: <span id="ads">0</span>/20</div>
+<div class="glass p-5 rounded-3xl text-center">
+<div onclick="earnLinks(event)" class="text-6xl cursor-pointer">
+💸 <span class="wing">🪽</span>
 </div>
 
-<!-- PROGRESS -->
-
-<div class="mt-4 bg-white/10 h-3 rounded-full overflow-hidden">
-<div id="progress" class="h-full bg-gradient-to-r from-yellow-400 to-orange-500" style="width:0%"></div>
+<div class="mt-3 flex justify-around text-sm">
+<div>🎯 <span id="links">0</span>/10</div>
+<div>📺 <span id="ads">0</span>/20</div>
 </div>
 
-<p class="text-[10px] mt-1 text-slate-400">Progress to bonus 🚀</p>
+<div class="mt-3 bg-white/10 h-2 rounded">
+<div id="progress" class="bg-yellow-400 h-2"></div>
+</div>
 </div>
 
-<!-- AD -->
+<!-- BUTTONS -->
 
-<button id="adBtn" class="w-full py-4 bg-blue-600 rounded-2xl font-black">
-WATCH AD 🎥
+<button onclick="earnLinks(event)" class="w-full py-4 bg-yellow-500 text-black rounded-xl font-bold">
+💰 EARN MORE
 </button>
 
-<!-- BONUS -->
-
-<button id="bonusBtn" class="w-full py-4 bg-yellow-500 text-black rounded-2xl font-black">
-BONUS 🔥 (Unlock after 10 ads)
+<button onclick="watchAds(event)" class="w-full py-4 bg-blue-600 rounded-xl font-bold">
+📺 WATCH NOW
 </button>
 
+<button onclick="spin(event)" class="w-full py-4 bg-purple-500 rounded-xl font-bold">
+🎰 SPIN & WIN
+</button>
+
+<button onclick="daily()" id="dailyBtn" class="w-full py-4 bg-white text-black rounded-xl font-bold">
+🎁 DAILY
+</button>
+
+</div>
+
+<!-- REF -->
+
+<div id="ref" class="page text-center space-y-5">
+<div class="glass p-5 rounded-2xl">
+<p>🎁 Invite & Earn</p>
+<p class="text-xs mt-2">https://t.me/your_bot?start=ID</p>
+</div>
+
+<div class="glass p-4 rounded-xl text-xs">
+🔥 Ali earned $0.05  
+🎉 Sara joined  
+💰 Ahmed earned $0.10  
+</div>
+</div>
+
+<!-- WITHDRAW -->
+
+<div id="with" class="page space-y-5">
+
+<div class="glass p-4 rounded-xl text-center">
+💳 Balance: <span id="wbal">0</span>
+</div>
+
+<div class="glass p-4 rounded-xl space-y-3">
+<select class="w-full bg-black/40 p-3 rounded">
+<option>₿ BTC</option>
+<option>Ξ ETH</option>
+<option>₮ USDT</option>
+</select>
+
+<select class="w-full bg-black/40 p-3 rounded">
+<option>BTC</option>
+<option>ETH</option>
+<option>BEP20</option>
+<option>TRC20</option>
+</select>
+
+<input class="w-full p-3 bg-black/40 rounded" placeholder="📲 Wallet">
+
+<button class="w-full py-4 bg-red-500 rounded-xl">
+💸 WITHDRAW
+</button>
+
+<p class="text-xs text-red-400 text-center">
+🔒 Unlock at $100
+</p>
+</div>
+
+</div>
+
+</div>
+
+<!-- NAV -->
+
+<div class="fixed bottom-0 left-0 right-0 flex justify-around p-3 bg-[#020617] border-t border-white/10">
+<button onclick="nav('home')">🏠</button>
+<button onclick="nav('ref')">🎁</button>
+<button onclick="nav('with')">💳</button>
 </div>
 
 <script>
-// 🎯 SETTINGS
-const RATE=1000;
-const ADS_LIMIT=20;
-const LINKS_LIMIT=10;
+let data={balance:0,ads:0,links:0};
 
-// ⏱️ COOLDOWN
-let lastAd=0;
-let lastLink=0;
-
-// 📊 USER DATA (LOCAL DEMO)
-let data={
-balance:0,
-ads:0,
-links:0,
-daily:false
-};
-
-// 🔄 UI UPDATE
-function updateUI(){
+// UPDATE
+function update(){
 balance.innerText=data.balance;
-dollar.innerText=(data.balance/RATE).toFixed(2);
-ads.innerText=data.ads;
+dollar.innerText=(data.balance/1000).toFixed(2);
 links.innerText=data.links;
+ads.innerText=data.ads;
+wbal.innerText=data.balance;
 
-let p=(data.ads/ADS_LIMIT)*100;
-progress.style.width=p+"%";
+progress.style.width=((data.ads+data.links)/30)*100+"%";
+
+// LEVEL
+let lvl="Beginner";
+if(data.balance>50000) lvl="Pro";
+if(data.balance>100000) lvl="VIP";
+level.innerText=lvl;
+
+// MISSIONS
+if(data.ads>=20) m1.innerText="✅ Ads Done";
+if(data.links>=10) m2.innerText="✅ Links Done";
+if(data.ads>=20 && data.links>=10) m3.innerText="🎉 Bonus Unlocked";
 }
 
-// ✨ EMOJI EFFECT
+// EMOJI
 function emoji(x,y){
 let e=document.createElement("div");
 e.className="float";
 e.style.left=x+"px";
 e.style.top=y+"px";
-e.innerText=["💸","🔥","✨","🚀"][Math.floor(Math.random()*4)];
+e.innerText=["💸","🔥","🎉","🎁","🚀","🎯","💣","📱","🧠"][Math.random()*9|0];
 document.body.appendChild(e);
 setTimeout(()=>e.remove(),800);
 }
 
-// 🎥 AD
-adBtn.onclick=(e)=>{
-let now=Date.now();
-
-if(now-lastAd<5000){
-alert("Wait ⏳");
-return;
-}
-if(data.ads>=ADS_LIMIT){
-alert("Limit reached 🚫");
-return;
-}
-
-window.open("YOUR_AD_LINK");
-
-setTimeout(()=>{
-data.balance+=30;
-data.ads++;
-lastAd=Date.now();
-updateUI();
-},4000);
-
-emoji(e.clientX,e.clientY);
-};
-
-// 🔗 LINK
-mainBtn.onclick=(e)=>{
-let now=Date.now();
-
-if(now-lastLink<4000){
-alert("Slow down ⚠️");
-return;
-}
-if(data.links>=LINKS_LIMIT){
-alert("Limit reached");
-return;
-}
-
-window.open("YOUR_SMARTLINK");
-
-setTimeout(()=>{
+// ACTIONS
+function earnLinks(e){
+if(data.links>=10)return alert("Limit");
 data.balance+=80;
 data.links++;
-lastLink=Date.now();
-updateUI();
-},3000);
-
+update();
 emoji(e.clientX,e.clientY);
-};
-
-// 🎁 DAILY
-dailyBtn.onclick=()=>{
-if(data.daily){
-alert("Already claimed");
-return;
 }
 
+function watchAds(e){
+if(data.ads>=20)return alert("Limit");
+data.balance+=100;
+data.ads++;
+update();
+emoji(e.clientX,e.clientY);
+}
+
+function daily(){
 data.balance+=300;
-data.daily=true;
-updateUI();
-
-dailyBtn.innerText="CLAIMED ✅";
-dailyBtn.style.opacity="0.5";
-};
-
-// 🔥 BONUS
-bonusBtn.onclick=(e)=>{
-if(data.ads<10){
-alert("Complete 10 ads first");
-return;
+dailyBtn.innerText="✅ Claimed";
+update();
 }
 
-data.balance+=50;
-updateUI();
+function spin(e){
+let r=[10,50,100,0][Math.random()*4|0];
+data.balance+=r;
+alert("You won "+r+" 💰");
+update();
 emoji(e.clientX,e.clientY);
-};
+}
 
-// INIT
-updateUI();
+// TIMER
+let t=300;
+setInterval(()=>{
+t--;
+let m=Math.floor(t/60),s=t%60;
+timer.innerText=`${m}:${s<10?'0':''+s}`;
+if(t<=0)t=300;
+},1000);
+
+// NAV
+function nav(p){
+document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+document.getElementById(p).classList.add('active');
+}
+
+update();
 </script>
 
 </body>
