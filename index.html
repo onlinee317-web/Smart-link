@@ -2,165 +2,477 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Earn Stream Pro 💎</title>
-    <script src="https://tailwindcss.com"></script>
-    <script src="https://telegram.org"></script>
-    <link rel="stylesheet" href="https://cloudflare.com""")/>>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Reward Mini App</title>
     <style>
-        /* 🎨 EXACT COLOR SCHEME FROM IMAGE */
-        body { 
-            background-color: #0f172a !important; /* Very Dark Navy */
-            color: #ffffff !important; 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-            margin: 0; padding: 0;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Top Gradient Card */
-        .header-card {
-            background: linear-gradient(135deg, #fb923c 0%, #ef4444 100%) !important;
-            border-radius: 24px;
-            padding: 24px;
+        body {
+            background-color: #0F172A;
+            color: #ffffff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- Header Section --- */
+        header {
+            background: linear-gradient(135deg, #FFB75E 0%, #ED8F03 100%);
+            padding: 30px 20px 40px 20px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             position: relative;
-            overflow: hidden; /* 🛡️ Fixes flying cash inside card */
         }
 
-        /* Dark Cards (Daily Check-in, etc.) */
-        .feature-card {
-            background-color: #1e293b !important;
-            border-radius: 20px;
-            padding: 20px;
-            margin-top: 15px;
-            border: 1px solid rgba(255,255,255,0.05);
+        .balance-container {
+            display: flex;
+            flex-direction: column;
         }
 
-        /* 💸 WINGS ANIMATION FIX (Card ke andar) */
-        .cash-box {
-            position: absolute;
-            right: 15px;
-            top: 20px;
-            font-size: 55px;
-            z-index: 10;
+        .balance-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 5px;
+            font-weight: 600;
         }
-        .wings-flap {
+
+        .balance-amount {
+            font-size: 36px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 💸 Flying Animation */
+        @keyframes flutter {
+            0% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-4px) rotate(-10deg); }
+            50% { transform: translateY(0px) rotate(0deg); }
+            75% { transform: translateY(-4px) rotate(10deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .flying-money {
+            font-size: 32px;
             display: inline-block;
-            animation: flap Wings 0.8s ease-in-out infinite alternate;
-        }
-        @keyframes flapWings {
-            from { transform: translateY(0) scale(1); }
-            to { transform: translateY(-12px) scale(1.1); }
+            animation: flutter 2s infinite ease-in-out;
         }
 
-        /* White Claim Button from Image */
-        .claim-btn {
-            background-color: #ffffff !important;
-            color: #000000 !important;
-            font-weight: 900;
-            font-size: 1.1rem;
-            padding: 14px;
+        .rocket-icon {
+            font-size: 40px;
+            filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.3));
+        }
+
+        /* --- Main Content Area --- */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 80px; /* Space for bottom nav */
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Cards --- */
+        .card {
+            background-color: #1E293B;
             border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .badge {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: #10B981;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn-white {
             width: 100%;
-            text-align: center;
-            margin-top: 12px;
-        }
-
-        .blue-btn {
-            background: linear-gradient(to right, #3b82f6, #6366f1) !important;
-            color: white !important;
-            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #000000;
+            border: none;
+            padding: 14px;
             border-radius: 12px;
-            font-weight: bold;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.1s;
         }
 
-        .text-white-all * { color: white !important; }
-        .font-xl { font-size: 3rem; font-weight: 800; }
+        .btn-white:active { transform: scale(0.98); }
+
+        .watch-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .watch-text {
+            color: #60A5FA;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .watch-sub {
+            font-size: 12px;
+            color: #94A3B8;
+        }
+
+        .btn-blue {
+            background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* --- Extra Rewards Section --- */
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 20px 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .mini-card {
+            background-color: #1E293B;
+            border-radius: 16px;
+            padding: 20px 10px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mini-card-icon { font-size: 30px; }
+        .mini-card-text { font-size: 14px; font-weight: 600; }
+
+        /* --- Referral & Withdraw Forms --- */
+        .input-group {
+            margin-top: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #94A3B8;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background-color: #0F172A;
+            color: white;
+            font-size: 14px;
+            outline: none;
+        }
+        .btn-full-blue {
+            width: 100%;
+            background: linear-gradient(135deg, #4F46E5 0%, #3B82F6 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+        .warning-text {
+            font-size: 12px;
+            color: #F59E0B;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* --- Bottom Navigation --- */
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #0B1120;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid #1E293B;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            color: #64748B;
+            font-size: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .nav-item.active {
+            color: #3B82F6;
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
     </style>
 </head>
-<body class="select-none">
+<body>
 
-    <main class="p-4 pb-28 space-y-6">
-
-        <!-- 1. HEADER BALANCE CARD (ORANGE/RED) -->
-        <div class="header-card animate__animated animate__fadeInDown">
-            <p class="text-sm font-bold opacity-80 uppercase tracking-tighter">Balance</p>
-            <div class="flex items-center gap-1">
-                <span class="text-3xl text-yellow-300 font-bold">$</span>
-                <h2 class="font-xl" id="balance">0</h2>
+    <header>
+        <div class="balance-container">
+            <span class="balance-label">Balance</span>
+            <div class="balance-amount">
+                <span class="flying-money">💸</span> 
+                <span id="user-balance">0</span>
             </div>
+        </div>
+        <div class="rocket-icon">🚀</div>
+    </header>
+
+    <div class="content-area">
+        
+        <div id="tab-home" class="tab-content active">
             
-            <!-- 💸 Animated Cash (Bound inside card) -->
-            <div class="cash-box">
-                <span class="wings-flap">💸</span>
-            </div>
-        </div>
-
-        <!-- 2. DAILY CHECK-IN -->
-        <div class="feature-card">
-            <div class="flex items-center justify-between mb-2">
-                <div class="flex items-center gap-3">
-                    <span class="text-2xl">📅</span>
-                    <h3 class="text-lg font-bold">Daily Check-in</h3>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📅 Daily Check-in</div>
+                    <div class="badge">Ready</div>
                 </div>
-                <span class="text-green-400 text-sm font-bold px-3 py-1 bg-green-900/30 rounded-full">Ready</span>
+                <button class="btn-white" onclick="collectDaily()">Collect 500 Coins 🎁</button>
             </div>
-            <button onclick="claimDaily()" id="checkinBtn" class="claim-btn active:scale-95 transition-all">
-                Collect 500 Coins 🎁
-            </button>
-        </div>
 
-        <!-- 3. WATCH & EARN -->
-        <div class="feature-card">
-            <div class="flex items-center gap-3 mb-4">
-                <span class="text-2xl">📺</span>
-                <h3 class="text-lg font-bold">Watch & Earn <span class="text-gray-400 text-sm">(20/Day)</span></h3>
-            </div>
-            
-            <div class="flex justify-between items-center">
-                <div>
-                    <h4 class="text-blue-400 font-bold">Rewarded Ad</h4>
-                    <p class="text-xs text-gray-400"><span id="adsDone">0</span>/20 Completed</p>
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📺 Watch & Earn <span style="font-size: 12px; color: #94A3B8; font-weight: normal;">(10/Day)</span></div>
                 </div>
-                <button onclick="watchAd()" class="blue-btn active:scale-95 shadow-lg">
-                    Watch Now
-                </button>
+                <div class="watch-flex">
+                    <div>
+                        <div class="watch-text">Rewarded Ad</div>
+                        <div class="watch-sub"><span id="ads-completed">0</span>/10 Completed</div>
+                    </div>
+                    <button class="btn-blue" onclick="watchAd()">Watch Now</button>
+                </div>
+            </div>
+
+            <div class="section-title">🔗 Extra Rewards</div>
+            <div class="grid-2">
+                <div class="mini-card" onclick="openSmartLink()">
+                    <div class="mini-card-icon">🛡️</div>
+                    <div class="mini-card-text">Smart Links<br><span style="color:#10B981; font-size:12px;">Earn More 🚀💸</span></div>
+                    <div class="watch-sub"><span id="links-completed">0</span>/20 Done</div>
+                </div>
+                <div class="mini-card">
+                    <div class="mini-card-icon">⚡</div>
+                    <div class="mini-card-text">Offerwalls<br><span style="color:#F59E0B; font-size:12px;">Limited Offer ⏳💸</span></div>
+                    <div class="watch-sub">Coming Soon</div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="tab-referral" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">👥 Invite Friends</div>
+                </div>
+                <p style="font-size: 14px; color: #94A3B8; margin-bottom: 15px;">Share your link and earn extra coins for every user who joins!</p>
+                <div class="input-group">
+                    <label>Your Invite Link</label>
+                    <input type="text" id="invite-link" value="https://t.me/YourBotName?start=ref123456" readonly>
+                </div>
+                <button class="btn-full-blue" onclick="copyReferral()">Copy Link</button>
             </div>
         </div>
 
-        <!-- 4. EXTRA REWARDS (GRID) -->
-        <div class="grid grid-cols-2 gap-4">
-            <div class="feature-card m-0 flex flex-col items-center justify-center text-center p-6 border-b-4 border-blue-500">
-                <span class="text-4xl mb-2">🛡️</span>
-                <h4 class="font-bold text-sm">Earn 300% More 🚀💸</h4>
-            </div>
-            <div class="feature-card m-0 flex flex-col items-center justify-center text-center p-6 border-b-4 border-yellow-500">
-                <span class="text-4xl mb-2">⚡</span>
-                <h4 class="font-bold text-sm">Limited Offer ⌛💸</h4>
+        <div id="tab-withdraw" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">💳 Withdraw Funds</div>
+                </div>
+                <p style="font-size: 14px; color: #94A3B8; margin-bottom: 15px;">Convert your coins to USDT. Minimum withdrawal is $100.</p>
+                
+                <div style="background: #0F172A; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 15px;">
+                    <span style="font-size: 12px; color: #94A3B8;">Current Value</span><br>
+                    <span style="font-size: 24px; font-weight: bold; color: #10B981;" id="usd-value">$0.00</span>
+                </div>
+
+                <div class="input-group">
+                    <label>USDT Address (TRC20)</label>
+                    <input type="text" placeholder="Enter your wallet address...">
+                </div>
+                <button class="btn-full-blue" onclick="requestWithdraw()">Withdraw</button>
+                <div class="warning-text">⚠️ 10,000 Coins = $1.00 USD</div>
             </div>
         </div>
 
-    </main>
+    </div>
 
-    <!-- 5. BOTTOM NAVIGATION BAR -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-[#0f172a] border-t border-gray-800 p-4 flex justify-around items-center">
-        <div class="text-center text-blue-500 font-bold">
-            <div class="text-2xl">🏠</div>
-            <p class="text-[10px] uppercase">Home</p>
+    <nav>
+        <div class="nav-item active" onclick="switchTab('home', this)">
+            <span class="nav-icon">🏠</span>
+            <span>HOME</span>
         </div>
-        <div class="text-center opacity-40">
-            <div class="text-2xl">👥</div>
-            <p class="text-[10px] uppercase">Referral</p>
+        <div class="nav-item" onclick="switchTab('referral', this)">
+            <span class="nav-icon">👥</span>
+            <span>REFERRAL</span>
         </div>
-        <div class="text-center opacity-40">
-            <div class="text-2xl">💳</div>
-            <p class="text-[10px] uppercase">Withdraw</p>
+        <div class="nav-item" onclick="switchTab('withdraw', this)">
+            <span class="nav-icon">💳</span>
+            <span>WITHDRAW</span>
         </div>
     </nav>
 
-    <script type="module">
-        // Yahan aapka purana Firebase aur Sync logic aayega
-        // ... (Javascript same rahegi jo pehle thi)
-    </script>
+    <script>
+        // --- System Variables (For your Monetag/Adsgram logic later) ---
+        // Goal: Max $3/day (30,000 coins where 10,000 = $1)
+        const REWARD_CHECKIN = 500;
+        const REWARD_VIDEO_AD = 1000; // 10 ads * 1000 = 10,000
+        const REWARD_SMART_LINK = 975; // 20 links * 975 = 19,500
+        // Total = 500 + 10,000 + 19,500 = 30,000 Coins ($3.00)
 
+        let balance = 0;
+        let adsCompleted = 0;
+        let linksCompleted = 0;
+
+        function updateBalance(amount) {
+            balance += amount;
+            document.getElementById('user-balance').innerText = balance.toLocaleString();
+            
+            // Update USD value in Withdraw tab (10,000 coins = $1)
+            let usd = (balance / 10000).toFixed(2);
+            document.getElementById('usd-value').innerText = "$" + usd;
+        }
+
+        // --- Mock Functions for Tasks ---
+        function collectDaily() {
+            alert("Daily check-in collected! +500 Coins");
+            updateBalance(REWARD_CHECKIN);
+            // Here you would disable the button or save state in database
+        }
+
+        function watchAd() {
+            if (adsCompleted < 10) {
+                // Here you will trigger Adsgram / Monetag Ad
+                alert("Simulating Video Ad... You earned 1000 Coins!");
+                adsCompleted++;
+                document.getElementById('ads-completed').innerText = adsCompleted;
+                updateBalance(REWARD_VIDEO_AD);
+            } else {
+                alert("You have reached the daily limit for Video Ads.");
+            }
+        }
+
+        function openSmartLink() {
+            if (linksCompleted < 20) {
+                // Here you will redirect to CPA / Smart Link
+                alert("Simulating Smart Link visit... You earned 975 Coins!");
+                linksCompleted++;
+                document.getElementById('links-completed').innerText = linksCompleted;
+                updateBalance(REWARD_SMART_LINK);
+            } else {
+                alert("You have completed all Smart Links for today.");
+            }
+        }
+
+        // --- Utility Functions ---
+        function copyReferral() {
+            var copyText = document.getElementById("invite-link");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+            navigator.clipboard.writeText(copyText.value);
+            alert("Referral link copied!");
+        }
+
+        function requestWithdraw() {
+            let usd = balance / 10000;
+            if (usd >= 100) {
+                alert("Withdrawal request submitted for $" + usd.toFixed(2));
+            } else {
+                alert("Minimum withdrawal is $100. Keep earning!");
+            }
+        }
+
+        // --- Tab Switching Logic ---
+        function switchTab(tabName, element) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Show selected tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+
+            // Update bottom nav active state
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+    </script>
 </body>
 </html>
