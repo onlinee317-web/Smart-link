@@ -4,139 +4,89 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Earn Stream Pro 💎</title>
 
+<title>Earn Pro</title>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-body{background:#020617;color:white}
-.glass{background:rgba(255,255,255,0.05);backdrop-filter:blur(12px)}
+body{
+background:#f1f5f9;
+font-family: system-ui;
+}
 
-@keyframes wings{0%,100%{transform:scaleY(1)}50%{transform:scaleY(0.5) translateY(5px)}}
-.wing{animation:wings 0.6s infinite;display:inline-block}
+/* CARD */
+.card{
+background:white;
+border-radius:20px;
+box-shadow:0 5px 20px rgba(0,0,0,0.05);
+}
 
-@keyframes float{0%{transform:translateY(0);opacity:1}100%{transform:translateY(-80px);opacity:0}}
-.float{position:absolute;animation:float 0.8s}
+/* BUTTON */
+.btn{
+background:#16a34a;
+color:white;
+border-radius:12px;
+padding:12px;
+font-weight:600;
+transition:0.2s;
+}
+.btn:active{transform:scale(0.96)}
 
-.page{display:none}
-.page.active{display:block}
+.nav-active{color:#16a34a}
 </style>
 
 </head>
 
-<body class="select-none">
+<body>
+
+<div class="p-4 space-y-5">
 
 <!-- HEADER -->
 
-<div class="p-6 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 rounded-b-[40px]">
-<h1 class="text-3xl font-black">💰 <span id="balance">0</span></h1>
-<p>$<span id="dollar">0.00</span> • 🏆 <span id="level">Beginner</span></p>
+<div class="card p-5">
+<p class="text-gray-500 text-sm">Total Balance</p>
+<h1 class="text-3xl font-bold">$<span id="balance">0.00</span></h1>
 </div>
 
-<div class="p-5 pb-28">
+<!-- REWARD CARD -->
 
-<!-- HOME -->
-
-<div id="home" class="page active space-y-6">
-
-<!-- MISSION -->
-
-<div class="glass p-4 rounded-2xl text-sm">
-<p class="font-bold mb-2">🎯 Today's Mission</p>
-<p id="m1">⬜ Watch 20 Ads</p>
-<p id="m2">⬜ Open 10 Links</p>
-<p id="m3">🔒 Bonus Locked</p>
+<div class="card p-5 flex justify-between items-center">
+<div>
+<p class="text-gray-500 text-sm">Available Reward</p>
+<h2 class="text-xl font-bold">$5.75</h2>
+<button class="btn mt-2">Redeem</button>
+</div>
+<div class="text-5xl">🏆</div>
 </div>
 
-<!-- TIMER -->
+<!-- TASKS -->
 
-<div class="glass p-3 text-center rounded-xl text-xs">
-⏳ Next Bonus In: <span id="timer">05:00</span>
+<div class="card p-5 space-y-4">
+
+<h3 class="font-semibold text-gray-600">Available Tasks</h3>
+
+<div class="flex justify-between items-center">
+<div>
+<p class="font-medium">Watch Video Ads</p>
+<p class="text-sm text-gray-500">Earn $0.10</p>
+</div>
+<button class="btn" onclick="watch()">Start</button>
 </div>
 
-<!-- MAIN -->
-
-<div class="glass p-5 rounded-3xl text-center">
-<div onclick="earnLinks(event)" class="text-6xl cursor-pointer">
-💸 <span class="wing">🪽</span>
+<div class="flex justify-between items-center">
+<div>
+<p class="font-medium">Open Links</p>
+<p class="text-sm text-gray-500">Earn $0.08</p>
+</div>
+<button class="btn" onclick="earn()">Start</button>
 </div>
 
-<div class="mt-3 flex justify-around text-sm">
-<div>🎯 <span id="links">0</span>/10</div>
-<div>📺 <span id="ads">0</span>/20</div>
+<div class="flex justify-between items-center">
+<div>
+<p class="font-medium">Daily Bonus</p>
+<p class="text-sm text-gray-500">Claim reward</p>
 </div>
-
-<div class="mt-3 bg-white/10 h-2 rounded">
-<div id="progress" class="bg-yellow-400 h-2"></div>
-</div>
-</div>
-
-<!-- BUTTONS -->
-
-<button onclick="earnLinks(event)" class="w-full py-4 bg-yellow-500 text-black rounded-xl font-bold">
-💰 EARN MORE
-</button>
-
-<button onclick="watchAds(event)" class="w-full py-4 bg-blue-600 rounded-xl font-bold">
-📺 WATCH NOW
-</button>
-
-<button onclick="spin(event)" class="w-full py-4 bg-purple-500 rounded-xl font-bold">
-🎰 SPIN & WIN
-</button>
-
-<button onclick="daily()" id="dailyBtn" class="w-full py-4 bg-white text-black rounded-xl font-bold">
-🎁 DAILY
-</button>
-
-</div>
-
-<!-- REF -->
-
-<div id="ref" class="page text-center space-y-5">
-<div class="glass p-5 rounded-2xl">
-<p>🎁 Invite & Earn</p>
-<p class="text-xs mt-2">https://t.me/your_bot?start=ID</p>
-</div>
-
-<div class="glass p-4 rounded-xl text-xs">
-🔥 Ali earned $0.05  
-🎉 Sara joined  
-💰 Ahmed earned $0.10  
-</div>
-</div>
-
-<!-- WITHDRAW -->
-
-<div id="with" class="page space-y-5">
-
-<div class="glass p-4 rounded-xl text-center">
-💳 Balance: <span id="wbal">0</span>
-</div>
-
-<div class="glass p-4 rounded-xl space-y-3">
-<select class="w-full bg-black/40 p-3 rounded">
-<option>₿ BTC</option>
-<option>Ξ ETH</option>
-<option>₮ USDT</option>
-</select>
-
-<select class="w-full bg-black/40 p-3 rounded">
-<option>BTC</option>
-<option>ETH</option>
-<option>BEP20</option>
-<option>TRC20</option>
-</select>
-
-<input class="w-full p-3 bg-black/40 rounded" placeholder="📲 Wallet">
-
-<button class="w-full py-4 bg-red-500 rounded-xl">
-💸 WITHDRAW
-</button>
-
-<p class="text-xs text-red-400 text-center">
-🔒 Unlock at $100
-</p>
+<button class="btn" onclick="daily()">Claim</button>
 </div>
 
 </div>
@@ -145,92 +95,42 @@ body{background:#020617;color:white}
 
 <!-- NAV -->
 
-<div class="fixed bottom-0 left-0 right-0 flex justify-around p-3 bg-[#020617] border-t border-white/10">
-<button onclick="nav('home')">🏠</button>
-<button onclick="nav('ref')">🎁</button>
-<button onclick="nav('with')">💳</button>
+<div class="fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around p-3 text-gray-500">
+
+<div class="nav-active text-center">
+🏠<br><span class="text-xs">Home</span>
+</div>
+
+<div class="text-center">
+🎁<br><span class="text-xs">Rewards</span>
+</div>
+
+<div class="text-center">
+⚙️<br><span class="text-xs">Settings</span>
+</div>
+
 </div>
 
 <script>
-let data={balance:0,ads:0,links:0};
+let bal=0;
 
-// UPDATE
 function update(){
-balance.innerText=data.balance;
-dollar.innerText=(data.balance/1000).toFixed(2);
-links.innerText=data.links;
-ads.innerText=data.ads;
-wbal.innerText=data.balance;
-
-progress.style.width=((data.ads+data.links)/30)*100+"%";
-
-// LEVEL
-let lvl="Beginner";
-if(data.balance>50000) lvl="Pro";
-if(data.balance>100000) lvl="VIP";
-level.innerText=lvl;
-
-// MISSIONS
-if(data.ads>=20) m1.innerText="✅ Ads Done";
-if(data.links>=10) m2.innerText="✅ Links Done";
-if(data.ads>=20 && data.links>=10) m3.innerText="🎉 Bonus Unlocked";
+balance.innerText=bal.toFixed(2);
 }
 
-// EMOJI
-function emoji(x,y){
-let e=document.createElement("div");
-e.className="float";
-e.style.left=x+"px";
-e.style.top=y+"px";
-e.innerText=["💸","🔥","🎉","🎁","🚀","🎯","💣","📱","🧠"][Math.random()*9|0];
-document.body.appendChild(e);
-setTimeout(()=>e.remove(),800);
-}
-
-// ACTIONS
-function earnLinks(e){
-if(data.links>=10)return alert("Limit");
-data.balance+=80;
-data.links++;
+function watch(){
+bal+=0.10;
 update();
-emoji(e.clientX,e.clientY);
 }
 
-function watchAds(e){
-if(data.ads>=20)return alert("Limit");
-data.balance+=100;
-data.ads++;
+function earn(){
+bal+=0.08;
 update();
-emoji(e.clientX,e.clientY);
 }
 
 function daily(){
-data.balance+=300;
-dailyBtn.innerText="✅ Claimed";
+bal+=0.30;
 update();
-}
-
-function spin(e){
-let r=[10,50,100,0][Math.random()*4|0];
-data.balance+=r;
-alert("You won "+r+" 💰");
-update();
-emoji(e.clientX,e.clientY);
-}
-
-// TIMER
-let t=300;
-setInterval(()=>{
-t--;
-let m=Math.floor(t/60),s=t%60;
-timer.innerText=`${m}:${s<10?'0':''+s}`;
-if(t<=0)t=300;
-},1000);
-
-// NAV
-function nav(p){
-document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
-document.getElementById(p).classList.add('active');
 }
 
 update();
