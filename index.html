@@ -151,7 +151,7 @@
 
             <div class="section-tag">🔐 EXCLUSIVE TASK 🔐</div>
             <div class="card" style="border: 2px solid #A855F7;">
-                <h2 style="color: #A855F7; text-align: center; font-size: 24px;">CONTENT LOCKER</h2>
+                <h2 style="color: #A855F7; text-align: center; font-size: 24px;">BONUS CENTER🎉</h2>
                 <button class="btn btn-purple" style="margin-top:20px;" onclick="unlockLocker()">UNLOCK $1 REWARD</button>
             </div>
             
@@ -178,7 +178,7 @@
             <div class="section-tag">💰 WITHDRAW FUNDS</div>
             <div class="card">
                 <h1 style="color: #10B981; text-align: center; font-size: 40px;">$<span id="withdraw-balance">0.00</span></h1>
-                <p style="color: #EF4444; text-align: center; font-size: 13px; font-weight: 800;">MIN WITHDRAW: $10.00</p>
+                <p style="color: #EF4444; text-align: center; font-size: 13px; font-weight: 800;">MIN WITHDRAW : $100.00</p>
                 
                 <select class="input-box" style="margin-top: 20px;">
                     <option>USDT (TRC20)</option>
@@ -208,21 +208,18 @@
     </nav>
 
     <script>
-        // --- REWARD SYSTEM ($1 = 100 Coins) ---
         const REWARDS = {
-            daily: 5,          // $0.05
-            video: 2,          // $0.60 total for 30 ads
-            hotOffer: 4.375,   // $0.35 total for 8 links
-            offerwall: 100,    // $1.00
-            locker: 100        // $1.00
+            daily: 5,
+            video: 2,
+            hotOffer: 4.375,
+            offerwall: 100,
+            locker: 100
         };
 
-        // Load data (Use parseFloat for decimals)
         let balance = parseFloat(localStorage.getItem('balance') || '0');
         let adsToday = parseInt(localStorage.getItem('adsToday') || '0');
         let offersToday = parseInt(localStorage.getItem('offersToday') || '0');
 
-        // Check if new day to reset counters
         const todayStr = new Date().toDateString();
         if(localStorage.getItem('currentDate') !== todayStr) {
             adsToday = 0;
@@ -232,13 +229,10 @@
             localStorage.setItem('currentDate', todayStr);
         }
 
-        // Init UI
         updateUI();
         updateCheckinUI();
 
-        // UI Update Function
         function updateUI() {
-            // Convert coins to dollars
             let dollarDisplay = (balance / 100).toFixed(2); 
             document.getElementById('user-balance').innerText = dollarDisplay;
             document.getElementById('withdraw-balance').innerText = dollarDisplay;
@@ -268,7 +262,6 @@
             window.scrollTo(0,0);
         }
 
-        // 1. Daily Check-in
         function collectDaily() {
             if(localStorage.getItem('lastClaim') === todayStr) {
                 showToast("🚫 Already claimed today!");
@@ -290,7 +283,6 @@
             }
         }
 
-        // 2. Video Rewards (Adsgram)
         function showAdsgram() {
             if(adsToday < 30) {
                 adsToday++;
@@ -302,13 +294,11 @@
             }
         }
 
-        // 3. Hot Offers (Smart Link + CTR)
         function startMission() {
             if(offersToday < 8) {
                 showToast("📈 Offer Started! Complete to earn.");
-                window.open('YOUR_MONETAG_LINK', '_blank'); // Replace with Monetag Link
+                window.open('YOUR_MONETAG_LINK', '_blank');
                 
-                // Reward logic (Wait 30s)
                 setTimeout(() => {
                     offersToday++;
                     balance += REWARDS.hotOffer;
@@ -320,16 +310,14 @@
             }
         }
 
-        // 4. Surprise Reward (Offerwall)
         function unlockSurprise() {
             showToast("🚀 Opening Surprise Reward ($1)...");
-            window.open('YOUR_OFFERWALL_LINK', '_blank'); // Replace with CPAGrip Link
+            window.open('YOUR_OFFERWALL_LINK', '_blank');
         }
 
-        // 5. Content Locker
         function unlockLocker() {
-            showToast("🔐 Opening Content Locker ($1)...");
-            window.open('YOUR_LOCKER_LINK', '_blank'); // Replace with Locker Link
+            showToast("🔐 Opening Bonus Center ($1)...");
+            window.open('YOUR_LOCKER_LINK', '_blank');
         }
 
         function copyLink() {
