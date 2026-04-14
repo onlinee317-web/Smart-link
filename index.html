@@ -7,7 +7,6 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 
-        /* --- Theme & Core Styles --- */
         * {
             margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
@@ -17,184 +16,256 @@
         body {
             background-color: #0F172A; color: #ffffff;
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            /* SCROLL FIX: Hidden ko hata kar auto kiya hai */
-            overflow-x: hidden;
-            overflow-y: auto; 
+            display: flex; flex-direction: column;
+            overflow-x: hidden; overflow-y: auto; 
         }
 
-        /* --- Animated Header (Sticky) --- */
+        /* --- Custom Toast (No Domain Name) --- */
+        #toast {
+            visibility: hidden;
+            min-width: 280px;
+            background: rgba(30, 41, 59, 0.95);
+            color: #fff;
+            text-align: center;
+            border-radius: 16px;
+            padding: 16px;
+            position: fixed;
+            z-index: 10000;
+            left: 50%;
+            bottom: 130px;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid #6366F1;
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s;
+        }
+
+        #toast.show {
+            visibility: visible; opacity: 1; bottom: 140px;
+        }
+
+        /* --- Header & Rocket Animation --- */
         header {
             background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
             padding: 25px 20px;
-            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
             position: sticky; top: 0; z-index: 1000;
         }
 
-        .balance-container { display: flex; flex-direction: column; }
-        .balance-label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: #E0E7FF; }
-        .balance-amount { font-size: 32px; font-weight: 800; color: #fff; }
-
-        /* SAME TO SAME VIDEO ANIMATION */
-        .header-cash-gif {
-            width: 75px; height: 75px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+        @keyframes rocket-fly {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-15px) rotate(5deg); }
         }
 
-        .content-area { 
-            flex: 1; 
-            padding: 20px; 
-            /* SCROLL SPACE: Niche nav bar ke liye jagah */
-            padding-bottom: 140px; 
+        .rocket-box {
+            font-size: 50px;
+            animation: rocket-fly 2s infinite ease-in-out;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
         }
 
-        /* --- Cards & Buttons --- */
-        .section-tag { font-size: 14px; font-weight: 800; color: #6366F1; text-transform: uppercase; margin: 25px 0 12px 0; }
-        .card { background: #1E293B; border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid #334155; }
+        .balance-label { font-size: 13px; font-weight: 800; opacity: 0.9; letter-spacing: 1px; }
+        .balance-amount { font-size: 34px; font-weight: 800; }
+
+        .content-area { flex: 1; padding: 20px; padding-bottom: 150px; }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Cards --- */
+        .section-tag { font-size: 13px; font-weight: 800; color: #818CF8; text-transform: uppercase; margin: 25px 0 10px 0; }
+        .card { background: #1E293B; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid #334155; }
         
-        .checkin-card { border-left: 5px solid #10B981; }
-        .video-card { border-top: 3px solid #3B82F6; }
-        .clicker-card { border-bottom: 3px solid #EC4899; }
-
-        .jackpot-card {
-            background: linear-gradient(145deg, #1E293B, #0F172A);
-            border: 2px solid #F59E0B; overflow: hidden;
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
-        }
-
         .btn {
-            width: 100%; padding: 18px; border-radius: 14px; border: none; font-size: 16px;
-            font-weight: 800; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.2s;
+            width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 16px;
+            font-weight: 800; cursor: pointer; transition: 0.2s; display: block; text-align: center; text-decoration: none;
         }
         .btn-green { background: #10B981; color: white; }
         .btn-blue { background: #3B82F6; color: white; }
-        .btn-gold { background: linear-gradient(90deg, #F59E0B, #D97706); color: white; }
         .btn-pink { background: #EC4899; color: white; }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-gold { background: linear-gradient(90deg, #F59E0B, #D97706); color: white; }
+        .btn:active { transform: scale(0.96); }
 
-        /* --- Footer Navigation --- */
+        .input-box {
+            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #334155;
+            background: #0F172A; color: white; margin: 10px 0; font-size: 14px;
+        }
+
+        /* --- BIG Navigation Bar --- */
         nav {
             position: fixed; bottom: 0; width: 100%; background: #0B1120;
-            display: flex; justify-content: space-around; padding: 15px;
-            border-top: 1px solid #1E293B; height: 100px; align-items: center; z-index: 1000;
+            display: flex; justify-content: space-around; padding: 15px 5px;
+            border-top: 1px solid #1E293B; height: 115px; align-items: center; z-index: 1000;
         }
-        .nav-item { color: #64748B; font-size: 12px; font-weight: 700; text-align: center; text-decoration: none; flex: 1; }
-        .nav-item.active { color: #6366F1; }
-        .nav-icon { font-size: 26px; display: block; margin-bottom: 5px; }
+        .nav-item { color: #64748B; font-size: 14px; font-weight: 800; text-align: center; flex: 1; cursor: pointer; }
+        .nav-item.active { color: #818CF8; }
+        .nav-icon { font-size: 34px; display: block; margin-bottom: 4px; }
     </style>
 </head>
 <body>
 
+    <div id="toast">Message here</div>
+
     <header>
         <div class="balance-container">
-            <span class="balance-label">MY RICHES 💸</span>
-            <div class="balance-amount">💰 <span id="user-balance">0</span></div>
+            <span class="balance-label">MY RICHES 💰</span>
+            <div class="balance-amount">$<span id="user-balance">0.00</span></div>
         </div>
-        <img src="https://www.icegif.com/wp-content/uploads/money-wings-icegif-1.gif" alt="Flying Money" class="header-cash-gif">
+        <div class="rocket-box">🚀</div>
     </header>
 
     <div class="content-area">
         
-        <div class="section-tag">⚡ ENERGY SURGE</div>
-        <div class="card checkin-card">
-            <h3 style="font-size: 18px;">Daily Power-Up 🎁</h3>
-            <p id="checkin-msg" style="font-size: 12px; color: #94A3B8; margin-bottom: 15px;">Claim 500 coins every 24 hours.</p>
-            <button id="daily-btn" class="btn btn-green" onclick="collectDaily()">CLAIM 500 ENERGY 🔋</button>
-        </div>
+        <div id="earn" class="tab-content active">
+            <div class="section-tag">⚡ ENERGY SURGE</div>
+            <div class="card" style="border-left: 6px solid #10B981;">
+                <h3>Daily Check-in 🎁</h3>
+                <p id="checkin-msg" style="font-size: 12px; color: #94A3B8; margin-top: 5px;">Claim 500 coins every 24h!</p>
+                <button id="daily-btn" class="btn btn-green" style="margin-top:15px;" onclick="collectDaily()">CLAIM 500 ENERGY</button>
+            </div>
 
-        <div class="section-tag">📺 VIDEO MANIA</div>
-        <div class="card video-card">
-            <h3 style="font-size: 18px;">Instant Crypto-Vids 📽️</h3>
-            <p style="font-size: 12px; color: #94A3B8; margin-bottom: 10px;">Watch and Earn!</p>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 800; color: #3B82F6;"><span id="ads-count">0</span>/30 DONE 🔥</span>
-                <button class="btn btn-blue" style="width: auto; padding: 10px 25px;" onclick="showAdsgram()">PLAY ▶️</button>
+            <div class="section-tag">📺 VIDEO MANIA</div>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 800; color: #3B82F6;"><span id="ads-count">0</span>/30 DONE 🔥</span>
+                    <button class="btn btn-blue" style="width: auto; padding: 10px 25px;" onclick="showAdsgram()">PLAY ▶️</button>
+                </div>
+            </div>
+
+            <div class="section-tag">💎 JACKPOT</div>
+            <div class="card" style="border: 2px solid #F59E0B;">
+                <h2 style="color: #F59E0B; text-align: center;">PREMIUM OFFERWALL</h2>
+                <button class="btn btn-gold" style="margin-top:15px;" onclick="showToast('Loading Premium Offers...')">UNLOCK $400 REWARD</button>
+            </div>
+            
+            <div class="section-tag">🚀 PRO CLICKER</div>
+            <div class="card" style="border-bottom: 4px solid #EC4899;">
+                <h3>Smart Link Mission</h3>
+                <p style="font-size: 12px; color: #94A3B8;">Stay for 30 seconds to earn.</p>
+                <button class="btn btn-pink" style="margin-top:15px;" onclick="startMission()">START MISSION 🖱️</button>
             </div>
         </div>
 
-        <div class="section-tag">🔥 THE MONEY JACKPOT</div>
-        <div class="card jackpot-card">
-            <h2 style="color: #F59E0B; text-align: center;">PREMIUM OFFERWALL 💎</h2>
-            <button class="btn btn-gold" style="margin-top: 15px;" onclick="openOfferwall()">UNLOCK RICHES 🚀</button>
+        <div id="team" class="tab-content">
+            <div class="section-tag">👥 TEAM SQUAD</div>
+            <div class="card">
+                <h3>Your Invite Link</h3>
+                <input type="text" id="ref-link" class="input-box" value="https://t.me/GlobalBot?start=user889" readonly>
+                <button class="btn btn-blue" onclick="copyLink()">COPY LINK 📋</button>
+            </div>
         </div>
 
-        <div class="section-tag">🚀 PRO CLICKER MISSIONS</div>
-        <div class="card clicker-card">
-            <h3 style="font-size: 18px;">Smart Interaction 🎯</h3>
-            <p style="font-size: 12px; color: #94A3B8; margin-bottom: 15px;">Stay 30s & win big!</p>
-            <button class="btn btn-pink" onclick="openMonetag()">START MISSION 🖱️</button>
+        <div id="cash" class="tab-content">
+            <div class="section-tag">💰 WITHDRAW FUNDS</div>
+            <div class="card">
+                <h1 style="color: #10B981; text-align: center; font-size: 40px;">$0.00</h1>
+                <p style="color: #EF4444; text-align: center; font-size: 13px; font-weight: 800;">MIN WITHDRAW: $100</p>
+                
+                <select class="input-box" style="margin-top: 20px;">
+                    <option>USDT (TRC20)</option>
+                    <option>USDT (BEP20)</option>
+                </select>
+                <input type="text" class="input-box" placeholder="Enter Wallet Address">
+                <button class="btn btn-green" style="margin-top: 10px;" onclick="showToast('🚫 Minimum $100 required!')">WITHDRAW</button>
+            </div>
+        </div>
+
+        <div id="me" class="tab-content">
+            <div class="section-tag">👤 MY ACCOUNT</div>
+            <div class="card" style="text-align: center;">
+                <div style="font-size: 60px;">🤴</div>
+                <h2>User #889210</h2>
+                <p style="color: #10B981; font-weight: 800;">Status: Verified ✅</p>
+            </div>
+            <div class="card">
+                <p><b>Rank:</b> <span style="color: #F59E0B;">Diamond 💎</span></p>
+                <p style="margin-top: 10px;"><b>Earnings:</b> $0.00</p>
+            </div>
         </div>
 
     </div>
 
     <nav>
-        <a href="#" class="nav-item active"><span class="nav-icon">🏠</span>EARN</a>
-        <a href="#" class="nav-item"><span class="nav-icon">🤝</span>TEAM</a>
-        <a href="#" class="nav-item"><span class="nav-icon">💰</span>CASH</a>
-        <a href="#" class="nav-item"><span class="nav-icon">👤</span>ME</a>
+        <div class="nav-item active" onclick="switchTab('earn', this)"><span class="nav-icon">🏠</span>EARN</div>
+        <div class="nav-item" onclick="switchTab('team', this)"><span class="nav-icon">🤝</span>TEAM</div>
+        <div class="nav-item" onclick="switchTab('cash', this)"><span class="nav-icon">💰</span>CASH</div>
+        <div class="nav-item" onclick="switchTab('me', this)"><span class="nav-icon">👤</span>ME</div>
     </nav>
 
     <script>
         let balance = parseInt(localStorage.getItem('balance') || '0');
-        let adsCount = parseInt(localStorage.getItem('adsToday') || '0');
+        let adsToday = parseInt(localStorage.getItem('adsToday') || '0');
 
-        // UI Load
-        document.getElementById('user-balance').innerText = balance.toLocaleString();
-        document.getElementById('ads-count').innerText = adsCount;
-        checkCheckinStatus();
+        document.getElementById('user-balance').innerText = balance.toLocaleString() + ".00";
+        document.getElementById('ads-count').innerText = adsToday;
+        updateCheckinUI();
 
-        function updateBalance(amt) {
-            balance += amt;
-            localStorage.setItem('balance', balance);
-            document.getElementById('user-balance').innerText = balance.toLocaleString();
+        function showToast(msg) {
+            const toast = document.getElementById("toast");
+            toast.innerText = msg;
+            toast.classList.add("show");
+            setTimeout(() => { toast.classList.remove("show"); }, 3000);
+        }
+
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            el.classList.add('active');
+            window.scrollTo(0,0);
         }
 
         function collectDaily() {
             const today = new Date().toDateString();
-            if(localStorage.getItem('lastCheckin') === today) {
-                alert("🚫 Aaj ka reward mil chuka hai!");
+            if(localStorage.getItem('lastClaim') === today) {
+                showToast("🚫 Already claimed today!");
                 return;
             }
-            localStorage.setItem('lastCheckin', today);
-            updateBalance(500);
-            alert("🔋 +500 Coins added!");
-            checkCheckinStatus();
+            balance += 500;
+            localStorage.setItem('balance', balance);
+            localStorage.setItem('lastClaim', today);
+            document.getElementById('user-balance').innerText = balance.toLocaleString() + ".00";
+            showToast("🔋 +500 Energy Collected!");
+            updateCheckinUI();
         }
 
-        function checkCheckinStatus() {
-            const today = new Date().toDateString();
-            if(localStorage.getItem('lastCheckin') === today) {
+        function updateCheckinUI() {
+            if(localStorage.getItem('lastClaim') === new Date().toDateString()) {
                 const btn = document.getElementById('daily-btn');
-                btn.innerText = "ALREADY CLAIMED";
                 btn.disabled = true;
-                btn.style.background = "#334155";
-                document.getElementById('checkin-msg').innerText = "Come back tomorrow! 😊";
+                btn.innerText = "CLAIMED";
+                btn.style.opacity = "0.5";
             }
         }
 
         function showAdsgram() {
-            if(adsCount < 30) {
-                adsCount++;
-                localStorage.setItem('adsToday', adsCount);
-                document.getElementById('ads-count').innerText = adsCount;
-                updateBalance(200);
-                alert("✅ 200 Coins Added!");
+            if(adsToday < 30) {
+                adsToday++;
+                localStorage.setItem('adsToday', adsToday);
+                document.getElementById('ads-count').innerText = adsToday;
+                balance += 200;
+                localStorage.setItem('balance', balance);
+                document.getElementById('user-balance').innerText = balance.toLocaleString() + ".00";
+                showToast("✅ 200 Coins Added!");
             } else {
-                alert("🚫 Limit Reached!");
+                showToast("🚫 Daily Limit Reached!");
             }
         }
 
-        function openOfferwall() {
-            window.open("https://YOUR_LINK", "_blank");
+        function copyLink() {
+            const copyText = document.getElementById("ref-link");
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            showToast("📋 Link Copied!");
         }
 
-        function openMonetag() {
-            window.open("https://YOUR_LINK", "_blank");
-            setTimeout(() => { updateBalance(800); }, 5000);
+        function startMission() {
+            showToast("🎯 Mission Started! Stay 30s.");
+            window.open('https://yourlink.com', '_blank');
         }
     </script>
 </body>
