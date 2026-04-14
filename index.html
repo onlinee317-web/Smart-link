@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Global Reward Pro - High Energy</title>
+    <title>Global Reward Pro - Elite</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 
-        /* --- Theme & Core Styles --- */
         * {
             margin: 0;
             padding: 0;
@@ -25,12 +24,12 @@
             overflow: hidden;
         }
 
-        /* --- Animated Header --- */
+        /* --- Header & Unique Wing Animation --- */
         header {
             background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
-            padding: 25px 20px;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
+            padding: 30px 20px;
+            border-bottom-left-radius: 35px;
+            border-bottom-right-radius: 35px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -40,237 +39,176 @@
 
         .balance-container { display: flex; flex-direction: column; }
         .balance-label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: #E0E7FF; }
-        .balance-amount { font-size: 32px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+        .balance-amount { font-size: 34px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
 
-        .content-area { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
-
-        /* --- Section Titles --- */
-        .section-tag {
-            font-size: 14px;
-            font-weight: 800;
-            color: #6366F1;
-            text-transform: uppercase;
-            margin: 15px 0 10px 0;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        /* Only Wings Animation */
+        @keyframes wing-flutter {
+            0%, 100% { transform: scaleX(1); }
+            50% { transform: scaleX(1.3); } /* Wings stretch outward */
+        }
+        .flying-cash {
+            display: inline-block;
+            font-size: 40px;
+            animation: wing-flutter 0.4s infinite ease-in-out;
+            transform-origin: center;
         }
 
-        /* --- Cards --- */
-        .card { 
-            background: #1E293B; 
-            border-radius: 20px; 
-            padding: 20px; 
-            margin-bottom: 20px; 
-            border: 1px solid #334155;
-            position: relative;
+        .content-area { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 120px; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* 1. Daily Check-in (Energy Surge) */
-        .checkin-card { border-left: 5px solid #10B981; }
-
-        /* 2. Adsgram (Video Mania) */
-        .video-card { border-top: 3px solid #3B82F6; }
-
-        /* 3. PREMIUM OFFERWALL (The Jackpot) - SHINY PULSE */
-        .jackpot-card {
-            background: linear-gradient(145deg, #1E293B, #0F172A);
-            border: 2px solid #F59E0B;
-            overflow: hidden;
-            animation: pulse-border 2s infinite;
-        }
-
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 5px #F59E0B; }
-            50% { box-shadow: 0 0 20px #F59E0B; }
-            100% { box-shadow: 0 0 5px #F59E0B; }
-        }
-
-        .jackpot-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -100%;
-            width: 100%;
-            height: 200%;
-            background: linear-gradient(90deg, transparent, rgba(245, 158, 11, 0.2), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-
-        @keyframes shine {
-            to { left: 200%; }
-        }
-
-        /* 4. Monetag (Pro Clicker) */
-        .clicker-card { border-bottom: 3px solid #EC4899; }
-
-        /* --- Buttons --- */
+        /* --- UI Elements --- */
+        .section-tag { font-size: 14px; font-weight: 800; color: #6366F1; text-transform: uppercase; margin: 15px 0 10px 0; }
+        .card { background: #1E293B; border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid #334155; }
+        
         .btn {
-            width: 100%;
-            padding: 16px;
-            border-radius: 14px;
-            border: none;
-            font-size: 16px;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            transition: 0.2s;
+            width: 100%; padding: 16px; border-radius: 14px; border: none; font-size: 16px;
+            font-weight: 800; cursor: pointer; transition: 0.2s;
         }
-
-        .btn-green { background: #10B981; color: white; }
         .btn-blue { background: #3B82F6; color: white; }
         .btn-gold { background: linear-gradient(90deg, #F59E0B, #D97706); color: white; }
-        .btn-pink { background: #EC4899; color: white; }
-        .btn:active { transform: scale(0.95); }
+        .btn-green { background: #10B981; color: white; }
 
-        /* --- Footer Navigation --- */
-        nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: #0B1120;
-            display: flex;
-            justify-content: space-around;
-            padding: 15px;
-            border-top: 1px solid #1E293B;
+        input {
+            width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #334155;
+            background: #0F172A; color: white; margin-top: 10px; outline: none;
         }
 
-        .nav-item { color: #64748B; font-size: 11px; font-weight: 700; text-align: center; text-decoration: none; }
+        /* --- Mega Navigation Bar --- */
+        nav {
+            position: fixed; bottom: 0; width: 100%; background: #0B1120;
+            display: flex; justify-content: space-around; padding: 20px 10px;
+            border-top: 1px solid #1E293B; height: 100px; align-items: center;
+        }
+        .nav-item { 
+            color: #64748B; font-size: 14px; font-weight: 800; 
+            text-align: center; text-decoration: none; display: flex; flex-direction: column; gap: 5px;
+        }
         .nav-item.active { color: #6366F1; }
-        .nav-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+        .nav-icon { font-size: 28px; }
+
     </style>
 </head>
 <body>
 
     <header>
         <div class="balance-container">
-            <span class="balance-label">MY RICHES 💸</span>
-            <div class="balance-amount">💰 <span id="user-balance">0</span></div>
+            <span class="balance-label">MY RICHES 💰</span>
+            <div class="balance-amount"><span id="user-balance">0</span></div>
         </div>
-        <div style="font-size: 35px; filter: drop-shadow(0 0 10px #fff);">⚡</div>
+        <div class="flying-cash">💸</div>
     </header>
 
     <div class="content-area">
         
-        <div class="section-tag">⚡ ENERGY SURGE</div>
-        <div class="card checkin-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <div>
-                    <h3 style="font-size: 18px;">Daily Power-Up 🎁</h3>
-                    <p style="font-size: 12px; color: #94A3B8;">Refuel your wallet instantly!</p>
+        <div id="earn" class="tab-content active">
+            <div class="section-tag">⚡ ENERGY SURGE</div>
+            <div class="card">
+                <h3>Daily Power-Up 🎁</h3>
+                <button class="btn btn-green" style="margin-top:10px" onclick="updateBalance(500)">CLAIM 500 COINS</button>
+            </div>
+
+            <div class="section-tag">🔥 THE MONEY JACKPOT</div>
+            <div class="card" style="border: 2px solid #F59E0B; box-shadow: 0 0 15px rgba(245,158,11,0.3);">
+                <h2 style="color:#F59E0B">PREMIUM OFFERWALL 💎</h2>
+                <p style="font-size: 12px; color: #94A3B8; margin-bottom:15px">Earn up to $1.00 per offer!</p>
+                <button class="btn btn-gold" onclick="window.open('YOUR_CPAGRIP_LINK', '_blank')">START WINNING 🚀</button>
+            </div>
+        </div>
+
+        <div id="team" class="tab-content">
+            <div class="section-tag">👥 MY SQUAD</div>
+            <div class="card">
+                <h3>Invite Friends</h3>
+                <p style="font-size:12px; color:#94A3B8">Get 10% commission on every task they complete!</p>
+                <input type="text" id="ref-link" value="https://t.me/YourBot?start=user123" readonly>
+                <button class="btn btn-blue" style="margin-top:10px" onclick="copyRef()">COPY INVITE LINK 📋</button>
+            </div>
+            <div class="card" style="display:flex; justify-content: space-around; text-align:center;">
+                <div><h2 style="color:#10B981">0</h2><small>Directs</small></div>
+                <div><h2 style="color:#10B981">$0.00</h2><small>Earnings</small></div>
+            </div>
+        </div>
+
+        <div id="cash" class="tab-content">
+            <div class="section-tag">💳 WITHDRAW FUNDS</div>
+            <div class="card">
+                <div style="text-align:center; margin-bottom:20px;">
+                    <span style="color:#94A3B8">Available Valuation</span>
+                    <h1 style="color:#10B981" id="usd-val">$0.00</h1>
+                </div>
+                <label style="font-size:12px; color:#94A3B8">Select Network</label>
+                <select style="width:100%; padding:15px; border-radius:10px; background:#0F172A; color:white; border:1px solid #334155;">
+                    <option>USDT (TRC20)</option>
+                    <option>USDT (BEP20)</option>
+                </select>
+                <input type="text" placeholder="Enter Wallet Address...">
+                <p style="font-size:11px; color:#ef4444; margin-top:10px;">⚠️ Minimum Withdrawal: $100.00</p>
+                <button class="btn btn-green" style="margin-top:15px" onclick="alert('Insufficient Balance! Min $100 required.')">REQUEST CASH OUT 🏦</button>
+            </div>
+        </div>
+
+        <div id="me" class="tab-content">
+            <div class="section-tag">👤 ACCOUNT PROFILE</div>
+            <div class="card" style="text-align:center">
+                <div style="width:80px; height:80px; background:#6366F1; border-radius:50%; margin: 0 auto 15px auto; display:flex; align-items:center; justify-content:center; font-size:40px">🤴</div>
+                <h3>Premium Member</h3>
+                <p style="color:#94A3B8; font-size:13px">ID: #8829102</p>
+            </div>
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+                    <span>Status</span><span style="color:#10B981">Active ✅</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+                    <span>Tasks Done</span><span id="tasks-done">0</span>
+                </div>
+                <div style="display:flex; justify-content:space-between">
+                    <span>Joined</span><span>April 2026</span>
                 </div>
             </div>
-            <button class="btn btn-green" onclick="collectDaily()">CLAIM 500 ENERGY 🔋</button>
-        </div>
-
-        <div class="section-tag">📺 VIDEO MANIA</div>
-        <div class="card video-card">
-            <div style="margin-bottom: 15px;">
-                <h3 style="font-size: 18px;">Instant Crypto-Vids 📽️</h3>
-                <p style="font-size: 12px; color: #94A3B8;">Watch 30 fast clips and earn!</p>
-            </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span style="font-weight: 800; color: #3B82F6;"><span id="ads-count">0</span>/30 DONE 🔥</span>
-                <button class="btn btn-blue" style="width: auto; padding: 10px 25px;" onclick="showAdsgram()">PLAY ▶️</button>
-            </div>
-        </div>
-
-        <div class="section-tag">🔥 THE MONEY JACKPOT</div>
-        <div class="card jackpot-card">
-            <div style="text-align: center; margin-bottom: 15px;">
-                <h2 style="color: #F59E0B; font-size: 22px;">PREMIUM OFFERWALL 💎</h2>
-                <p style="font-size: 13px; color: #CBD5E1;">One task = Up to 10,000 Coins!</p>
-            </div>
-            <button class="btn btn-gold" onclick="openOfferwall()">UNLOCK RICHES 🚀</button>
-            <p style="text-align: center; font-size: 10px; margin-top: 10px; color: #94A3B8;">NEW EXCLUSIVE TASKS ADDED EVERY 24 HOURS</p>
-        </div>
-
-        <div class="section-tag">🚀 PRO CLICKER MISSIONS</div>
-        <div class="card clicker-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <div>
-                    <h3 style="font-size: 18px;">Smart Interaction 🎯</h3>
-                    <p style="font-size: 12px; color: #94A3B8;">Click, stay 30s & win big!</p>
-                </div>
-            </div>
-            <button class="btn btn-pink" onclick="openMonetag()">START MISSION 🖱️</button>
+            <button class="btn" style="background:#334155; color:white">LOGOUT 🚪</button>
         </div>
 
     </div>
 
     <nav>
-        <a href="#" class="nav-item active"><span class="nav-icon">🏠</span>EARN</a>
-        <a href="#" class="nav-item"><span class="nav-icon">🤝</span>TEAM</a>
-        <a href="#" class="nav-item"><span class="nav-icon">💰</span>CASH</a>
-        <a href="#" class="nav-item"><span class="nav-icon">👤</span>ME</a>
+        <div class="nav-item active" onclick="switchTab('earn', this)"><span class="nav-icon">🏠</span>EARN</div>
+        <div class="nav-item" onclick="switchTab('team', this)"><span class="nav-icon">👥</span>TEAM</div>
+        <div class="nav-item" onclick="switchTab('cash', this)"><span class="nav-icon">💰</span>CASH</div>
+        <div class="nav-item" onclick="switchTab('me', this)"><span class="nav-icon">👤</span>ME</div>
     </nav>
 
     <script>
-        // --- DATA SETUP ---
-        let balance = parseInt(localStorage.getItem('balance') || '0');
-        let adsCount = parseInt(localStorage.getItem('adsToday') || '0');
-        
-        // Monetag Link Rotator Pool
-        const monetagLinks = [
-            "https://YOUR_MONETAG_LINK_1",
-            "https://YOUR_MONETAG_LINK_2",
-            "https://YOUR_MONETAG_LINK_3"
-        ];
-
-        // Initialize UI
-        document.getElementById('user-balance').innerText = balance.toLocaleString();
-        document.getElementById('ads-count').innerText = adsCount;
+        let balance = 0;
+        let tasks = 0;
 
         function updateBalance(amt) {
             balance += amt;
-            localStorage.setItem('balance', balance);
+            tasks++;
             document.getElementById('user-balance').innerText = balance.toLocaleString();
+            document.getElementById('tasks-done').innerText = tasks;
+            // $1 = 100,000 coins (example conversion)
+            document.getElementById('usd-val').innerText = "$" + (balance / 100000).toFixed(2);
         }
 
-        // --- FUNCTIONS ---
-        function collectDaily() {
-            if(localStorage.getItem('lastCheckin') === new Date().toDateString()) {
-                alert("🚫 Fuel already collected! Come back tomorrow.");
-            } else {
-                localStorage.setItem('lastCheckin', new Date().toDateString());
-                updateBalance(500);
-                alert("🔋 Energy surge complete! +500 Coins added.");
-            }
-        }
-
-        function showAdsgram() {
-            if(adsCount < 30) {
-                alert("📺 Video Loading... (Adsgram)");
-                setTimeout(() => {
-                    adsCount++;
-                    localStorage.setItem('adsToday', adsCount);
-                    document.getElementById('ads-count').innerText = adsCount;
-                    updateBalance(200);
-                    alert("✅ Reward Added!");
-                }, 2000);
-            } else {
-                alert("🚫 Daily Video Limit Reached!");
-            }
-        }
-
-        function openOfferwall() {
-            alert("💎 Entering the Jackpot Zone! Complete one offer for 10,000 Coins.");
-            window.open("https://YOUR_CPAGRIP_OFFERWALL_LINK", "_blank");
-        }
-
-        function openMonetag() {
-            const randomLink = monetagLinks[Math.floor(Math.random() * monetagLinks.length)];
-            alert("🎯 Mission: Stay on the page for 30s to verify!");
-            window.open(randomLink, "_blank");
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
             
-            // Logic: Award coins after a delay or upon return
-            setTimeout(() => {
-                updateBalance(800);
-            }, 5000);
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function copyRef() {
+            const copyText = document.getElementById("ref-link");
+            copyText.select();
+            navigator.clipboard.writeText(copyText.value);
+            alert("Invite link copied! 🤝");
         }
     </script>
 </body>
