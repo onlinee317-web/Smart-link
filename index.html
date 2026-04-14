@@ -74,22 +74,17 @@
         .tab-content.active { display: block; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- Cards --- */
-        .section-tag { font-size: 13px; font-weight: 800; color: #818CF8; text-transform: uppercase; margin: 25px 0 10px 0; }
-        .card { background: #1E293B; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid #334155; }
-        
-        /* Description Box */
-        .desc-box {
-            background: rgba(15, 23, 42, 0.5);
-            padding: 10px;
-            border-radius: 12px;
-            margin: 10px 0;
-            border: 1px dashed #475569;
-            font-size: 12px;
-            color: #94A3B8;
-            text-align: center;
+        /* --- Tags Style --- */
+        .section-tag { 
+            font-size: 18px; 
+            font-weight: 800; 
+            color: #ffffff; 
+            text-transform: uppercase; 
+            margin: 25px 0 10px 0; 
         }
 
+        .card { background: #1E293B; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid #334155; }
+        
         .btn {
             width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 16px;
             font-weight: 800; cursor: pointer; transition: 0.2s; display: block; text-align: center; text-decoration: none;
@@ -98,6 +93,7 @@
         .btn-blue { background: #3B82F6; color: white; }
         .btn-pink { background: #EC4899; color: white; }
         .btn-gold { background: linear-gradient(90deg, #F59E0B, #D97706); color: white; }
+        .btn-purple { background: linear-gradient(90deg, #9333EA, #7E22CE); color: white; }
         .btn:active { transform: scale(0.96); }
 
         .input-box {
@@ -133,14 +129,14 @@
         <div id="earn" class="tab-content active">
             <div class="section-tag">⚡ ENERGY SURGE</div>
             <div class="card" style="border-left: 6px solid #10B981;">
-                <h3>Daily Check-in 🎁</h3>
-                <p id="checkin-msg" style="font-size: 12px; color: #94A3B8; margin-top: 5px;">Claim 500 coins every 24h!</p>
-                <button id="daily-btn" class="btn btn-green" style="margin-top:15px;" onclick="collectDaily()">CLAIM 500 ENERGY</button>
+                <h3 style="font-size: 20px;">Daily Check-in 🎁</h3>
+                <p id="checkin-msg" style="font-size: 12px; color: #94A3B8; margin-top: 5px;">Claim daily to boost earnings!</p>
+                <button id="daily-btn" class="btn btn-green" style="margin-top:15px;" onclick="collectDaily()">CLAIM DAILY BONUS</button>
             </div>
 
             <div class="section-tag">📺 WATCH & EARN 📺</div>
             <div class="card" style="border-top: 3px solid #3B82F6;">
-                <h3 style="font-size: 16px; margin-bottom: 10px;">Video Rewards</h3>
+                <h3 style="font-size: 20px; margin-bottom: 10px;">Video Rewards</h3>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <span style="font-weight: 800; color: #3B82F6;"><span id="ads-count">0</span>/30 DONE 🔥</span>
                     <button class="btn btn-blue" style="width: auto; padding: 10px 25px;" onclick="showAdsgram()">PLAY ▶️</button>
@@ -149,17 +145,22 @@
 
             <div class="section-tag">🚀 PREMIUM TASK 🚀</div>
             <div class="card" style="border: 2px solid #F59E0B;">
-                <h2 style="color: #F59E0B; text-align: center; font-size: 18px;">Special Offerwall</h2>
-                <div class="desc-box">
-                    📝 Complete all available tasks in this section to earn instant coins!
-                </div>
-                <button class="btn btn-gold" style="margin-top:5px;" onclick="showToast('Loading Premium Tasks...')">UNLOCK $1 REWARD</button>
+                <h2 style="color: #F59E0B; text-align: center; font-size: 24px;">SURPRISE REWARD🎁</h2>
+                <button class="btn btn-gold" style="margin-top:20px;" onclick="unlockSurprise()">UNLOCK $1 REWARD</button>
+            </div>
+
+            <div class="section-tag">🔐 EXCLUSIVE TASK 🔐</div>
+            <div class="card" style="border: 2px solid #A855F7;">
+                <h2 style="color: #A855F7; text-align: center; font-size: 24px;">CONTENT LOCKER</h2>
+                <button class="btn btn-purple" style="margin-top:20px;" onclick="unlockLocker()">UNLOCK $1 REWARD</button>
             </div>
             
             <div class="section-tag">📈 EARN MORE 📈</div>
             <div class="card" style="border-bottom: 4px solid #EC4899;">
-                <h3>Direct Link Mission</h3>
-                <p style="font-size: 12px; color: #94A3B8; margin-top: 5px;">Stay on the page for 30 seconds to verify.</p>
+                <h3 style="font-size: 22px;">HOT OFFERS🔥</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
+                    <span style="font-weight: 800; color: #EC4899; font-size: 14px;"><span id="offers-count">0</span>/8 COMPLETED</span>
+                </div>
                 <button class="btn btn-pink" style="margin-top:15px;" onclick="startMission()">START MISSION 🖱️</button>
             </div>
         </div>
@@ -176,15 +177,15 @@
         <div id="cash" class="tab-content">
             <div class="section-tag">💰 WITHDRAW FUNDS</div>
             <div class="card">
-                <h1 style="color: #10B981; text-align: center; font-size: 40px;">$0.00</h1>
-                <p style="color: #EF4444; text-align: center; font-size: 13px; font-weight: 800;">MIN WITHDRAW: $100</p>
+                <h1 style="color: #10B981; text-align: center; font-size: 40px;">$<span id="withdraw-balance">0.00</span></h1>
+                <p style="color: #EF4444; text-align: center; font-size: 13px; font-weight: 800;">MIN WITHDRAW: $10.00</p>
                 
                 <select class="input-box" style="margin-top: 20px;">
                     <option>USDT (TRC20)</option>
                     <option>USDT (BEP20)</option>
                 </select>
                 <input type="text" class="input-box" placeholder="Enter Wallet Address">
-                <button class="btn btn-green" style="margin-top: 10px;" onclick="showToast('🚫 Minimum $100 required!')">WITHDRAW</button>
+                <button class="btn btn-green" style="margin-top: 10px;" onclick="showToast('🚫 Minimum balance required!')">WITHDRAW</button>
             </div>
         </div>
 
@@ -207,12 +208,50 @@
     </nav>
 
     <script>
-        let balance = parseInt(localStorage.getItem('balance') || '0');
-        let adsToday = parseInt(localStorage.getItem('adsToday') || '0');
+        // --- REWARD SYSTEM ($1 = 100 Coins) ---
+        const REWARDS = {
+            daily: 5,          // $0.05
+            video: 2,          // $0.60 total for 30 ads
+            hotOffer: 4.375,   // $0.35 total for 8 links
+            offerwall: 100,    // $1.00
+            locker: 100        // $1.00
+        };
 
-        document.getElementById('user-balance').innerText = balance.toLocaleString() + ".00";
-        document.getElementById('ads-count').innerText = adsToday;
+        // Load data (Use parseFloat for decimals)
+        let balance = parseFloat(localStorage.getItem('balance') || '0');
+        let adsToday = parseInt(localStorage.getItem('adsToday') || '0');
+        let offersToday = parseInt(localStorage.getItem('offersToday') || '0');
+
+        // Check if new day to reset counters
+        const todayStr = new Date().toDateString();
+        if(localStorage.getItem('currentDate') !== todayStr) {
+            adsToday = 0;
+            offersToday = 0;
+            localStorage.setItem('adsToday', 0);
+            localStorage.setItem('offersToday', 0);
+            localStorage.setItem('currentDate', todayStr);
+        }
+
+        // Init UI
+        updateUI();
         updateCheckinUI();
+
+        // UI Update Function
+        function updateUI() {
+            // Convert coins to dollars
+            let dollarDisplay = (balance / 100).toFixed(2); 
+            document.getElementById('user-balance').innerText = dollarDisplay;
+            document.getElementById('withdraw-balance').innerText = dollarDisplay;
+            document.getElementById('ads-count').innerText = adsToday;
+            document.getElementById('offers-count').innerText = offersToday;
+        }
+
+        function saveAndRefresh() {
+            localStorage.setItem('balance', balance);
+            localStorage.setItem('adsToday', adsToday);
+            localStorage.setItem('offersToday', offersToday);
+            updateUI();
+        }
 
         function showToast(msg) {
             const toast = document.getElementById("toast");
@@ -229,22 +268,21 @@
             window.scrollTo(0,0);
         }
 
+        // 1. Daily Check-in
         function collectDaily() {
-            const today = new Date().toDateString();
-            if(localStorage.getItem('lastClaim') === today) {
+            if(localStorage.getItem('lastClaim') === todayStr) {
                 showToast("🚫 Already claimed today!");
                 return;
             }
-            balance += 500;
-            localStorage.setItem('balance', balance);
-            localStorage.setItem('lastClaim', today);
-            document.getElementById('user-balance').innerText = balance.toLocaleString() + ".00";
-            showToast("🔋 +500 Energy Collected!");
+            balance += REWARDS.daily;
+            localStorage.setItem('lastClaim', todayStr);
+            saveAndRefresh();
+            showToast("✅ Daily Bonus Added ($0.05)!");
             updateCheckinUI();
         }
 
         function updateCheckinUI() {
-            if(localStorage.getItem('lastClaim') === new Date().toDateString()) {
+            if(localStorage.getItem('lastClaim') === todayStr) {
                 const btn = document.getElementById('daily-btn');
                 btn.disabled = true;
                 btn.innerText = "CLAIMED";
@@ -252,18 +290,46 @@
             }
         }
 
+        // 2. Video Rewards (Adsgram)
         function showAdsgram() {
             if(adsToday < 30) {
                 adsToday++;
-                localStorage.setItem('adsToday', adsToday);
-                document.getElementById('ads-count').innerText = adsToday;
-                balance += 200;
-                localStorage.setItem('balance', balance);
-                document.getElementById('user-balance').innerText = balance.toLocaleString() + ".00";
-                showToast("✅ 200 Coins Added!");
+                balance += REWARDS.video;
+                saveAndRefresh();
+                showToast("✅ Reward Added!");
             } else {
                 showToast("🚫 Daily Limit Reached!");
             }
+        }
+
+        // 3. Hot Offers (Smart Link + CTR)
+        function startMission() {
+            if(offersToday < 8) {
+                showToast("📈 Offer Started! Complete to earn.");
+                window.open('YOUR_MONETAG_LINK', '_blank'); // Replace with Monetag Link
+                
+                // Reward logic (Wait 30s)
+                setTimeout(() => {
+                    offersToday++;
+                    balance += REWARDS.hotOffer;
+                    saveAndRefresh();
+                    showToast("✅ Offer Completed!");
+                }, 30000);
+            } else {
+                showToast("🚫 All Hot Offers Completed for Today!");
+            }
+        }
+
+        // 4. Surprise Reward (Offerwall)
+        function unlockSurprise() {
+            showToast("🚀 Opening Surprise Reward ($1)...");
+            window.open('YOUR_OFFERWALL_LINK', '_blank'); // Replace with CPAGrip Link
+        }
+
+        // 5. Content Locker
+        function unlockLocker() {
+            showToast("🔐 Opening Content Locker ($1)...");
+            window.open('YOUR_LOCKER_LINK', '_blank'); // Replace with Locker Link
         }
 
         function copyLink() {
@@ -272,11 +338,7 @@
             navigator.clipboard.writeText(copyText.value);
             showToast("📋 Link Copied!");
         }
-
-        function startMission() {
-            showToast("📈 Mission Started! Stay 30s.");
-            window.open('https://yourlink.com', '_blank');
-        }
     </script>
 </body>
-</html>
+    </html>
+    
