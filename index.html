@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Global Reward Pro - Elite</title>
+    <title>Global Reward Pro - Elite Hybrid</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 
@@ -24,10 +24,10 @@
             overflow: hidden;
         }
 
-        /* --- Header & Unique Wing Animation --- */
+        /* --- Header & Flying Wing Animation --- */
         header {
             background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
-            padding: 30px 20px;
+            padding: 25px 20px;
             border-bottom-left-radius: 35px;
             border-bottom-right-radius: 35px;
             display: flex;
@@ -41,15 +41,15 @@
         .balance-label { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; color: #E0E7FF; }
         .balance-amount { font-size: 34px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
 
-        /* Only Wings Animation */
+        /* Wing Flutter Animation Only */
         @keyframes wing-flutter {
             0%, 100% { transform: scaleX(1); }
-            50% { transform: scaleX(1.3); } /* Wings stretch outward */
+            50% { transform: scaleX(1.4); } 
         }
         .flying-cash {
             display: inline-block;
-            font-size: 40px;
-            animation: wing-flutter 0.4s infinite ease-in-out;
+            font-size: 45px;
+            animation: wing-flutter 0.3s infinite ease-in-out;
             transform-origin: center;
         }
 
@@ -62,35 +62,36 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- UI Elements --- */
-        .section-tag { font-size: 14px; font-weight: 800; color: #6366F1; text-transform: uppercase; margin: 15px 0 10px 0; }
-        .card { background: #1E293B; border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid #334155; }
+        /* --- Section Styling --- */
+        .section-tag { font-size: 13px; font-weight: 800; color: #6366F1; text-transform: uppercase; margin: 20px 0 10px 0; display: flex; align-items: center; gap: 8px; }
+        .card { background: #1E293B; border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid #334155; }
         
         .btn {
             width: 100%; padding: 16px; border-radius: 14px; border: none; font-size: 16px;
-            font-weight: 800; cursor: pointer; transition: 0.2s;
+            font-weight: 800; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px;
         }
         .btn-blue { background: #3B82F6; color: white; }
         .btn-gold { background: linear-gradient(90deg, #F59E0B, #D97706); color: white; }
         .btn-green { background: #10B981; color: white; }
+        .btn-pink { background: #EC4899; color: white; }
 
-        input {
-            width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #334155;
-            background: #0F172A; color: white; margin-top: 10px; outline: none;
+        input, select {
+            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #334155;
+            background: #0F172A; color: white; margin-top: 10px; outline: none; font-size: 14px;
         }
 
-        /* --- Mega Navigation Bar --- */
+        /* --- Mega Navigation --- */
         nav {
             position: fixed; bottom: 0; width: 100%; background: #0B1120;
-            display: flex; justify-content: space-around; padding: 20px 10px;
-            border-top: 1px solid #1E293B; height: 100px; align-items: center;
+            display: flex; justify-content: space-around; padding: 15px 5px;
+            border-top: 1px solid #1E293B; height: 100px; align-items: center; z-index: 100;
         }
         .nav-item { 
-            color: #64748B; font-size: 14px; font-weight: 800; 
-            text-align: center; text-decoration: none; display: flex; flex-direction: column; gap: 5px;
+            color: #64748B; font-size: 13px; font-weight: 800; 
+            text-align: center; text-decoration: none; width: 25%;
         }
         .nav-item.active { color: #6366F1; }
-        .nav-icon { font-size: 28px; }
+        .nav-icon { font-size: 30px; display: block; margin-bottom: 2px; }
 
     </style>
 </head>
@@ -107,71 +108,96 @@
     <div class="content-area">
         
         <div id="earn" class="tab-content active">
+            
             <div class="section-tag">⚡ ENERGY SURGE</div>
-            <div class="card">
-                <h3>Daily Power-Up 🎁</h3>
-                <button class="btn btn-green" style="margin-top:10px" onclick="updateBalance(500)">CLAIM 500 COINS</button>
+            <div class="card" style="border-left: 5px solid #10B981;">
+                <h3 style="font-size: 18px;">Daily Fuel 🎁</h3>
+                <p style="font-size: 12px; color: #94A3B8; margin-bottom: 12px;">Grab 500 coins every 24 hours.</p>
+                <button class="btn btn-green" onclick="collectDaily()">CLAIM NOW 🔋</button>
+            </div>
+
+            <div class="section-tag">📺 VIDEO MANIA</div>
+            <div class="card" style="border-top: 3px solid #3B82F6;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h3>Adsgram Vids</h3>
+                    <span style="color:#3B82F6; font-weight:800;"><span id="ads-done">0</span>/30</span>
+                </div>
+                <button class="btn btn-blue" onclick="playVideo()">WATCH & EARN ▶️</button>
             </div>
 
             <div class="section-tag">🔥 THE MONEY JACKPOT</div>
-            <div class="card" style="border: 2px solid #F59E0B; box-shadow: 0 0 15px rgba(245,158,11,0.3);">
-                <h2 style="color:#F59E0B">PREMIUM OFFERWALL 💎</h2>
-                <p style="font-size: 12px; color: #94A3B8; margin-bottom:15px">Earn up to $1.00 per offer!</p>
-                <button class="btn btn-gold" onclick="window.open('YOUR_CPAGRIP_LINK', '_blank')">START WINNING 🚀</button>
+            <div class="card" style="border: 2px solid #F59E0B; background: linear-gradient(145deg, #1E293B, #0F172A); box-shadow: 0 0 15px rgba(245,158,11,0.4);">
+                <h2 style="color:#F59E0B; text-align:center;">PREMIUM OFFERWALL 💎</h2>
+                <p style="font-size: 12px; text-align:center; color: #CBD5E1; margin: 10px 0 15px 0;">Big tasks for big money. Up to $1.00 per completion!</p>
+                <button class="btn btn-gold" onclick="window.open('YOUR_CPAGRIP_LINK', '_blank')">UNLOCK WEALTH 🚀</button>
+            </div>
+
+            <div class="section-tag">🚀 PRO CLICKER</div>
+            <div class="card" style="border-bottom: 3px solid #EC4899;">
+                <h3>Smart Interaction 🎯</h3>
+                <p style="font-size: 12px; color: #94A3B8; margin-bottom:12px;">Interact with high-CPM links for 30s.</p>
+                <button class="btn btn-pink" onclick="playSmartLink()">START MISSION 🖱️</button>
             </div>
         </div>
 
         <div id="team" class="tab-content">
             <div class="section-tag">👥 MY SQUAD</div>
             <div class="card">
-                <h3>Invite Friends</h3>
-                <p style="font-size:12px; color:#94A3B8">Get 10% commission on every task they complete!</p>
-                <input type="text" id="ref-link" value="https://t.me/YourBot?start=user123" readonly>
-                <button class="btn btn-blue" style="margin-top:10px" onclick="copyRef()">COPY INVITE LINK 📋</button>
+                <h3>Affiliate Program</h3>
+                <p style="font-size:12px; color:#94A3B8; margin-bottom:15px;">Earn 10% commission for life from your friends' work!</p>
+                <label style="font-size: 12px; font-weight: bold; color: #6366F1;">YOUR UNIQUE LINK 🔗</label>
+                <input type="text" id="ref-link" value="https://t.me/YourBot?start=user9928" readonly>
+                <button class="btn btn-blue" style="margin-top:15px" onclick="copyRef()">COPY LINK 📋</button>
             </div>
-            <div class="card" style="display:flex; justify-content: space-around; text-align:center;">
-                <div><h2 style="color:#10B981">0</h2><small>Directs</small></div>
-                <div><h2 style="color:#10B981">$0.00</h2><small>Earnings</small></div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                <div class="card" style="text-align:center;"><h2>0</h2><small>Total Members</small></div>
+                <div class="card" style="text-align:center;"><h2>$0.00</h2><small>Earned</small></div>
             </div>
         </div>
 
         <div id="cash" class="tab-content">
-            <div class="section-tag">💳 WITHDRAW FUNDS</div>
+            <div class="section-tag">💳 SECURE WITHDRAW</div>
             <div class="card">
-                <div style="text-align:center; margin-bottom:20px;">
-                    <span style="color:#94A3B8">Available Valuation</span>
-                    <h1 style="color:#10B981" id="usd-val">$0.00</h1>
+                <div style="text-align:center; margin-bottom:25px; padding: 20px; background: #0F172A; border-radius: 15px;">
+                    <span style="color:#94A3B8; font-size: 14px;">Wallet Valuation</span>
+                    <h1 style="color:#10B981; font-size: 40px;" id="usd-val">$0.00</h1>
                 </div>
-                <label style="font-size:12px; color:#94A3B8">Select Network</label>
-                <select style="width:100%; padding:15px; border-radius:10px; background:#0F172A; color:white; border:1px solid #334155;">
+                
+                <label style="font-size:13px; color:#94A3B8;">Select Payment Network</label>
+                <select>
                     <option>USDT (TRC20)</option>
                     <option>USDT (BEP20)</option>
                 </select>
-                <input type="text" placeholder="Enter Wallet Address...">
-                <p style="font-size:11px; color:#ef4444; margin-top:10px;">⚠️ Minimum Withdrawal: $100.00</p>
-                <button class="btn btn-green" style="margin-top:15px" onclick="alert('Insufficient Balance! Min $100 required.')">REQUEST CASH OUT 🏦</button>
+
+                <input type="text" placeholder="Enter your Wallet Address...">
+                
+                <div style="margin-top:15px; padding: 10px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; border: 1px solid #ef4444;">
+                    <p style="font-size:11px; color:#ef4444; text-align:center;">⚠️ Minimum Withdrawal Amount: <b>$100.00</b></p>
+                </div>
+
+                <button class="btn btn-green" style="margin-top:20px" onclick="alert('Balance too low! You need minimum $100 to withdraw.')">WITHDRAW NOW 🏦</button>
             </div>
         </div>
 
         <div id="me" class="tab-content">
-            <div class="section-tag">👤 ACCOUNT PROFILE</div>
+            <div class="section-tag">👤 MY PROFILE</div>
             <div class="card" style="text-align:center">
-                <div style="width:80px; height:80px; background:#6366F1; border-radius:50%; margin: 0 auto 15px auto; display:flex; align-items:center; justify-content:center; font-size:40px">🤴</div>
-                <h3>Premium Member</h3>
-                <p style="color:#94A3B8; font-size:13px">ID: #8829102</p>
+                <div style="width:90px; height:90px; background: linear-gradient(135deg, #6366F1, #A855F7); border-radius:50%; margin: 0 auto 15px auto; display:flex; align-items:center; justify-content:center; font-size:45px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">🤴</div>
+                <h3 style="font-size: 22px;">Elite Member</h3>
+                <p style="color:#94A3B8; font-size:14px;">User ID: #GR-992810</p>
             </div>
             <div class="card">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px">
-                    <span>Status</span><span style="color:#10B981">Active ✅</span>
+                <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid #334155;">
+                    <span>Account Status</span><span style="color:#10B981; font-weight:bold;">VERIFIED ✅</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px">
-                    <span>Tasks Done</span><span id="tasks-done">0</span>
+                <div style="display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid #334155;">
+                    <span>Total Tasks</span><span id="me-tasks">0</span>
                 </div>
-                <div style="display:flex; justify-content:space-between">
-                    <span>Joined</span><span>April 2026</span>
+                <div style="display:flex; justify-content:space-between; padding: 10px 0;">
+                    <span>Member Since</span><span>April 2026</span>
                 </div>
             </div>
-            <button class="btn" style="background:#334155; color:white">LOGOUT 🚪</button>
+            <button class="btn" style="background:#334155; color:white; margin-top:10px;">EDIT PROFILE ⚙️</button>
         </div>
 
     </div>
@@ -185,21 +211,40 @@
 
     <script>
         let balance = 0;
-        let tasks = 0;
+        let ads = 0;
 
         function updateBalance(amt) {
             balance += amt;
-            tasks++;
             document.getElementById('user-balance').innerText = balance.toLocaleString();
-            document.getElementById('tasks-done').innerText = tasks;
-            // $1 = 100,000 coins (example conversion)
             document.getElementById('usd-val').innerText = "$" + (balance / 100000).toFixed(2);
+        }
+
+        function playVideo() {
+            if(ads < 30) {
+                alert("📺 Loading Adsgram Video...");
+                setTimeout(() => {
+                    ads++;
+                    document.getElementById('ads-done').innerText = ads;
+                    document.getElementById('me-tasks').innerText = ads;
+                    updateBalance(200);
+                }, 2000);
+            } else { alert("🚫 Daily Video Limit Reached!"); }
+        }
+
+        function playSmartLink() {
+            alert("🖱️ Smart Mission: Stay on the page for 30s!");
+            window.open("https://YOUR_MONETAG_LINK", "_blank");
+            setTimeout(() => { updateBalance(800); }, 5000);
+        }
+
+        function collectDaily() {
+            alert("🔋 500 Coins added to your riches!");
+            updateBalance(500);
         }
 
         function switchTab(tabId, el) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
-            
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             el.classList.add('active');
         }
@@ -208,7 +253,7 @@
             const copyText = document.getElementById("ref-link");
             copyText.select();
             navigator.clipboard.writeText(copyText.value);
-            alert("Invite link copied! 🤝");
+            alert("Link copied! Share with your squad. 🤝");
         }
     </script>
 </body>
