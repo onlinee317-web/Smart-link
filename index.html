@@ -1,219 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Elite Dashboard Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Elite Dashboard Pro</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent;
+        }
 
-* {
-    margin: 0; padding: 0; box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-}
+        body {
+            background-color: #0F172A; color: #ffffff;
+            /* Scroll fix karne ke liye height auto ki hai */
+            min-height: 100vh;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            display: block; 
+        }
 
-body {
-    background-color: #0F172A;
-    color: #ffffff;
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: scroll;
-}
+        header {
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+            padding: 30px 20px; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            margin-bottom: 10px;
+        }
 
-/* HEADER */
-header {
-    background: linear-gradient(135deg, #4F46E5, #7C3AED);
-    padding: 30px 20px;
-    border-bottom-left-radius: 40px;
-    border-bottom-right-radius: 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .balance-label { font-size: 11px; text-transform: uppercase; letter-spacing: 2px; font-weight: 800; opacity: 0.9; }
+        .balance-amount { font-size: 32px; font-weight: 800; }
 
-.balance-label {
-    font-size: 11px;
-    letter-spacing: 2px;
-    font-weight: 800;
-}
+        @keyframes wings-move {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1) rotate(2deg); }
+        }
 
-.balance-amount {
-    font-size: 32px;
-    font-weight: 800;
-}
+        .header-image {
+            width: 80px; height: 80px;
+            animation: wings-move 0.6s infinite ease-in-out;
+        }
 
-/* 💸 MONEY ANIMATION */
-.money-wrapper {
-    position: relative;
-    width: 80px;
-    height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .content-area { 
+            padding: 20px; 
+            padding-bottom: 150px; /* Nav bar se takraye na */
+        }
 
-.money-emoji {
-    font-size: 50px;
-    z-index: 2;
-    animation: floatMoney 2s infinite ease-in-out;
-}
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
 
-.wing {
-    position: absolute;
-    font-size: 22px;
-    animation: wingFlap 0.5s infinite ease-in-out;
-}
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.left-wing { left: -12px; top: 22px; }
-.right-wing { right: -12px; top: 22px; }
+        .section-tag { font-size: 12px; font-weight: 800; color: #818CF8; text-transform: uppercase; margin: 20px 0 10px 0; }
+        .card { background: #1E293B; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid #334155; }
+        
+        .btn {
+            width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 16px;
+            font-weight: 800; cursor: pointer; transition: 0.2s;
+        }
+        .btn-blue { background: #3B82F6; color: white; }
+        .btn-green { background: #10B981; color: white; }
+        .btn-pink { background: #EC4899; color: white; }
+        .btn-gold { background: linear-gradient(90deg, #F59E0B, #D97706); color: white; }
+        
+        .premium-card { border: 2px solid #F59E0B; box-shadow: 0 0 15px rgba(245, 158, 11, 0.2); }
 
-@keyframes floatMoney {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-    100% { transform: translateY(0px); }
-}
+        nav {
+            position: fixed; bottom: 0; width: 100%; background: #0B1120;
+            display: flex; justify-content: space-around; padding: 15px 5px;
+            border-top: 1px solid #334155; height: 110px; align-items: center; z-index: 9999;
+        }
+        .nav-item { color: #64748B; font-size: 14px; font-weight: 800; text-align: center; flex: 1; text-decoration: none; }
+        .nav-item.active { color: #818CF8; }
+        .nav-icon { font-size: 32px; display: block; margin-bottom: 5px; }
 
-@keyframes wingFlap {
-    0% { transform: rotate(0deg) scale(1); }
-    50% { transform: rotate(25deg) scale(1.3); }
-    100% { transform: rotate(0deg) scale(1); }
-}
-
-/* CONTENT */
-.content-area {
-    padding: 20px;
-    padding-bottom: 150px;
-}
-
-.card {
-    background: #1E293B;
-    border-radius: 20px;
-    padding: 20px;
-    margin-bottom: 15px;
-}
-
-/* BUTTONS */
-.btn {
-    width: 100%;
-    padding: 15px;
-    border-radius: 14px;
-    border: none;
-    font-weight: 800;
-    cursor: pointer;
-}
-
-.btn-blue { background: #3B82F6; color: white; }
-.btn-green { background: #10B981; color: white; }
-.btn-pink { background: #EC4899; color: white; }
-
-/* NAV */
-nav {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: #0B1120;
-    display: flex;
-    justify-content: space-around;
-    padding: 15px;
-}
-
-.nav-item {
-    color: #64748B;
-    font-size: 14px;
-    text-align: center;
-}
-
-.nav-item.active {
-    color: #818CF8;
-}
-
-.nav-icon {
-    font-size: 26px;
-    display: block;
-}
-
-/* TABS */
-.tab-content { display: none; }
-.tab-content.active { display: block; }
-</style>
+        input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #334155; background: #0F172A; color: white; margin-top: 10px; }
+    </style>
 </head>
-
 <body>
 
-<header>
-    <div>
-        <div class="balance-label">MY RICHES 💸</div>
-        <div class="balance-amount"><span id="balance">0</span></div>
+    <header id="main-header">
+        <div class="balance-container">
+            <span class="balance-label">MY RICHES 💸</span>
+            <div class="balance-amount"><span id="user-balance">0</span></div>
+        </div>
+        <img src="https://www.icegif.com/wp-content/uploads/money-wings-icegif-1.gif" alt="Cash" class="header-image">
+    </header>
+
+    <div class="content-area">
+        
+        <div id="earn" class="tab-content active">
+            <div class="section-tag">⚡ ENERGY SURGE</div>
+            <div class="card" style="border-left: 6px solid #10B981;">
+                <h3>Daily Check-in 🎁</h3>
+                <p id="checkin-status" style="font-size: 12px; color: #94A3B8; margin-top: 5px;">Claim your 500 coins for today!</p>
+                <button id="daily-btn" class="btn btn-green" style="margin-top:12px;" onclick="collectDaily()">CLAIM NOW</button>
+            </div>
+
+            <div class="section-tag">📺 VIDEOS & LINKS</div>
+            <div class="card"><button class="btn btn-blue">WATCH ADSGRAM ▶️</button></div>
+            
+            <div class="section-tag">💎 JACKPOT</div>
+            <div class="card premium-card">
+                <h2 style="color:#F59E0B; text-align:center;">PREMIUM OFFERWALL</h2>
+                <button class="btn btn-gold" style="margin-top:15px;">START MISSION 🚀</button>
+            </div>
+
+            <div class="section-tag">🎯 SMART LINKS</div>
+            <div class="card">
+                <h3>Pro Clicker (Monetag)</h3>
+                <button class="btn btn-pink" style="margin-top:10px;">CLICK HERE 🖱️</button>
+            </div>
+        </div>
+
+        <div id="team" class="tab-content">
+            <div class="section-tag">👥 TEAM</div>
+            <div class="card">
+                <input type="text" id="ref-link" value="https://t.me/YourBot?start=user998" readonly>
+                <button class="btn btn-blue" style="margin-top:15px;" onclick="copyRef()">COPY LINK</button>
+            </div>
+        </div>
+
+        <div id="cash" class="tab-content">
+            <div class="section-tag">💰 CASH OUT</div>
+            <div class="card">
+                <h1 style="color:#10B981; text-align:center;">$0.00</h1>
+                <p style="color:red; font-size:12px; text-align:center; margin-top:10px;">Min Withdraw: $100 (USDT)</p>
+                <button class="btn btn-green" style="margin-top:20px;">WITHDRAW</button>
+            </div>
+        </div>
+
+        <div id="me" class="tab-content">
+            <div class="section-tag">👤 ME</div>
+            <div class="card" style="text-align:center;">
+                <h3>User ID: #889210</h3>
+                <p>Level: Elite 💎</p>
+            </div>
+        </div>
     </div>
 
-    <!-- 💸 ANIMATED MONEY -->
-    <div class="money-wrapper">
-        <span class="money-emoji">💸</span>
-        <span class="wing left-wing">🪽</span>
-        <span class="wing right-wing">🪽</span>
-    </div>
-</header>
+    <nav>
+        <div class="nav-item active" onclick="switchTab('earn', this)"><span class="nav-icon">🏠</span>EARN</div>
+        <div class="nav-item" onclick="switchTab('team', this)"><span class="nav-icon">👥</span>TEAM</div>
+        <div class="nav-item" onclick="switchTab('cash', this)"><span class="nav-icon">💰</span>CASH</div>
+        <div class="nav-item" onclick="switchTab('me', this)"><span class="nav-icon">👤</span>ME</div>
+    </nav>
 
-<div class="content-area">
+    <script>
+        let balance = parseInt(localStorage.getItem('userBalance')) || 0;
+        document.getElementById('user-balance').innerText = balance.toLocaleString();
 
-<div id="earn" class="tab-content active">
-    <div class="card">
-        <h3>Daily Check-in 🎁</h3>
-        <button class="btn btn-green" onclick="earn(500)">CLAIM 500</button>
-    </div>
+        function collectDaily() {
+            const lastClaim = localStorage.getItem('lastClaimDate');
+            const today = new Date().toDateString();
 
-    <div class="card">
-        <button class="btn btn-blue" onclick="earn(100)">WATCH ADS ▶️</button>
-    </div>
+            if (lastClaim === today) {
+                alert("Bhai, aaj ka claim ho chuka hai! Kal wapas aana. 😊");
+                document.getElementById('daily-btn').disabled = true;
+                document.getElementById('daily-btn').innerText = "ALREADY CLAIMED";
+                return;
+            }
 
-    <div class="card">
-        <button class="btn btn-pink" onclick="earn(200)">SMART LINK 🔗</button>
-    </div>
-</div>
+            balance += 500;
+            localStorage.setItem('userBalance', balance);
+            localStorage.setItem('lastClaimDate', today);
+            document.getElementById('user-balance').innerText = balance.toLocaleString();
+            alert("Mubarak ho! 500 Coins mil gaye. 🎉");
+            checkStatus();
+        }
 
-<div id="team" class="tab-content">
-    <div class="card">
-        <input value="https://t.me/yourbot" readonly>
-    </div>
-</div>
+        function checkStatus() {
+            const lastClaim = localStorage.getItem('lastClaimDate');
+            if (lastClaim === new Date().toDateString()) {
+                document.getElementById('daily-btn').style.opacity = "0.5";
+                document.getElementById('daily-btn').innerText = "CLAIMED TODAY";
+                document.getElementById('checkin-status').innerText = "Come back tomorrow for more!";
+            }
+        }
 
-<div id="cash" class="tab-content">
-    <div class="card">
-        <h2>$0.00</h2>
-    </div>
-</div>
+        function switchTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+            window.scrollTo(0, 0); 
+        }
 
-</div>
+        function copyRef() {
+            const input = document.getElementById("ref-link");
+            input.select();
+            navigator.clipboard.writeText(input.value);
+            alert("Referral Link Copied!");
+        }
 
-<nav>
-    <div class="nav-item active" onclick="tab('earn', this)">
-        <span class="nav-icon">🏠</span>EARN
-    </div>
-    <div class="nav-item" onclick="tab('team', this)">
-        <span class="nav-icon">👥</span>TEAM
-    </div>
-    <div class="nav-item" onclick="tab('cash', this)">
-        <span class="nav-icon">💰</span>CASH
-    </div>
-</nav>
-
-<script>
-let balance = 0;
-
-function earn(amount){
-    balance += amount;
-    document.getElementById("balance").innerText = balance;
-}
-
-function tab(id, el){
-    document.querySelectorAll(".tab-content").forEach(t=>t.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-
-    document.querySelectorAll(".nav-item").forEach(n=>n.classList.remove("active"));
-    el.classList.add("active");
-}
-</script>
-
+        window.onload = checkStatus;
+    </script>
 </body>
-</html>
+    </html>
+    
