@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Global Reward Pro - High Energy</title>
+    
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 
@@ -138,7 +141,7 @@
             <div class="card" style="border-top: 3px solid #3B82F6;">
                 <h3 style="font-size: 20px; margin-bottom: 10px;">Video Rewards</h3>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-weight: 800; color: #3B82F6;"><span id="ads-count">0</span>/30 DONE 🔥</span>
+                    <span style="font-weight: 800; color: #3B82F6;"><span id="ads-count">0</span>/50 DONE 🔥</span>
                     <button class="btn btn-blue" style="width: auto; padding: 10px 25px;" onclick="showAdsgram()">PLAY ▶️</button>
                 </div>
             </div>
@@ -185,15 +188,15 @@
                     <option>USDT (BEP20)</option>
                 </select>
                 <input type="text" class="input-box" placeholder="Enter Wallet Address">
-                <button class="btn btn-green" style="margin-top: 10px;" onclick="showToast('🚫 Minimum balance required!')">WITHDRAW</button>
+                <button class="btn btn-green" style="margin-top: 10px;" onclick="checkAndTriggerPopunder(); showToast('🚫 Minimum balance required!')">WITHDRAW</button>
             </div>
         </div>
 
         <div id="me" class="tab-content">
             <div class="section-tag">👤 MY ACCOUNT</div>
             <div class="card" style="text-align: center;">
-                <div style="font-size: 60px;">🤴</div>
-                <h2>User #889210</h2>
+                <div id="user-photo" style="font-size: 60px;">🤴</div>
+                <h2 id="user-name">User #889210</h2>
                 <p style="color: #10B981; font-weight: 800;">Status: Verified ✅</p>
             </div>
         </div>
@@ -208,27 +211,50 @@
     </nav>
 
     <script>
+        // --- ⚙️ SMART CONFIGURATION ---
+        const MONETAG_DIRECT_LINK = "YOUR_MONETAG_DIRECT_LINK_HERE"; 
+        const POPUNDER_COOLDOWN = 120000; // 2 Minutes
+        const TOTAL_DAILY_LIMIT = 50; // Daily Max Ads
+        const SESSION_LIMIT = 15; // Ads per session
+        const SESSION_COOLDOWN = 14400000; // 4 Hours (14,400,000 ms)
+        const AD_INTERNAL_WAIT = 10000; // 10 Seconds Wait between Ads
+
         const REWARDS = {
-            daily: 5,
-            video: 2,
-            hotOffer: 4.375,
-            offerwall: 100,
-            locker: 100
+            daily: 5, video: 2, hotOffer: 4.375, offerwall: 100, locker: 100
         };
 
+        // --- 💾 STATE MANAGEMENT ---
         let balance = parseFloat(localStorage.getItem('balance') || '0');
-        let adsToday = parseInt(localStorage.getItem('adsToday') || '0');
+        let totalAdsDone = parseInt(localStorage.getItem('adsToday') || '0');
         let offersToday = parseInt(localStorage.getItem('offersToday') || '0');
+        
+        let adsInCurrentSession = parseInt(localStorage.getItem('adsInSession') || '0');
+        let lastSessionTime = parseInt(localStorage.getItem('lastSessionTime') || '0');
+        let lastAdViewTime = parseInt(localStorage.getItem('lastAdViewTime') || '0');
+        let lastPopunderTime = localStorage.getItem('lastPopunder') || 0;
 
+        // Daily Reset Logic
         const todayStr = new Date().toDateString();
         if(localStorage.getItem('currentDate') !== todayStr) {
-            adsToday = 0;
-            offersToday = 0;
+            totalAdsDone = 0; offersToday = 0; adsInCurrentSession = 0;
             localStorage.setItem('adsToday', 0);
             localStorage.setItem('offersToday', 0);
+            localStorage.setItem('adsInSession', 0);
             localStorage.setItem('currentDate', todayStr);
         }
 
+        // --- 🌐 GLOBAL POPUNDER LOGIC (2-Min Safety Check) ---
+        function checkAndTriggerPopunder() {
+            let now = Date.now();
+            if (now - lastPopunderTime > POPUNDER_COOLDOWN) {
+                window.open(MONETAG_DIRECT_LINK, '_blank');
+                lastPopunderTime = now;
+                localStorage.setItem('lastPopunder', now);
+                console.log("Popunder safely triggered.");
+            }
+        }
+
+        // --- 🖥️ UI UPDATES ---
         updateUI();
         updateCheckinUI();
 
@@ -236,13 +262,13 @@
             let dollarDisplay = (balance / 100).toFixed(2); 
             document.getElementById('user-balance').innerText = dollarDisplay;
             document.getElementById('withdraw-balance').innerText = dollarDisplay;
-            document.getElementById('ads-count').innerText = adsToday;
+            document.getElementById('ads-count').innerText = totalAdsDone; // Linked to totalAdsDone
             document.getElementById('offers-count').innerText = offersToday;
         }
 
         function saveAndRefresh() {
             localStorage.setItem('balance', balance);
-            localStorage.setItem('adsToday', adsToday);
+            localStorage.setItem('adsToday', totalAdsDone);
             localStorage.setItem('offersToday', offersToday);
             updateUI();
         }
@@ -254,7 +280,9 @@
             setTimeout(() => { toast.classList.remove("show"); }, 3000);
         }
 
+        // --- 🎮 BUTTON FUNCTIONS ---
         function switchTab(tabId, el) {
+            checkAndTriggerPopunder(); // Ad check on tab switch
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
@@ -263,6 +291,7 @@
         }
 
         function collectDaily() {
+            checkAndTriggerPopunder(); // Ad check on claim daily
             if(localStorage.getItem('lastClaim') === todayStr) {
                 showToast("🚫 Already claimed today!");
                 return;
@@ -283,18 +312,62 @@
             }
         }
 
+        // --- 📺 SMART ADSGRAM LOGIC ---
         function showAdsgram() {
-            if(adsToday < 30) {
-                adsToday++;
-                balance += REWARDS.video;
-                saveAndRefresh();
-                showToast("✅ Reward Added!");
-            } else {
-                showToast("🚫 Daily Limit Reached!");
+            checkAndTriggerPopunder(); // Popunder attempt before video logic
+            
+            let now = Date.now();
+
+            // 1. Check Total Daily Limit (50)
+            if (totalAdsDone >= TOTAL_DAILY_LIMIT) {
+                showToast("🚫 Daily limit 50/50 reached!");
+                return;
             }
+
+            // 2. Check Session Cooldown (15 Ads / 4 Hours Wait)
+            if (adsInCurrentSession >= SESSION_LIMIT) {
+                if (now - lastSessionTime < SESSION_COOLDOWN) {
+                    let remaining = SESSION_COOLDOWN - (now - lastSessionTime);
+                    let hours = Math.floor(remaining / (1000 * 60 * 60));
+                    let mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                    showToast(`⏳ Wait for next session: ${hours}h ${mins}m left`);
+                    return;
+                } else {
+                    // Start new session
+                    adsInCurrentSession = 0;
+                    localStorage.setItem('adsInSession', '0');
+                }
+            }
+
+            // 3. Check Internal Ad Wait (10 Seconds)
+            if (now - lastAdViewTime < AD_INTERNAL_WAIT) {
+                let waitLeft = Math.ceil((AD_INTERNAL_WAIT - (now - lastAdViewTime)) / 1000);
+                showToast(`⏳ Wait ${waitLeft}s for next ad...`);
+                return;
+            }
+
+            // 4. Award Ad (Here you would integrate Adsgram player success callback)
+            adsInCurrentSession++;
+            totalAdsDone++;
+            balance += REWARDS.video;
+            lastAdViewTime = now;
+
+            if (adsInCurrentSession === SESSION_LIMIT) {
+                lastSessionTime = now;
+                localStorage.setItem('lastSessionTime', lastSessionTime);
+            }
+
+            // Save all states
+            localStorage.setItem('adsInSession', adsInCurrentSession);
+            localStorage.setItem('adsToday', totalAdsDone);
+            localStorage.setItem('lastAdViewTime', lastAdViewTime);
+            
+            saveAndRefresh();
+            showToast("✅ Reward Added!");
         }
 
         function startMission() {
+            checkAndTriggerPopunder();
             if(offersToday < 8) {
                 showToast("📈 Offer Started! Complete to earn.");
                 window.open('YOUR_MONETAG_LINK', '_blank');
@@ -311,20 +384,44 @@
         }
 
         function unlockSurprise() {
+            checkAndTriggerPopunder();
             showToast("🚀 Opening Surprise Reward ($1)...");
             window.open('YOUR_OFFERWALL_LINK', '_blank');
         }
 
         function unlockLocker() {
+            checkAndTriggerPopunder();
             showToast("🔐 Opening Bonus Center ($1)...");
             window.open('YOUR_LOCKER_LINK', '_blank');
         }
 
         function copyLink() {
+            checkAndTriggerPopunder();
             const copyText = document.getElementById("ref-link");
             copyText.select();
             navigator.clipboard.writeText(copyText.value);
             showToast("📋 Link Copied!");
+        }
+
+        // --- 🔵 TELEGRAM MINI APP PRO FEATURE (Auto Username & Photo) ---
+        try {
+            const tg = window.Telegram.WebApp;
+            tg.expand(); // App ko full screen karne ke liye
+            
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+                
+                // Username set karega (agar username nahi hai to first name dikhayega)
+                let displayName = user.username ? '@' + user.username : user.first_name;
+                document.getElementById('user-name').innerText = displayName;
+
+                // Profile photo set karega (agar user ne lagai hui hai)
+                if (user.photo_url) {
+                    document.getElementById('user-photo').innerHTML = `<img src="${user.photo_url}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #10B981; margin-bottom: 5px;">`;
+                }
+            }
+        } catch(e) {
+            console.log("Telegram Web App not detected. Using default UI.");
         }
     </script>
 </body>
