@@ -8,11 +8,10 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
-
+        /* --- Fast Loading Fonts --- */
         * {
             margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -22,6 +21,19 @@
             display: flex; flex-direction: column;
             overflow-x: hidden; overflow-y: auto; 
         }
+
+        /* --- 🌀 LOADING SPINNER --- */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #0F172A; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 99999;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #1e293b;
+            border-top: 5px solid #6366F1; border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- Custom Toast --- */
         #toast {
@@ -77,7 +89,6 @@
         .tab-content.active { display: block; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- Tags Style --- */
         .section-tag { 
             font-size: 18px; 
             font-weight: 800; 
@@ -99,12 +110,29 @@
         .btn-purple { background: linear-gradient(90deg, #9333EA, #7E22CE); color: white; }
         .btn:active { transform: scale(0.96); }
 
+        /* --- 🎡 WHEEL STYLE --- */
+        .wheel-container {
+            display: flex; justify-content: center; align-items: center;
+            margin: 20px 0; position: relative;
+        }
+        .wheel-outer {
+            width: 150px; height: 150px; border-radius: 50%;
+            border: 8px solid #334155;
+            background: conic-gradient(#6366F1 0% 25%, #A855F7 25% 50%, #EC4899 50% 75%, #10B981 75% 100%);
+            transition: transform 3s cubic-bezier(0.1, 0, 0, 1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .wheel-pointer {
+            position: absolute; top: -10px; width: 0; height: 0;
+            border-left: 15px solid transparent; border-right: 15px solid transparent;
+            border-top: 25px solid white; z-index: 10;
+        }
+
         .input-box {
             width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #334155;
             background: #0F172A; color: white; margin: 10px 0; font-size: 14px;
         }
 
-        /* --- Navigation --- */
         nav {
             position: fixed; bottom: 0; width: 100%; background: #0B1120;
             display: flex; justify-content: space-around; padding: 15px 5px;
@@ -116,6 +144,11 @@
     </style>
 </head>
 <body>
+
+    <div id="loader">
+        <div class="spinner"></div>
+        <p style="margin-top: 15px; font-weight: 600; color: white;">🚀 Loading App...</p>
+    </div>
 
     <div id="toast">Message here</div>
 
@@ -146,25 +179,21 @@
                 </div>
             </div>
 
-            <div class="section-tag">🚀 PREMIUM TASK 🚀</div>
+            <div class="section-tag">🚀 PREMIUM REWARDS 🚀</div>
             <div class="card" style="border: 2px solid #F59E0B;">
-                <h2 style="color: #F59E0B; text-align: center; font-size: 24px;">SURPRISE REWARD🎁</h2>
-                <button class="btn btn-gold" style="margin-top:20px;" onclick="unlockSurprise()">UNLOCK $1 REWARD</button>
+                <h2 style="color: #F59E0B; text-align: center; font-size: 22px;">OFFERWALL & LOCKER</h2>
+                <p style="text-align: center; font-size: 12px; color: #94A3B8; margin-top: 5px;">Complete offers or surveys to unlock massive rewards!</p>
+                <button class="btn btn-gold" style="margin-top:20px;" onclick="openTaskWall()">COMPLETE TASK 📝</button>
             </div>
 
-            <div class="section-tag">🔐 EXCLUSIVE TASK 🔐</div>
+            <div class="section-tag">🎡 SPINNING WHEEL 🎡</div>
             <div class="card" style="border: 2px solid #A855F7;">
-                <h2 style="color: #A855F7; text-align: center; font-size: 24px;">BONUS CENTER🎉</h2>
-                <button class="btn btn-purple" style="margin-top:20px;" onclick="unlockLocker()">UNLOCK $1 REWARD</button>
-            </div>
-            
-            <div class="section-tag">📈 EARN MORE 📈</div>
-            <div class="card" style="border-bottom: 4px solid #EC4899;">
-                <h3 style="font-size: 22px;">HOT OFFERS🔥</h3>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
-                    <span style="font-weight: 800; color: #EC4899; font-size: 14px;"><span id="offers-count">0</span>/8 COMPLETED</span>
+                <h2 style="color: #A855F7; text-align: center; font-size: 22px;">TEST YOUR LUCK</h2>
+                <div class="wheel-container">
+                    <div class="wheel-pointer"></div>
+                    <div id="wheel" class="wheel-outer"></div>
                 </div>
-                <button class="btn btn-pink" style="margin-top:15px;" onclick="startMission()">START MISSION 🖱️</button>
+                <button id="spin-btn" class="btn btn-purple" onclick="startSpin()">SPIN & WIN NOW 💸</button>
             </div>
         </div>
 
@@ -172,7 +201,7 @@
             <div class="section-tag">👥 TEAM SQUAD</div>
             <div class="card">
                 <h3>Your Invite Link</h3>
-                <input type="text" id="ref-link" class="input-box" value="https://t.me/GlobalBot?start=user889" readonly>
+                <input type="text" id="ref-link" class="input-box" value="Loading link..." readonly>
                 <button class="btn btn-blue" onclick="copyLink()">COPY LINK 📋</button>
             </div>
         </div>
@@ -196,7 +225,7 @@
             <div class="section-tag">👤 MY ACCOUNT</div>
             <div class="card" style="text-align: center;">
                 <div id="user-photo" style="font-size: 60px;">🤴</div>
-                <h2 id="user-name">User #889210</h2>
+                <h2 id="user-name">Guest User</h2>
                 <p style="color: #10B981; font-weight: 800;">Status: Verified ✅</p>
             </div>
         </div>
@@ -211,50 +240,52 @@
     </nav>
 
     <script>
-        // --- ⚙️ SMART CONFIGURATION ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+            }, 1000);
+        });
+
+        // --- AD LINKS & SETTINGS ---
         const MONETAG_DIRECT_LINK = "YOUR_MONETAG_DIRECT_LINK_HERE"; 
-        const POPUNDER_COOLDOWN = 120000; // 2 Minutes
-        const TOTAL_DAILY_LIMIT = 50; // Daily Max Ads
-        const SESSION_LIMIT = 15; // Ads per session
-        const SESSION_COOLDOWN = 14400000; // 4 Hours (14,400,000 ms)
-        const AD_INTERNAL_WAIT = 10000; // 10 Seconds Wait between Ads
+        const TASK_WALL_LINK = "YOUR_OFFERWALL_OR_LOCKER_LINK_HERE"; 
+
+        const POPUNDER_COOLDOWN = 120000; // 2 minutes between popunders
+        const TOTAL_DAILY_LIMIT = 50;     // Max ads per day
+        const SESSION_LIMIT = 15;         // Ads per session
+        const SESSION_COOLDOWN = 14400000;// 4 hours wait between sessions
+        const AD_INTERNAL_WAIT = 10000;   // 10 seconds wait between 2 ads
 
         const REWARDS = {
-            daily: 5, video: 2, hotOffer: 4.375, offerwall: 100, locker: 100
+            daily: 5, video: 2, task: 100 
         };
 
-        // --- 💾 STATE MANAGEMENT ---
         let balance = parseFloat(localStorage.getItem('balance') || '0');
         let totalAdsDone = parseInt(localStorage.getItem('adsToday') || '0');
-        let offersToday = parseInt(localStorage.getItem('offersToday') || '0');
         
         let adsInCurrentSession = parseInt(localStorage.getItem('adsInSession') || '0');
         let lastSessionTime = parseInt(localStorage.getItem('lastSessionTime') || '0');
         let lastAdViewTime = parseInt(localStorage.getItem('lastAdViewTime') || '0');
         let lastPopunderTime = localStorage.getItem('lastPopunder') || 0;
 
-        // Daily Reset Logic
         const todayStr = new Date().toDateString();
         if(localStorage.getItem('currentDate') !== todayStr) {
-            totalAdsDone = 0; offersToday = 0; adsInCurrentSession = 0;
+            totalAdsDone = 0; adsInCurrentSession = 0;
             localStorage.setItem('adsToday', 0);
-            localStorage.setItem('offersToday', 0);
             localStorage.setItem('adsInSession', 0);
             localStorage.setItem('currentDate', todayStr);
         }
 
-        // --- 🌐 GLOBAL POPUNDER LOGIC (2-Min Safety Check) ---
+        // --- POPUNDER TRIGGER ---
         function checkAndTriggerPopunder() {
             let now = Date.now();
             if (now - lastPopunderTime > POPUNDER_COOLDOWN) {
                 window.open(MONETAG_DIRECT_LINK, '_blank');
                 lastPopunderTime = now;
                 localStorage.setItem('lastPopunder', now);
-                console.log("Popunder safely triggered.");
             }
         }
 
-        // --- 🖥️ UI UPDATES ---
         updateUI();
         updateCheckinUI();
 
@@ -262,14 +293,12 @@
             let dollarDisplay = (balance / 100).toFixed(2); 
             document.getElementById('user-balance').innerText = dollarDisplay;
             document.getElementById('withdraw-balance').innerText = dollarDisplay;
-            document.getElementById('ads-count').innerText = totalAdsDone; // Linked to totalAdsDone
-            document.getElementById('offers-count').innerText = offersToday;
+            document.getElementById('ads-count').innerText = totalAdsDone; 
         }
 
         function saveAndRefresh() {
             localStorage.setItem('balance', balance);
             localStorage.setItem('adsToday', totalAdsDone);
-            localStorage.setItem('offersToday', offersToday);
             updateUI();
         }
 
@@ -280,9 +309,8 @@
             setTimeout(() => { toast.classList.remove("show"); }, 3000);
         }
 
-        // --- 🎮 BUTTON FUNCTIONS ---
         function switchTab(tabId, el) {
-            checkAndTriggerPopunder(); // Ad check on tab switch
+            checkAndTriggerPopunder(); 
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
@@ -290,8 +318,9 @@
             window.scrollTo(0,0);
         }
 
+        // --- DAILY CHECK-IN ---
         function collectDaily() {
-            checkAndTriggerPopunder(); // Ad check on claim daily
+            checkAndTriggerPopunder(); // Popunder triggers here as requested
             if(localStorage.getItem('lastClaim') === todayStr) {
                 showToast("🚫 Already claimed today!");
                 return;
@@ -312,89 +341,102 @@
             }
         }
 
-        // --- 📺 SMART ADSGRAM LOGIC ---
+        // --- VIDEO ADS LOGIC (50 Limit, Sessions, Cooldown) ---
         function showAdsgram() {
-            checkAndTriggerPopunder(); // Popunder attempt before video logic
-            
+            // Yahan agar chahain toh popunder bhi laga sakte hain, par video ke sath zaroori nahi
             let now = Date.now();
-
-            // 1. Check Total Daily Limit (50)
+            
+            // Limit 1: Daily Limit (50)
             if (totalAdsDone >= TOTAL_DAILY_LIMIT) {
-                showToast("🚫 Daily limit 50/50 reached!");
+                showToast(`🚫 Daily limit ${TOTAL_DAILY_LIMIT}/${TOTAL_DAILY_LIMIT} reached!`);
                 return;
             }
-
-            // 2. Check Session Cooldown (15 Ads / 4 Hours Wait)
+            
+            // Limit 2: Session Limit & Cooldown
             if (adsInCurrentSession >= SESSION_LIMIT) {
                 if (now - lastSessionTime < SESSION_COOLDOWN) {
                     let remaining = SESSION_COOLDOWN - (now - lastSessionTime);
                     let hours = Math.floor(remaining / (1000 * 60 * 60));
                     let mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-                    showToast(`⏳ Wait for next session: ${hours}h ${mins}m left`);
+                    showToast(`⏳ Session ended. Wait ${hours}h ${mins}m`);
                     return;
                 } else {
-                    // Start new session
+                    // Cooldown over, start new session
                     adsInCurrentSession = 0;
                     localStorage.setItem('adsInSession', '0');
                 }
             }
-
-            // 3. Check Internal Ad Wait (10 Seconds)
+            
+            // Limit 3: Internal Cooldown between ads
             if (now - lastAdViewTime < AD_INTERNAL_WAIT) {
                 let waitLeft = Math.ceil((AD_INTERNAL_WAIT - (now - lastAdViewTime)) / 1000);
-                showToast(`⏳ Wait ${waitLeft}s for next ad...`);
+                showToast(`⏳ Next ad ready in ${waitLeft}s...`);
                 return;
             }
 
-            // 4. Award Ad (Here you would integrate Adsgram player success callback)
+            // SIMULATING AD VIEW SUCCESS (Replace with real AdsGram logic when integrating)
             adsInCurrentSession++;
             totalAdsDone++;
             balance += REWARDS.video;
             lastAdViewTime = now;
-
+            
+            // Check if this ad finished the session
             if (adsInCurrentSession === SESSION_LIMIT) {
                 lastSessionTime = now;
                 localStorage.setItem('lastSessionTime', lastSessionTime);
+                showToast("⏳ Session completed! Cooldown started.");
+            } else {
+                showToast("✅ Ad Watched, Reward Added!");
             }
 
-            // Save all states
             localStorage.setItem('adsInSession', adsInCurrentSession);
             localStorage.setItem('adsToday', totalAdsDone);
             localStorage.setItem('lastAdViewTime', lastAdViewTime);
-            
             saveAndRefresh();
-            showToast("✅ Reward Added!");
         }
 
-        function startMission() {
+        // --- PREMIUM TASKS (COMBINED) ---
+        function openTaskWall() {
             checkAndTriggerPopunder();
-            if(offersToday < 8) {
-                showToast("📈 Offer Started! Complete to earn.");
-                window.open('YOUR_MONETAG_LINK', '_blank');
-                
-                setTimeout(() => {
-                    offersToday++;
-                    balance += REWARDS.hotOffer;
-                    saveAndRefresh();
-                    showToast("✅ Offer Completed!");
-                }, 30000);
-            } else {
-                showToast("🚫 All Hot Offers Completed for Today!");
+            showToast("🚀 Opening Task Wall...");
+            window.open(TASK_WALL_LINK, '_blank');
+        }
+
+        // --- 🎡 SPINNING WHEEL ---
+        let isSpinning = false;
+        function startSpin() {
+            if (isSpinning) return;
+            checkAndTriggerPopunder(); // Popunder triggers on spin
+
+            let lastSpin = localStorage.getItem('lastSpinTime') || 0;
+            let now = Date.now();
+            if (now - lastSpin < 3600000) { // 1 Hour cooldown for spin
+                let left = Math.ceil((3600000 - (now - lastSpin)) / 60000);
+                showToast(`⏳ Wait ${left} mins for next spin!`);
+                return;
             }
+
+            isSpinning = true;
+            const wheel = document.getElementById('wheel');
+            const randomDeg = Math.floor(Math.random() * 360) + 1800; 
+            wheel.style.transform = `rotate(${randomDeg}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                let reward = (Math.random() * (10 - 1) + 1).toFixed(0); 
+                balance += parseInt(reward);
+                localStorage.setItem('lastSpinTime', Date.now());
+                saveAndRefresh();
+                showToast(`🎉 You won $0.0${reward}!`);
+                
+                // Reset wheel position instantly for next time
+                wheel.style.transition = "none";
+                wheel.style.transform = `rotate(${randomDeg % 360}deg)`;
+                setTimeout(()=> { wheel.style.transition = "transform 3s cubic-bezier(0.1, 0, 0, 1)"; }, 100);
+            }, 3000);
         }
 
-        function unlockSurprise() {
-            checkAndTriggerPopunder();
-            showToast("🚀 Opening Surprise Reward ($1)...");
-            window.open('YOUR_OFFERWALL_LINK', '_blank');
-        }
-
-        function unlockLocker() {
-            checkAndTriggerPopunder();
-            showToast("🔐 Opening Bonus Center ($1)...");
-            window.open('YOUR_LOCKER_LINK', '_blank');
-        }
-
+        // --- OTHERS ---
         function copyLink() {
             checkAndTriggerPopunder();
             const copyText = document.getElementById("ref-link");
@@ -403,27 +445,15 @@
             showToast("📋 Link Copied!");
         }
 
-        // --- 🔵 TELEGRAM MINI APP PRO FEATURE (Auto Username & Photo) ---
+        // --- TELEGRAM INIT ---
         try {
             const tg = window.Telegram.WebApp;
-            tg.expand(); // App ko full screen karne ke liye
-            
+            tg.expand(); 
+            const MY_BOT_USERNAME = "Earnstream693_bot"; 
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const user = tg.initDataUnsafe.user;
-                
-                // Username set karega (agar username nahi hai to first name dikhayega)
                 let displayName = user.username ? '@' + user.username : user.first_name;
                 document.getElementById('user-name').innerText = displayName;
-
-                // Profile photo set karega (agar user ne lagai hui hai)
                 if (user.photo_url) {
-                    document.getElementById('user-photo').innerHTML = `<img src="${user.photo_url}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #10B981; margin-bottom: 5px;">`;
-                }
-            }
-        } catch(e) {
-            console.log("Telegram Web App not detected. Using default UI.");
-        }
-    </script>
-</body>
-    </html>
-    
+                    document.getElementById('user-photo').innerHTML = `<img src="${user.photo_url}" style="width: 80px; height: 80px; border-radius: 
+                    
