@@ -8,10 +8,11 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
-        /* --- Fast Loading Fonts --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
         * {
             margin: 0; padding: 0; box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Poppins', sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -21,19 +22,6 @@
             display: flex; flex-direction: column;
             overflow-x: hidden; overflow-y: auto; 
         }
-
-        /* --- 🌀 LOADING SPINNER --- */
-        #loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0F172A; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 99999;
-        }
-        .spinner {
-            width: 50px; height: 50px; border: 5px solid #1e293b;
-            border-top: 5px solid #6366F1; border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- Custom Toast --- */
         #toast {
@@ -89,6 +77,7 @@
         .tab-content.active { display: block; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* --- Tags Style --- */
         .section-tag { 
             font-size: 18px; 
             font-weight: 800; 
@@ -127,11 +116,6 @@
     </style>
 </head>
 <body>
-
-    <div id="loader">
-        <div class="spinner"></div>
-        <p style="margin-top: 15px; font-weight: 600; color: white;">🚀 Loading App...</p>
-    </div>
 
     <div id="toast">Message here</div>
 
@@ -188,7 +172,7 @@
             <div class="section-tag">👥 TEAM SQUAD</div>
             <div class="card">
                 <h3>Your Invite Link</h3>
-                <input type="text" id="ref-link" class="input-box" value="Loading link..." readonly>
+                <input type="text" id="ref-link" class="input-box" value="https://t.me/GlobalBot?start=user889" readonly>
                 <button class="btn btn-blue" onclick="copyLink()">COPY LINK 📋</button>
             </div>
         </div>
@@ -212,7 +196,7 @@
             <div class="section-tag">👤 MY ACCOUNT</div>
             <div class="card" style="text-align: center;">
                 <div id="user-photo" style="font-size: 60px;">🤴</div>
-                <h2 id="user-name">Guest User</h2>
+                <h2 id="user-name">User #889210</h2>
                 <p style="color: #10B981; font-weight: 800;">Status: Verified ✅</p>
             </div>
         </div>
@@ -227,25 +211,19 @@
     </nav>
 
     <script>
-        // --- 🌀 LOADER LOGIC ---
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loader').style.display = 'none';
-            }, 1000);
-        });
-
         // --- ⚙️ SMART CONFIGURATION ---
         const MONETAG_DIRECT_LINK = "YOUR_MONETAG_DIRECT_LINK_HERE"; 
-        const POPUNDER_COOLDOWN = 120000; 
-        const TOTAL_DAILY_LIMIT = 50; 
-        const SESSION_LIMIT = 15; 
-        const SESSION_COOLDOWN = 14400000; 
-        const AD_INTERNAL_WAIT = 10000; 
+        const POPUNDER_COOLDOWN = 120000; // 2 Minutes
+        const TOTAL_DAILY_LIMIT = 50; // Daily Max Ads
+        const SESSION_LIMIT = 15; // Ads per session
+        const SESSION_COOLDOWN = 14400000; // 4 Hours (14,400,000 ms)
+        const AD_INTERNAL_WAIT = 10000; // 10 Seconds Wait between Ads
 
         const REWARDS = {
             daily: 5, video: 2, hotOffer: 4.375, offerwall: 100, locker: 100
         };
 
+        // --- 💾 STATE MANAGEMENT ---
         let balance = parseFloat(localStorage.getItem('balance') || '0');
         let totalAdsDone = parseInt(localStorage.getItem('adsToday') || '0');
         let offersToday = parseInt(localStorage.getItem('offersToday') || '0');
@@ -255,6 +233,7 @@
         let lastAdViewTime = parseInt(localStorage.getItem('lastAdViewTime') || '0');
         let lastPopunderTime = localStorage.getItem('lastPopunder') || 0;
 
+        // Daily Reset Logic
         const todayStr = new Date().toDateString();
         if(localStorage.getItem('currentDate') !== todayStr) {
             totalAdsDone = 0; offersToday = 0; adsInCurrentSession = 0;
@@ -264,15 +243,18 @@
             localStorage.setItem('currentDate', todayStr);
         }
 
+        // --- 🌐 GLOBAL POPUNDER LOGIC (2-Min Safety Check) ---
         function checkAndTriggerPopunder() {
             let now = Date.now();
             if (now - lastPopunderTime > POPUNDER_COOLDOWN) {
                 window.open(MONETAG_DIRECT_LINK, '_blank');
                 lastPopunderTime = now;
                 localStorage.setItem('lastPopunder', now);
+                console.log("Popunder safely triggered.");
             }
         }
 
+        // --- 🖥️ UI UPDATES ---
         updateUI();
         updateCheckinUI();
 
@@ -280,7 +262,7 @@
             let dollarDisplay = (balance / 100).toFixed(2); 
             document.getElementById('user-balance').innerText = dollarDisplay;
             document.getElementById('withdraw-balance').innerText = dollarDisplay;
-            document.getElementById('ads-count').innerText = totalAdsDone; 
+            document.getElementById('ads-count').innerText = totalAdsDone; // Linked to totalAdsDone
             document.getElementById('offers-count').innerText = offersToday;
         }
 
@@ -298,8 +280,9 @@
             setTimeout(() => { toast.classList.remove("show"); }, 3000);
         }
 
+        // --- 🎮 BUTTON FUNCTIONS ---
         function switchTab(tabId, el) {
-            checkAndTriggerPopunder(); 
+            checkAndTriggerPopunder(); // Ad check on tab switch
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
@@ -308,7 +291,7 @@
         }
 
         function collectDaily() {
-            checkAndTriggerPopunder(); 
+            checkAndTriggerPopunder(); // Ad check on claim daily
             if(localStorage.getItem('lastClaim') === todayStr) {
                 showToast("🚫 Already claimed today!");
                 return;
@@ -329,13 +312,19 @@
             }
         }
 
+        // --- 📺 SMART ADSGRAM LOGIC ---
         function showAdsgram() {
-            checkAndTriggerPopunder(); 
+            checkAndTriggerPopunder(); // Popunder attempt before video logic
+            
             let now = Date.now();
+
+            // 1. Check Total Daily Limit (50)
             if (totalAdsDone >= TOTAL_DAILY_LIMIT) {
                 showToast("🚫 Daily limit 50/50 reached!");
                 return;
             }
+
+            // 2. Check Session Cooldown (15 Ads / 4 Hours Wait)
             if (adsInCurrentSession >= SESSION_LIMIT) {
                 if (now - lastSessionTime < SESSION_COOLDOWN) {
                     let remaining = SESSION_COOLDOWN - (now - lastSessionTime);
@@ -344,26 +333,35 @@
                     showToast(`⏳ Wait for next session: ${hours}h ${mins}m left`);
                     return;
                 } else {
+                    // Start new session
                     adsInCurrentSession = 0;
                     localStorage.setItem('adsInSession', '0');
                 }
             }
+
+            // 3. Check Internal Ad Wait (10 Seconds)
             if (now - lastAdViewTime < AD_INTERNAL_WAIT) {
                 let waitLeft = Math.ceil((AD_INTERNAL_WAIT - (now - lastAdViewTime)) / 1000);
                 showToast(`⏳ Wait ${waitLeft}s for next ad...`);
                 return;
             }
+
+            // 4. Award Ad (Here you would integrate Adsgram player success callback)
             adsInCurrentSession++;
             totalAdsDone++;
             balance += REWARDS.video;
             lastAdViewTime = now;
+
             if (adsInCurrentSession === SESSION_LIMIT) {
                 lastSessionTime = now;
                 localStorage.setItem('lastSessionTime', lastSessionTime);
             }
+
+            // Save all states
             localStorage.setItem('adsInSession', adsInCurrentSession);
             localStorage.setItem('adsToday', totalAdsDone);
             localStorage.setItem('lastAdViewTime', lastAdViewTime);
+            
             saveAndRefresh();
             showToast("✅ Reward Added!");
         }
@@ -371,8 +369,9 @@
         function startMission() {
             checkAndTriggerPopunder();
             if(offersToday < 8) {
-                showToast("📈 Offer Started!");
+                showToast("📈 Offer Started! Complete to earn.");
                 window.open('YOUR_MONETAG_LINK', '_blank');
+                
                 setTimeout(() => {
                     offersToday++;
                     balance += REWARDS.hotOffer;
@@ -380,19 +379,19 @@
                     showToast("✅ Offer Completed!");
                 }, 30000);
             } else {
-                showToast("🚫 All Hot Offers Completed!");
+                showToast("🚫 All Hot Offers Completed for Today!");
             }
         }
 
         function unlockSurprise() {
             checkAndTriggerPopunder();
-            showToast("🚀 Opening Surprise Reward...");
+            showToast("🚀 Opening Surprise Reward ($1)...");
             window.open('YOUR_OFFERWALL_LINK', '_blank');
         }
 
         function unlockLocker() {
             checkAndTriggerPopunder();
-            showToast("🔐 Opening Bonus Center...");
+            showToast("🔐 Opening Bonus Center ($1)...");
             window.open('YOUR_LOCKER_LINK', '_blank');
         }
 
@@ -404,33 +403,25 @@
             showToast("📋 Link Copied!");
         }
 
-        // --- 🔵 TELEGRAM FEATURE (Bot Username: Earnstream693_bot) ---
+        // --- 🔵 TELEGRAM MINI APP PRO FEATURE (Auto Username & Photo) ---
         try {
             const tg = window.Telegram.WebApp;
-            tg.expand(); 
+            tg.expand(); // App ko full screen karne ke liye
             
-            // Fixed Bot Username
-            const MY_BOT_USERNAME = "Earnstream693_bot"; 
-
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const user = tg.initDataUnsafe.user;
                 
-                // Name & Photo set karega
+                // Username set karega (agar username nahi hai to first name dikhayega)
                 let displayName = user.username ? '@' + user.username : user.first_name;
                 document.getElementById('user-name').innerText = displayName;
 
+                // Profile photo set karega (agar user ne lagai hui hai)
                 if (user.photo_url) {
                     document.getElementById('user-photo').innerHTML = `<img src="${user.photo_url}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #10B981; margin-bottom: 5px;">`;
                 }
-
-                // Invite Link Generation
-                const inviteURL = `https://t.me/${MY_BOT_USERNAME}?start=ref${user.id}`;
-                document.getElementById('ref-link').value = inviteURL;
-            } else {
-                document.getElementById('ref-link').value = `https://t.me/${MY_BOT_USERNAME}?start=test`;
             }
         } catch(e) {
-            console.log("Error loading Telegram data");
+            console.log("Telegram Web App not detected. Using default UI.");
         }
     </script>
 </body>
