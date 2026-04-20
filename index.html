@@ -48,7 +48,7 @@
 
         #toast.show { visibility: visible; opacity: 1; bottom: 140px; }
 
-        /* --- Header & Rocket Animation --- */
+        /* --- Header --- */
         header {
             background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
             padding: 25px 20px;
@@ -69,7 +69,7 @@
             filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3));
         }
 
-        .balance-label { font-size: 13px; font-weight: 800; opacity: 0.9; letter-spacing: 1px; }
+        .balance-label { font-size: 14px; font-weight: 800; opacity: 0.9; letter-spacing: 1px; text-transform: uppercase; color: #fbbf24;}
         .balance-amount { font-size: 34px; font-weight: 800; }
 
         .content-area { flex: 1; padding: 20px; padding-bottom: 150px; }
@@ -90,36 +90,53 @@
         
         .btn {
             width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 16px;
-            font-weight: 800; cursor: pointer; transition: 0.2s; display: block; text-align: center; text-decoration: none;
+            font-weight: 800; cursor: pointer; transition: transform 0.1s, filter 0.2s; display: block; text-align: center;
         }
         .btn-green { background: #10B981; color: white; }
         .btn-blue { background: #3B82F6; color: white; }
         .btn-pink { background: #EC4899; color: white; }
         .btn-gold { background: linear-gradient(90deg, #F59E0B, #D97706); color: white; }
         .btn-purple { background: linear-gradient(90deg, #9333EA, #7E22CE); color: white; }
-        .btn:active { transform: scale(0.96); }
+        .btn:active { transform: scale(0.94); filter: brightness(0.8); }
 
-        /* --- 🎡 WHEEL CSS --- */
+        /* --- 🎡 NEW WHEEL CSS --- */
         .wheel-container {
             display: flex; justify-content: center; align-items: center;
-            margin: 20px 0; position: relative;
+            margin: 20px 0 30px 0; position: relative;
         }
         .wheel-outer {
-            width: 150px; height: 150px; border-radius: 50%;
-            border: 8px solid #334155;
-            background: conic-gradient(#6366F1 0% 25%, #A855F7 25% 50%, #EC4899 50% 75%, #10B981 75% 100%);
-            transition: transform 3s cubic-bezier(0.1, 0, 0, 1);
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            width: 180px; height: 180px; border-radius: 50%;
+            border: 8px solid #F59E0B;
+            /* Naya 6-color segments wala wheel */
+            background: conic-gradient(
+                #EF4444 0deg 60deg, 
+                #3B82F6 60deg 120deg, 
+                #10B981 120deg 180deg, 
+                #F59E0B 180deg 240deg, 
+                #8B5CF6 240deg 300deg, 
+                #EC4899 300deg 360deg
+            );
+            transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5), inset 0 0 15px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        /* Wheel ke darmiyan wala goal daira */
+        .wheel-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 40px; height: 40px; background: #1E293B; 
+            border: 4px solid #ffffff; border-radius: 50%; z-index: 5;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
         .wheel-pointer {
-            position: absolute; top: -10px; width: 0; height: 0;
+            position: absolute; top: -15px; width: 0; height: 0;
             border-left: 15px solid transparent; border-right: 15px solid transparent;
-            border-top: 25px solid white; z-index: 10;
+            border-top: 35px solid #ffffff; z-index: 10;
+            filter: drop-shadow(0 4px 5px rgba(0,0,0,0.5));
         }
 
         .input-box {
             width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #334155;
-            background: #0F172A; color: white; margin: 10px 0; font-size: 14px;
+            background: #0F172A; color: white; margin: 10px 0; font-size: 14px; outline: none;
         }
 
         nav {
@@ -127,9 +144,10 @@
             display: flex; justify-content: space-around; padding: 15px 5px;
             border-top: 1px solid #1E293B; height: 115px; align-items: center; z-index: 1000;
         }
-        .nav-item { color: #64748B; font-size: 14px; font-weight: 800; text-align: center; flex: 1; cursor: pointer; }
+        .nav-item { color: #64748B; font-size: 14px; font-weight: 800; text-align: center; flex: 1; cursor: pointer; transition: color 0.3s;}
         .nav-item.active { color: #818CF8; }
-        .nav-icon { font-size: 34px; display: block; margin-bottom: 4px; }
+        .nav-icon { font-size: 34px; display: block; margin-bottom: 4px; transition: transform 0.3s;}
+        .nav-item.active .nav-icon { transform: translateY(-5px); }
     </style>
 </head>
 <body>
@@ -138,7 +156,7 @@
 
     <header>
         <div class="balance-container">
-            <span class="balance-label">MY RICHES 💰</span>
+            <span class="balance-label" id="header-username">GUEST USER 👤</span>
             <div class="balance-amount">$<span id="user-balance">0.00</span></div>
         </div>
         <div class="rocket-box">🚀</div>
@@ -165,18 +183,22 @@
 
             <div class="section-tag">🚀 PREMIUM REWARDS 🚀</div>
             <div class="card" style="border: 2px solid #F59E0B;">
-                <h2 style="color: #F59E0B; text-align: center; font-size: 22px;">OFFERWALL & LOCKER</h2>
+                <h2 style="color: #F59E0B; text-align: center; font-size: 22px;">MEGA REWARD🎉✅</h2>
                 <p style="text-align: center; font-size: 12px; color: #94A3B8; margin-top: 5px;">Complete tasks to unlock big rewards!</p>
                 <button class="btn btn-gold" style="margin-top:20px;" onclick="openTaskWall()">COMPLETE TASK 📝</button>
             </div>
 
             <div class="section-tag">🎡 SPINNING WHEEL 🎡</div>
             <div class="card" style="border: 2px solid #A855F7;">
-                <h2 style="color: #A855F7; text-align: center; font-size: 22px;">TEST YOUR LUCK</h2>
+                <h2 style="color: #A855F7; text-align: center; font-size: 22px;">SPIN NOW🔥📈</h2>
+                
                 <div class="wheel-container">
                     <div class="wheel-pointer"></div>
-                    <div id="wheel" class="wheel-outer"></div>
+                    <div id="wheel" class="wheel-outer">
+                        <div class="wheel-center"></div>
+                    </div>
                 </div>
+                
                 <button id="spin-btn" class="btn btn-purple" onclick="startSpin()">SPIN & WIN NOW 💸</button>
             </div>
         </div>
@@ -226,7 +248,7 @@
         // --- CONFIGURATION ---
         const MONETAG_DIRECT_LINK = "YOUR_MONETAG_DIRECT_LINK_HERE"; 
         const TASK_WALL_LINK = "YOUR_OFFERWALL_OR_LOCKER_LINK_HERE"; 
-        const ADSGRAM_BLOCK_ID = "YOUR_ADSGRAM_BLOCK_ID_HERE"; // <--- Put Adsgram Block ID here
+        const ADSGRAM_BLOCK_ID = "YOUR_ADSGRAM_BLOCK_ID_HERE"; 
 
         const POPUNDER_COOLDOWN = 120000;
         const TOTAL_DAILY_LIMIT = 50;
@@ -236,8 +258,15 @@
 
         const REWARDS = { daily: 5, video: 2, task: 100 };
 
-        // Initialize Adsgram
-        const AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+        // Crash-proof Adsgram Initialization
+        let AdController = null;
+        try {
+            if(window.Adsgram) {
+                AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID });
+            }
+        } catch(e) {
+            console.log("Adsgram init skipped. Add correct Block ID.");
+        }
 
         let balance = parseFloat(localStorage.getItem('balance') || '0');
         let totalAdsDone = parseInt(localStorage.getItem('adsToday') || '0');
@@ -255,12 +284,16 @@
         }
 
         function checkAndTriggerPopunder() {
-            let now = Date.now();
-            if (now - lastPopunderTime > POPUNDER_COOLDOWN) {
-                window.open(MONETAG_DIRECT_LINK, '_blank');
-                lastPopunderTime = now;
-                localStorage.setItem('lastPopunder', now);
-            }
+            try {
+                let now = Date.now();
+                if (now - lastPopunderTime > POPUNDER_COOLDOWN) {
+                    if (MONETAG_DIRECT_LINK && MONETAG_DIRECT_LINK.includes("http")) {
+                        window.open(MONETAG_DIRECT_LINK, '_blank');
+                    }
+                    lastPopunderTime = now;
+                    localStorage.setItem('lastPopunder', now);
+                }
+            } catch(e) { console.log("Popunder prevented"); }
         }
 
         updateUI();
@@ -320,7 +353,11 @@
         function showAdsgram() {
             let now = Date.now();
 
-            // Safety Checks
+            if (!AdController) {
+                showToast("⚠️ Ads system connecting. Try again.");
+                return;
+            }
+
             if (totalAdsDone >= TOTAL_DAILY_LIMIT) { showToast("🚫 Daily limit reached!"); return; }
             if (adsInCurrentSession >= SESSION_LIMIT) {
                 if (now - lastSessionTime < SESSION_COOLDOWN) { showToast("⏳ Session Cooldown..."); return; }
@@ -328,9 +365,7 @@
             }
             if (now - lastAdViewTime < AD_INTERNAL_WAIT) { showToast("⏳ Wait for next ad..."); return; }
 
-            // Show Adsgram Player
             AdController.show().then((result) => {
-                // SUCCESS: User watched the whole video
                 adsInCurrentSession++;
                 totalAdsDone++;
                 balance += REWARDS.video;
@@ -348,27 +383,35 @@
                 showToast("✅ Reward Added!");
 
             }).catch((result) => {
-                // ERROR or CLOSED
-                console.log("Adsgram result:", result);
+                console.log("Adsgram error/skipped:", result);
                 showToast("⚠️ Ad not completed!");
             });
         }
 
         function openTaskWall() {
             checkAndTriggerPopunder();
-            window.open(TASK_WALL_LINK, '_blank');
+            if(TASK_WALL_LINK.includes("http")) {
+                window.open(TASK_WALL_LINK, '_blank');
+            } else {
+                showToast("⚠️ Task link not set yet!");
+            }
         }
 
         let isSpinning = false;
         function startSpin() {
             if (isSpinning) return;
             checkAndTriggerPopunder(); 
+            
             let lastSpin = localStorage.getItem('lastSpinTime') || 0;
             if (Date.now() - lastSpin < 3600000) { showToast("⏳ Wait 1 hour!"); return; }
 
             isSpinning = true;
             const wheel = document.getElementById('wheel');
+            // 5 chakar + random degree lagayi hai wheel ghoomne ke liye
             const randomDeg = Math.floor(Math.random() * 360) + 1800; 
+            
+            // Animation start
+            wheel.style.transition = "transform 4s cubic-bezier(0.1, 0.7, 0.1, 1)";
             wheel.style.transform = `rotate(${randomDeg}deg)`;
 
             setTimeout(() => {
@@ -378,10 +421,14 @@
                 localStorage.setItem('lastSpinTime', Date.now());
                 saveAndRefresh();
                 showToast(`🎉 Won $0.0${reward}!`);
-                wheel.style.transition = "none";
-                wheel.style.transform = `rotate(${randomDeg % 360}deg)`;
-                setTimeout(()=> { wheel.style.transition = "transform 3s cubic-bezier(0.1, 0, 0, 1)"; }, 100);
-            }, 3000);
+                
+                // Animation reset gracefully
+                setTimeout(() => {
+                    wheel.style.transition = "none";
+                    wheel.style.transform = `rotate(${randomDeg % 360}deg)`;
+                }, 500);
+
+            }, 4000); // 4 second ka ghoomne ka time
         }
 
         function copyLink() {
@@ -392,22 +439,25 @@
             showToast("📋 Link Copied!");
         }
 
+        // Telegram Logic
         try {
             const tg = window.Telegram.WebApp;
             tg.expand(); 
             const MY_BOT_USERNAME = "Earnstream693_bot"; 
             if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                 const user = tg.initDataUnsafe.user;
-                document.getElementById('user-name').innerText = user.username ? '@' + user.username : user.first_name;
+                const displayName = user.username ? '@' + user.username : user.first_name;
+                
+                // Set name in Profile Tab
+                document.getElementById('user-name').innerText = displayName;
+                
+                // Set name in Top Header (Replacing "MY RICHES")
+                document.getElementById('header-username').innerText = displayName.toUpperCase() + " 👤";
+
                 if (user.photo_url) {
                     document.getElementById('user-photo').innerHTML = `<img src="${user.photo_url}" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #10B981; margin-bottom: 5px;">`;
                 }
                 document.getElementById('ref-link').value = `https://t.me/${MY_BOT_USERNAME}?start=ref${user.id}`;
             } else {
-                document.getElementById('ref-link').value = `https://t.me/${MY_BOT_USERNAME}?start=test`;
-            }
-        } catch(e) { console.log("TG Error"); }
-    </script>
-</body>
-    </html>
-    
+                document.getEle
+                
