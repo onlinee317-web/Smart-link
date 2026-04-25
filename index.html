@@ -3,325 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Global Reward Pro - High Energy</title>
-    
+    <title>EarnStream Pro</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://adsgram.ai/sdk/v1/adsgram-sdk.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
-
-        * {
-            margin: 0; padding: 0; box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-            -webkit-tap-highlight-color: transparent;
+        :root {
+            --bg-color: #0F172A; /* Deep Dark */
+            --panel-bg: #1E293B; /* Slightly lighter dark */
+            --primary: #10B981;  /* Professional Green */
+            --primary-dark: #059669;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
         }
 
-        body {
-            background-color: #0F172A; color: #ffffff;
-            min-height: 100vh;
-            display: flex; flex-direction: column;
-            overflow-x: hidden; overflow-y: auto; 
-        }
-
-        /* --- Toast Notification --- */
-        #toast {
-            visibility: hidden; min-width: 280px; background: rgba(30, 41, 59, 0.95);
-            color: #fff; text-align: center; border-radius: 16px; padding: 16px;
-            position: fixed; z-index: 10000; left: 50%; bottom: 130px;
-            transform: translateX(-50%); font-size: 14px; font-weight: 700;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid #6366F1;
-            opacity: 0; transition: opacity 0.3s, bottom 0.3s;
-        }
-        #toast.show { visibility: visible; opacity: 1; bottom: 140px; }
-
-        /* --- Header --- */
-        header {
-            background: linear-gradient(135deg, #6366F1 0%, #A855F7 100%);
-            padding: 25px 20px; border-bottom-left-radius: 35px; border-bottom-right-radius: 35px;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4); position: sticky; top: 0; z-index: 1000;
-        }
-        @keyframes rocket-fly {
-            0%, 100% { transform: translateY(0) rotate(-5deg); }
-            50% { transform: translateY(-15px) rotate(5deg); }
-        }
-        .rocket-box { font-size: 50px; animation: rocket-fly 2s infinite ease-in-out; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.3)); }
-        .balance-label { font-size: 14px; font-weight: 800; opacity: 0.9; letter-spacing: 1px; text-transform: uppercase; color: #fbbf24;}
-        .balance-amount { font-size: 34px; font-weight: 800; }
-
-        .content-area { flex: 1; padding: 20px; padding-bottom: 150px; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; animation: slideUp 0.3s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .section-tag { font-size: 18px; font-weight: 800; color: #ffffff; text-transform: uppercase; margin: 25px 0 10px 0; }
-        .card { background: #1E293B; border-radius: 24px; padding: 20px; margin-bottom: 15px; border: 1px solid #334155; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        .btn {
-            width: 100%; padding: 18px; border-radius: 16px; border: none; font-size: 16px;
-            font-weight: 800; cursor: pointer; transition: transform 0.1s, filter 0.2s; display: block; text-align: center;
-        }
-        .btn-green { background: #10B981; color: white; }
-        .btn-blue { background: #3B82F6; color: white; }
-        .btn-gold { background: linear-gradient(90deg, #F59E0B, #D97706); color: white; }
-        .btn-purple { background: linear-gradient(90deg, #9333EA, #7E22CE); color: white; }
-        .btn:active { transform: scale(0.94); filter: brightness(0.8); }
-        .btn:disabled { background: #475569; color: #94A3B8; cursor: not-allowed; transform: none; filter: none; }
+        body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 80px; }
 
-        /* --- Wheel CSS --- */
-        .wheel-container { display: flex; justify-content: center; align-items: center; margin: 20px 0 30px 0; position: relative; }
-        .wheel-outer {
-            width: 180px; height: 180px; border-radius: 50%; border: 8px solid #F59E0B;
-            background: conic-gradient(#EF4444 0deg 60deg, #3B82F6 60deg 120deg, #10B981 120deg 180deg, #F59E0B 180deg 240deg, #8B5CF6 240deg 300deg, #EC4899 300deg 360deg);
-            transition: transform 4s cubic-bezier(0.1, 0.7, 0.1, 1); box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative;
-        }
-        .wheel-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #1E293B; border: 4px solid #ffffff; border-radius: 50%; z-index: 5; }
-        .wheel-pointer { position: absolute; top: -15px; width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid transparent; border-top: 35px solid #ffffff; z-index: 10; }
+        /* Header */
+        .header { background-color: var(--panel-bg); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--primary); }
+        .header h1 { font-size: 18px; color: var(--primary); }
+        .balance-badge { background: rgba(16, 185, 129, 0.2); padding: 5px 12px; border-radius: 20px; font-weight: bold; border: 1px solid var(--primary); }
 
-        .input-box { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #334155; background: #0F172A; color: white; margin: 10px 0; font-size: 14px; outline: none; }
+        /* Tabs Setup */
+        .tab-content { display: none; padding: 20px; animation: fadeIn 0.3s ease-in-out; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- Navbar --- */
-        nav {
-            position: fixed; bottom: 0; width: 100%; background: #0B1120; display: flex; justify-content: space-around;
-            padding: 15px 5px; border-top: 1px solid #1E293B; height: 115px; align-items: center; z-index: 1000;
-        }
-        .nav-item { color: #64748B; font-size: 11px; font-weight: 800; text-align: center; flex: 1; cursor: pointer; transition: color 0.3s;}
-        .nav-item.active { color: #818CF8; }
-        .nav-icon { font-size: 26px; display: block; margin-bottom: 4px; transition: transform 0.3s;}
-        .nav-item.active .nav-icon { transform: translateY(-5px); }
+        /* Cards & Panels */
+        .card { background: var(--panel-bg); border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        h2 { font-size: 16px; margin-bottom: 10px; color: var(--text-main); }
+        p { color: var(--text-muted); font-size: 14px; margin-bottom: 15px; line-height: 1.5; }
 
-        /* --- ADDED FOR STREAK UI --- */
-        .streak-day {
-            background: #0F172A; border: 1px solid #334155; border-radius: 12px; padding: 10px; width: 80px;
-            display: flex; flex-direction: column; align-items: center; position: relative;
-        }
-        .streak-day.completed { border-color: #10B981; opacity: 0.7; }
-        .streak-day.active { border-color: #F59E0B; box-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
-        .streak-day.locked { opacity: 0.5; filter: grayscale(100%); }
+        /* Buttons */
+        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-green { background: var(--primary); color: white; }
+        .btn-green:hover { background: var(--primary-dark); }
+        .btn-green:disabled { background: #334155; color: #64748B; cursor: not-allowed; }
+        
+        /* Stats Display */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .stat-box { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #334155; }
+        .stat-box span { display: block; font-size: 12px; color: var(--text-muted); }
+        .stat-box strong { font-size: 18px; color: var(--primary); }
+
+        /* Inputs */
+        input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #334155; background: #0F172A; color: white; margin-bottom: 15px; outline: none; }
+        input[type="text"]:focus { border-color: var(--primary); }
+
+        /* Bottom Navigation */
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--panel-bg); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #334155; z-index: 1000; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .nav-item.active { color: var(--primary); transform: scale(1.1); }
+        .nav-item span { font-size: 22px; margin-bottom: 4px; }
+
+        /* Toast Notification */
+        #toast { visibility: hidden; min-width: 250px; background-color: var(--primary); color: #fff; text-align: center; border-radius: 8px; padding: 12px; position: fixed; z-index: 9999; left: 50%; bottom: 80px; transform: translateX(-50%); font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
+        #toast.show { visibility: visible; opacity: 1; bottom: 100px; }
     </style>
 </head>
 <body>
 
-    <div id="toast">Message here</div>
-
-    <div id="daily-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(11,17,32,0.95); z-index:10001; flex-direction:column; justify-content:center; align-items:center;">
-        <div class="card" style="width:90%; max-width:400px; text-align:center;">
-            <h3 style="color:#10B981;">7-Day Energy Surge ⚡</h3>
-            <p id="streak-warning" style="color:#EF4444; font-size:12px; font-weight:800; margin:10px 0; height:15px;"></p>
-            
-            <div id="streak-grid" style="display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:20px 0;">
-                </div>
-
-            <button id="verify-daily-btn" class="btn btn-green" onclick="verifyDaily()">CLAIM DAY <span id="current-day-label">1</span></button>
-            <button class="btn" style="background:transparent; color:#94A3B8; margin-top:10px;" onclick="document.getElementById('daily-modal').style.display='none'">Close</button>
-        </div>
+    <div class="header">
+        <h1 id="header-username">USER 👤</h1>
+        <div class="balance-badge">💸 $<span id="top-balance">0.0000</span></div>
     </div>
 
-    <header>
-        <div class="balance-container">
-            <span class="balance-label" id="header-username">GUEST USER 👤</span>
-            <div class="balance-amount">$<span id="user-balance">0.00</span></div>
-        </div>
-        <div class="rocket-box">🚀</div>
-    </header>
-
-    <div class="content-area">
+    <div id="home-tab" class="tab-content active">
         
-        <div id="earn" class="tab-content active">
-            <div class="section-tag">⚡ ENERGY SURGE</div>
-            <div class="card" style="border-left: 6px solid #10B981;">
-                <h3>Daily Check-in 🎁</h3>
-                <p id="checkin-msg" style="font-size: 12px; color: #94A3B8; margin-top: 5px;">Claim daily to boost earnings by 50%!</p>
-                <button id="daily-btn" class="btn btn-green" style="margin-top:15px;" onclick="openDailyModal()">CLAIM DAILY BONUS</button>
-            </div>
-
-            <div class="section-tag">📺 WATCH & EARN</div>
-            <div class="card" style="border-top: 3px solid #3B82F6;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                    <div>
-                        <h3 id="session-name">Morning Session</h3>
-                        <p style="font-size: 11px; color: #94A3B8;">Ads Done: <span id="session-ads" style="color:#3B82F6; font-weight:bold;">0</span>/<span id="session-limit">15</span></p>
-                    </div>
-                    <div style="text-align: right;">
-                        <span style="font-weight: 800; color: #10B981;">$0.02</span>
-                        <p style="font-size: 10px; color: #64748B;">Per Ad</p>
-                    </div>
+        <div class="card">
+            <h2>📺 Watch & Earn</h2>
+            <p>Watch short videos to earn cash. Complete your session to unlock the next level.</p>
+            
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span>Current Session</span>
+                    <strong id="session-name">Session 1</strong>
                 </div>
-                <button id="video-btn" class="btn btn-blue" onclick="handleVideoAd()">PLAY ▶️</button>
-            </div>
-
-            <div class="section-tag">🚀 PREMIUM TASKS</div>
-            <div class="card" style="border: 2px solid #F59E0B;">
-                <h2 style="color: #F59E0B; text-align: center; font-size: 22px;">MEGA REWARD🎉</h2>
-                <button class="btn btn-gold" style="margin-top:20px;" onclick="openTaskWall()">COMPLETE TASK 📝</button>
-                <p style="font-size: 11px; color: #10B981; margin-top: 15px; text-align: center; font-weight: bold;">NOTE: STAY ON WEBSITE AND CLICK 1-2 OFFER FOR 20 SECOND TO GET REWARD 💸</p>
-            </div>
-
-            <div class="section-tag">🎡 SPINNING WHEEL</div>
-            <div class="card" style="border: 2px solid #A855F7;">
-                <h2 style="color: #A855F7; text-align: center; font-size: 22px;">SPIN NOW🔥</h2>
-                <p style="text-align: center; font-size: 12px; color: #94A3B8; margin-top: 5px;">Spins Today: <span id="spins-done" style="color:#fff; font-weight:bold;">0</span>/10</p>
-                <div class="wheel-container">
-                    <div class="wheel-pointer"></div>
-                    <div id="wheel" class="wheel-outer"><div class="wheel-center"></div></div>
-                </div>
-                <button id="spin-btn" class="btn btn-purple" onclick="startSpin()">SPIN & WIN 💸</button>
-            </div>
-        </div>
-
-        <div id="team" class="tab-content">
-            <div class="section-tag">👥 TEAM SQUAD</div>
-            <div class="card">
-                <h3>Your Invite Link</h3>
-                <p style="font-size: 13px; color: #94A3B8; margin: 10px 0;">Total Invites: <span id="total-invites" style="color:#10B981; font-weight:bold; font-size: 16px;">0</span></p>
-                <input type="text" id="ref-link" class="input-box" value="Loading link..." readonly>
-                <button class="btn btn-blue" onclick="copyLink()">COPY LINK 📋</button>
-            </div>
-        </div>
-
-        <div id="partner" class="tab-content">
-            <div class="section-tag">🤝 PARTNER PROGRAM</div>
-            <div class="card" style="border: 2px solid #10B981; background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);">
-                <h2 style="text-align: center; color: #10B981; font-size: 24px;">Become a VIP Partner 🚀</h2>
-                <p style="text-align: center; font-size: 13px; color: #94A3B8; margin-bottom: 20px;">Audience hai? To mehnat kyun karna, commission kamao!</p>
-                
-                <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 16px; border: 1px dashed #10B981; font-size: 13px; font-weight: 800; line-height: 1.8;">
-                    <p style="color: #ffffff;">✅1000+ FOLLOWERS (ANY SOCIAL MEDIA NETWOTK )</p>
-                    <p style="color: #ffffff;">✅ATLEAST 50 ACTIVE USER TO GET COMMISSION</p>
-                    <p style="color: #EF4444; margin-top: 5px;">❌BOT/FAKE TRAFFIC NOT ALLOWED (PERMANENT BAN)</p>
-                    <div style="margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
-                        <p style="color: #F59E0B; font-size: 14px;">BANEFIT⚡: HIGHER COMMISION FAST WITHDRAW LIVE SUPPORT</p>
-                    </div>
-                </div>
-                <button class="btn btn-green" style="margin-top: 15px;" onclick="contactAdmin()">APPLY NOW 🤝</button>
-            </div>
-        </div>
-
-        <div id="cash" class="tab-content">
-            <div class="section-tag">💰 WITHDRAW FUNDS</div>
-            <div class="card">
-                <h1 style="color: #10B981; text-align: center; font-size: 40px;">$<span id="withdraw-balance">0.00</span></h1>
-                <p style="color: #EF4444; text-align: center; font-size: 13px; font-weight: 800;">MIN WITHDRAW : $100.00</p>
-                <select class="input-box" style="margin-top: 20px;">
-                    <option>USDT (TRC20)</option>
-                    <option>USDT (BEP20)</option>
-                </select>
-                <input type="text" id="wallet-address" class="input-box" placeholder="Enter Wallet Address">
-                <button id="withdraw-btn" class="btn btn-green" style="margin-top: 10px;" onclick="handleWithdraw()">WITHDRAW</button>
-                
-                <div style="margin-top: 25px;">
-                    <h4 style="font-size: 14px; color: #94A3B8; border-bottom: 1px solid #334155; padding-bottom: 5px; margin-bottom: 10px;">Withdraw History</h4>
-                    <div id="withdraw-history" style="font-size: 12px; color: #e2e8f0;">No history found.</div>
+                <div class="stat-box">
+                    <span>Ads Watched</span>
+                    <strong><span id="session-ads">0</span> / <span id="session-limit">15</span></strong>
                 </div>
             </div>
+
+            <button id="video-btn" class="btn btn-green" onclick="handleVideoAd()">PLAY VIDEO 📺</button>
         </div>
 
-        <div id="me" class="tab-content">
-            <div class="section-tag">👤 MY ACCOUNT</div>
-            <div class="card" style="text-align: center;">
-                <div id="user-photo" style="font-size: 60px;">🤴</div>
-                <h2 id="user-name">Guest User</h2>
-                <p style="color: #10B981; font-weight: 800;">Status: Verified ✅</p>
-            </div>
+        <div class="card" style="border: 1px dashed var(--primary);">
+            <h2>🚀 Quick Boost</h2>
+            <p>Click here to trigger a quick sponsor task and earn instantly.</p>
+            <button class="btn btn-green" onclick="triggerPopunder()" style="background: transparent; border: 1px solid var(--primary); color: var(--primary);">BOOST NOW 🚀</button>
         </div>
-
     </div>
 
-    <nav>
-        <div class="nav-item active" onclick="switchTab('earn', this)"><span class="nav-icon">🏠</span>EARN</div>
-        <div class="nav-item" onclick="switchTab('team', this)"><span class="nav-icon">👥</span>TEAM</div>
-        <div class="nav-item" onclick="switchTab('partner', this)"><span class="nav-icon">🤝</span>PARTNER</div>
-        <div class="nav-item" onclick="switchTab('cash', this)"><span class="nav-icon">💰</span>CASH</div>
-        <div class="nav-item" onclick="switchTab('me', this)"><span class="nav-icon">👤</span>ME</div>
-    </nav>
+    <div id="tasks-tab" class="tab-content">
+        <div class="card">
+            <h2>🚀 Cash Partners</h2>
+            <p>Complete high-paying tasks from our premium partners. These tasks pay more than regular videos.</p>
+            <button class="btn btn-green" onclick="openTaskWall()">OPEN TASK WALL 💸</button>
+        </div>
+        
+        <div class="card">
+            <h2>👥 Invite Friends</h2>
+            <p>Share your link and earn 10% of what your friends make!</p>
+            <input type="text" id="ref-link" readonly value="Loading link...">
+            <button class="btn btn-green" onclick="copyLink()">COPY LINK 📋</button>
+        </div>
+    </div>
+
+    <div id="withdraw-tab" class="tab-content">
+        <div class="card">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <span style="font-size: 40px;">💸</span>
+                <h2>Your Balance</h2>
+                <h1 style="font-size: 32px; color: var(--primary);">$<span id="withdraw-balance">0.0000</span></h1>
+            </div>
+
+            <p style="text-align: center; font-size: 12px;">Minimum withdrawal is $100.00</p>
+            
+            <input type="text" id="wallet-address" placeholder="Enter USDT (TRC20) Address">
+            <button class="btn btn-green" onclick="handleWithdraw()">WITHDRAW NOW</button>
+        </div>
+
+        <div class="card">
+            <h2>⏳ Recent Transactions</h2>
+            <div id="withdraw-history" style="font-size: 13px; color: var(--text-muted);">
+                No recent transactions.
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home-tab', this)">
+            <span>🏠</span>
+            Home
+        </div>
+        <div class="nav-item" onclick="switchTab('tasks-tab', this)">
+            <span>🚀</span>
+            Partners
+        </div>
+        <div class="nav-item" onclick="switchTab('withdraw-tab', this)">
+            <span>💸</span>
+            Withdraw
+        </div>
+    </div>
+
+    <div id="toast">Message</div>
 
     <script>
-        // --- CONFIGURATION LINKS ---
-        const DIRECT_SMART_LINK = "YOUR_ADSTERRA_OR_MONETAG_LINK_HERE"; 
-        const ADSGRAM_BLOCK_ID = "YOUR_ADSGRAM_ID_HERE"; 
-        const ADMIN_TELEGRAM_LINK = "https://t.me/YOUR_USERNAME"; 
-        const MY_BOT_USERNAME = "Earnstream693_bot"; 
+        // ==========================================
+        // 1. CONFIGURATION (REPLACE WITH YOUR LINKS)
+        // ==========================================
+        const DIRECT_SMART_LINK = "https://your-adsterra-or-monetag-link.com"; // Your Popunder Link
+        const ADSGRAM_BLOCK_ID = "YOUR_ADSGRAM_BLOCK_ID"; // Your Adsgram ID
+        const MY_BOT_USERNAME = "YourBotUsername"; // Without @
 
-        const REWARDS = { video: 2, task: 50 }; // in cents
-        
-        // --- STATE MANAGEMENT ---
+        const REWARDS = { video: 2, task: 50 }; // Reward in cents (2 = $0.02)
+        const SESSION_LIMITS = [15, 15, 20]; // The 15, 15, 20 Ad rule
+        const SESSION_NAMES = ["Morning Phase", "Afternoon Phase", "Night Phase"];
+        const COOLDOWN_HOURS = 4; // 4 Hours break
+
+        // ==========================================
+        // 2. CRASH-PROOF STATE MANAGEMENT
+        // ==========================================
         let balance = parseFloat(localStorage.getItem('balance') || '0');
-        
-        // Video State
-        let videoSession = parseInt(localStorage.getItem('videoSession') || '1'); // 1:Morning, 2:Evening, 3:Night
+        let videoSession = parseInt(localStorage.getItem('videoSession') || '1');
         let adsInCurrentSession = parseInt(localStorage.getItem('adsInCurrentSession') || '0');
         let sessionCooldownEndTime = parseInt(localStorage.getItem('sessionCooldownEndTime') || '0');
         let lastAdTime = parseInt(localStorage.getItem('lastAdTime') || '0');
+        
+        let withdrawHistory = [];
+        try { withdrawHistory = JSON.parse(localStorage.getItem('withdrawHistory') || '[]'); } 
+        catch(e) { localStorage.removeItem('withdrawHistory'); }
 
-        // Spin State
-        let spinsToday = parseInt(localStorage.getItem('spinsToday') || '0');
-        let lastSpinTime = parseInt(localStorage.getItem('lastSpinTime') || '0');
-        let spinDate = localStorage.getItem('spinDate') || '';
-
-        // Streak State
-        let streakDay = parseInt(localStorage.getItem('streakDay') || '0'); // 0 to 6
-        let lastClaimDate = localStorage.getItem('lastClaimDate') || '';
-
-        // Withdraw State
-        let withdrawHistory = JSON.parse(localStorage.getItem('withdrawHistory') || '[]');
-
-        const todayStr = new Date().toDateString();
-
-        // Daily Resets
-        if(spinDate !== todayStr) {
-            spinsToday = 0;
-            localStorage.setItem('spinsToday', 0);
-            localStorage.setItem('spinDate', todayStr);
-        }
-
-        // Streak Logic Verification (Reset if skipped a day)
-        if (lastClaimDate) {
-            const lastDateObj = new Date(lastClaimDate);
-            const todayObj = new Date(todayStr);
-            const diffDays = Math.floor((todayObj - lastDateObj) / (1000 * 60 * 60 * 24));
-            if (diffDays > 1) { // Missed a day!
-                streakDay = 0;
-                localStorage.setItem('streakDay', 0);
-                localStorage.setItem('streakBroken', 'true');
-            }
-        }
-
-        // Adsgram Init
+        // Adsgram Initialization
         let AdController = null;
-        try { if(window.Adsgram) { AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID }); } } catch(e) {}
+        try { 
+            if(window.Adsgram) { AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID }); } 
+        } catch(e) { console.log("Adsgram not loaded in this environment."); }
 
-        updateUI();
-
-        // --- CORE FUNCTIONS ---
+        // ==========================================
+        // 3. CORE FUNCTIONS & UI UPDATES
+        // ==========================================
         function updateUI() {
-            let dollarDisplay = (balance / 100).toFixed(4); // showing 4 decimals for accurate cents addition
-            document.getElementById('user-balance').innerText = dollarDisplay;
-            document.getElementById('withdraw-balance').innerText = dollarDisplay;
-            
-            // Streak Button UI
-            const dailyBtn = document.getElementById('daily-btn');
-            if(lastClaimDate === todayStr) {
-                dailyBtn.disabled = true; dailyBtn.innerText = "CLAIMED TODAY ✅";
-            } else {
-                dailyBtn.disabled = false; dailyBtn.innerText = "CLAIM DAILY BONUS";
-            }
+            try {
+                let dollarDisplay = (balance / 100).toFixed(4); 
+                document.getElementById('top-balance').innerText = dollarDisplay;
+                document.getElementById('withdraw-balance').innerText = dollarDisplay;
+                
+                document.getElementById('session-name').innerText = SESSION_NAMES[videoSession - 1] || "Extra Phase";
+                document.getElementById('session-ads').innerText = adsInCurrentSession;
+                document.getElementById('session-limit').innerText = SESSION_LIMITS[videoSession - 1] || 15;
 
-            // Video UI
-            let sessionNames = ["Morning Session", "Evening Session", "Night Session"];
-            let sessionLimits = [15, 15, 20];
-            document.getElementById('session-name').innerText = sessionNames[videoSession - 1];
-            document.getElementById('session-ads').innerText = adsInCurrentSession;
-            document.getElementById('session-limit').innerText = sessionLimits[videoSession - 1];
-
-            // Spin UI
-            document.getElementById('spins-done').innerText = spinsToday;
-
-            // Withdraw History UI
-            const histDiv = document.getElementById('withdraw-history');
-            if(withdrawHistory.length > 0) {
-                histDiv.innerHTML = withdrawHistory.map(h => `<div style="padding:8px 0; border-bottom:1px solid #1E293B;">⏳ ${h.date} - <span style="color:#F59E0B;">$${h.amount}</span> - Processing</div>`).join('');
-            }
+                const histDiv = document.getElementById('withdraw-history');
+                if(withdrawHistory.length > 0) {
+                    histDiv.innerHTML = withdrawHistory.map(h => `<div style="padding:10px 0; border-bottom:1px solid #334155;">📅 ${h.date} - <strong style="color:var(--primary);">$${h.amount}</strong> (Pending)</div>`).join('');
+                }
+            } catch(e) { console.error("UI Update Error:", e); }
         }
 
         function saveState() {
@@ -330,32 +209,158 @@
             localStorage.setItem('adsInCurrentSession', adsInCurrentSession);
             localStorage.setItem('sessionCooldownEndTime', sessionCooldownEndTime);
             localStorage.setItem('lastAdTime', lastAdTime);
-            localStorage.setItem('spinsToday', spinsToday);
-            localStorage.setItem('lastSpinTime', lastSpinTime);
             updateUI();
         }
 
         function showToast(msg) {
             const toast = document.getElementById("toast");
-            toast.innerText = msg; toast.classList.add("show");
+            toast.innerText = msg; 
+            toast.classList.add("show");
             setTimeout(() => { toast.classList.remove("show"); }, 3000);
         }
 
-        function triggerPopunder() {
-            try {
-                if (DIRECT_SMART_LINK.includes("http")) { window.open(DIRECT_SMART_LINK, '_blank'); }
-            } catch(e) {}
-        }
-
-        function switchTab(tabId, el) {
-            triggerPopunder();
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            el.classList.add('active');
+        // ==========================================
+        // 4. NAVIGATION TAB SWITCHER (BUG-FREE)
+        // ==========================================
+        function switchTab(tabId, element) {
+            triggerPopunder(); // Earn money on tab click!
+            
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(nav => {
+                nav.classList.remove('active');
+            });
+            
+            // Show target tab
+            const targetTab = document.getElementById(tabId);
+            if(targetTab) targetTab.classList.add('active');
+            
+            // Highlight clicked nav item
+            if(element) element.classList.add('active');
+            
             window.scrollTo(0,0);
         }
 
-        // --- ENERGY SURGE (STREAK) LOGIC ---
-        function getStreak
+        // ==========================================
+        // 5. ADS & EARNING LOGIC
+        // ==========================================
+        function triggerPopunder() {
+            try {
+                if (DIRECT_SMART_LINK && DIRECT_SMART_LINK.startsWith("http")) { 
+                    window.open(DIRECT_SMART_LINK, '_blank'); 
+                }
+            } catch(e) {}
+        }
+
+        function openTaskWall() {
+            triggerPopunder();
+            if(DIRECT_SMART_LINK && DIRECT_SMART_LINK.startsWith("http")) { 
+                window.location.href = DIRECT_SMART_LINK; 
+            } else { 
+                showToast("⚠️ Task link is missing in configuration!"); 
+            }
+        }
+
+        function handleVideoAd() {
+            let now = Date.now();
+            let currentLimit = SESSION_LIMITS[videoSession - 1] || 15;
+
+            if (sessionCooldownEndTime > now) return showToast("🔒 Session Locked. Wait for the timer!");
+            if (now - lastAdTime < 10000) return showToast("⏳ Wait 10 seconds between ads!");
+            if (!AdController) return showToast("⚠️ Adsgram not connected properly.");
+
+            AdController.show().then(() => {
+                balance += REWARDS.video;
+                adsInCurrentSession++;
+                lastAdTime = Date.now();
+
+                if (adsInCurrentSession >= currentLimit) {
+                    sessionCooldownEndTime = Date.now() + (COOLDOWN_HOURS * 60 * 60 * 1000); 
+                    adsInCurrentSession = 0;
+                    videoSession++;
+                    if (videoSession > 3) videoSession = 1; // Reset to session 1 after 3 sessions
+                    showToast(`✅ Session Complete! ${COOLDOWN_HOURS} Hour cooldown started.`);
+                } else {
+                    showToast("✅ Reward Added! Watch next video.");
+                }
+                saveState();
+            }).catch((err) => { 
+                console.log(err);
+                showToast("⚠️ Ad closed early or failed to load."); 
+            });
+        }
+
+        // ==========================================
+        // 6. UTILITIES (COPY LINK, WITHDRAW, TIMERS)
+        // ==========================================
+        function copyLink() {
+            const copyText = document.getElementById("ref-link");
+            copyText.select(); 
+            document.execCommand('copy');
+            showToast("📋 Referral Link Copied!");
+        }
+
+        function handleWithdraw() {
+            const addr = document.getElementById('wallet-address').value;
+            if(!addr || addr.length < 10) return showToast("🚫 Enter a valid Wallet Address!");
+            if (balance < 10000) {  // 10000 cents = $100
+                showToast("🚫 Minimum $100 balance required!");
+            } else {
+                triggerPopunder();
+                withdrawHistory.unshift({ date: new Date().toLocaleDateString(), amount: (balance/100).toFixed(2) });
+                localStorage.setItem('withdrawHistory', JSON.stringify(withdrawHistory));
+                balance = 0; 
+                saveState();
+                showToast("✅ REQUEST SUBMITTED! PLEASE WAIT 24-48 HOURS.");
+                document.getElementById('wallet-address').value = "";
+            }
+        }
+
+        // Timer Loop for Video Button
+        setInterval(() => {
+            let now = Date.now();
+            let vidBtn = document.getElementById('video-btn');
             
+            if(vidBtn) {
+                if (sessionCooldownEndTime > now) {
+                    vidBtn.disabled = true;
+                    let diff = sessionCooldownEndTime - now;
+                    let h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                    let m = Math.floor((diff / 1000 / 60) % 60);
+                    let s = Math.floor((diff / 1000) % 60);
+                    vidBtn.innerText = `LOCKED (${h}h ${m}m ${s}s) 🔒`;
+                } else if (now - lastAdTime < 10000) {
+                    vidBtn.disabled = true;
+                    let s = Math.ceil((10000 - (now - lastAdTime)) / 1000);
+                    vidBtn.innerText = `WAIT ${s}s ⏳`;
+                } else {
+                    vidBtn.disabled = false; 
+                    vidBtn.innerText = "PLAY VIDEO 📺";
+                }
+            }
+        }, 1000);
+
+        // ==========================================
+        // 7. TELEGRAM DATA INJECTION
+        // ==========================================
+        try {
+            const tg = window.Telegram.WebApp;
+            tg.expand(); 
+            tg.ready();
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+                const displayName = user.username ? '@' + user.username : user.first_name;
+                document.getElementById('header-username').innerText = displayName.toUpperCase() + " 👤";
+                document.getElementById('ref-link').value = `https://t.me/${MY_BOT_USERNAME}?start=ref${user.id}`;
+            }
+        } catch(e) { console.log("Not running inside Telegram"); }
+
+        // Initialize display on load
+        updateUI();
+
+    </script>
+</body>
+</html>
