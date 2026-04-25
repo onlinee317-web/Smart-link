@@ -3,364 +3,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EarnStream Pro</title>
+    <title>EarnStream Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 
     <style>
         :root {
-            --bg-color: #0F172A; /* Deep Dark */
-            --panel-bg: #1E293B; /* Slightly lighter dark */
-            --primary: #10B981;  /* Professional Green */
-            --primary-dark: #059669;
-            --text-main: #F8FAFC;
-            --text-muted: #94A3B8;
+            --primary-green: #10B981;
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --text-light: #f8fafc;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        
-        body { background-color: var(--bg-color); color: var(--text-main); padding-bottom: 80px; }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: sans-serif;
+            margin: 0;
+            padding-bottom: 70px;
+        }
 
-        /* Header */
-        .header { background-color: var(--panel-bg); padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--primary); }
-        .header h1 { font-size: 18px; color: var(--primary); }
-        .balance-badge { background: rgba(16, 185, 129, 0.2); padding: 5px 12px; border-radius: 20px; font-weight: bold; border: 1px solid var(--primary); }
+        .header {
+            padding: 15px;
+            background: var(--card-bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary-green);
+        }
 
-        /* Tabs Setup */
-        .tab-content { display: none; padding: 20px; animation: fadeIn 0.3s ease-in-out; }
+        .balance-box {
+            font-weight: bold;
+            color: var(--primary-green);
+            background: rgba(16, 185, 129, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .tab-content { display: none; padding: 15px; }
         .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Cards & Panels */
-        .card { background: var(--panel-bg); border-radius: 12px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        h2 { font-size: 16px; margin-bottom: 10px; color: var(--text-main); }
-        p { color: var(--text-muted); font-size: 14px; margin-bottom: 15px; line-height: 1.5; }
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
 
-        /* Buttons */
-        .btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-green { background: var(--primary); color: white; }
-        .btn-green:hover { background: var(--primary-dark); }
-        .btn-green:disabled { background: #334155; color: #64748B; cursor: not-allowed; }
-        
-        /* Stats Display */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .stat-box { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; text-align: center; border: 1px solid #334155; }
-        .stat-box span { display: block; font-size: 12px; color: var(--text-muted); }
-        .stat-box strong { font-size: 18px; color: var(--primary); }
+        .btn-main {
+            background: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+        }
 
-        /* Inputs */
-        input[type="text"] { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #334155; background: #0F172A; color: white; margin-bottom: 15px; outline: none; }
-        input[type="text"]:focus { border-color: var(--primary); }
+        .btn-main:disabled { background: #475569; }
 
-        /* Bottom Navigation */
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: var(--panel-bg); display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #334155; z-index: 1000; }
-        .nav-item { display: flex; flex-direction: column; align-items: center; color: var(--text-muted); text-decoration: none; font-size: 12px; cursor: pointer; transition: 0.2s; }
-        .nav-item.active { color: var(--primary); transform: scale(1.1); }
-        .nav-item span { font-size: 22px; margin-bottom: 4px; }
+        /* Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: var(--card-bg);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #334155;
+        }
 
-        /* Toast Notification */
-        #toast { visibility: hidden; min-width: 250px; background-color: var(--primary); color: #fff; text-align: center; border-radius: 8px; padding: 12px; position: fixed; z-index: 9999; left: 50%; bottom: 80px; transform: translateX(-50%); font-weight: bold; box-shadow: 0 4px 12px rgba(0,0,0,0.5); opacity: 0; transition: opacity 0.3s, bottom 0.3s; }
-        #toast.show { visibility: visible; opacity: 1; bottom: 100px; }
+        .nav-item {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .nav-item.active { color: var(--primary-green); }
+        .nav-item span { display: block; font-size: 20px; }
+
+        /* Stats Grid */
+        .stats-row { display: flex; justify-content: space-around; margin-bottom: 15px; }
+        .stat-item { font-size: 13px; color: #94a3b8; }
+        .stat-item b { color: var(--primary-green); display: block; font-size: 16px; }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1 id="header-username">USER 👤</h1>
-        <div class="balance-badge">💸 $<span id="top-balance">0.0000</span></div>
+        <div id="user-display">USER 👤</div>
+        <div class="balance-box">💸 $<span id="balance">0.0000</span></div>
     </div>
 
-    <div id="home-tab" class="tab-content active">
-        
+    <div id="home" class="tab-content active">
         <div class="card">
-            <h2>📺 Watch & Earn</h2>
-            <p>Watch short videos to earn cash. Complete your session to unlock the next level.</p>
+            <h3>WATCH & EARN 📺</h3>
+            <p style="font-size: 12px; color: #94a3b8; margin-bottom: 15px;">Watch ads to earn rewards</p>
             
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <span>Current Session</span>
-                    <strong id="session-name">Session 1</strong>
-                </div>
-                <div class="stat-box">
-                    <span>Ads Watched</span>
-                    <strong><span id="session-ads">0</span> / <span id="session-limit">15</span></strong>
-                </div>
+            <div class="stats-row">
+                <div class="stat-item">Phase<b id="session-name">1</b></div>
+                <div class="stat-item">Progress<b id="progress">0/15</b></div>
             </div>
 
-            <button id="video-btn" class="btn btn-green" onclick="handleVideoAd()">PLAY VIDEO 📺</button>
+            <button id="ad-btn" class="btn-main" onclick="playVideoAd()">PLAY VIDEO 📺</button>
         </div>
 
-        <div class="card" style="border: 1px dashed var(--primary);">
-            <h2>🚀 Quick Boost</h2>
-            <p>Click here to trigger a quick sponsor task and earn instantly.</p>
-            <button class="btn btn-green" onclick="triggerPopunder()" style="background: transparent; border: 1px solid var(--primary); color: var(--primary);">BOOST NOW 🚀</button>
+        <div class="card" style="border: 1px solid #334155;">
+            <h3>BOOST EARNINGS 🚀</h3>
+            <p style="font-size: 12px; color: #94a3b8;">Trigger a quick task to boost balance</p>
+            <button class="btn-main" style="background: transparent; border: 1px solid var(--primary-green); color: var(--primary-green);" onclick="triggerPopunder()">BOOST NOW 🚀</button>
         </div>
     </div>
 
-    <div id="tasks-tab" class="tab-content">
+    <div id="partners" class="tab-content">
         <div class="card">
-            <h2>🚀 Cash Partners</h2>
-            <p>Complete high-paying tasks from our premium partners. These tasks pay more than regular videos.</p>
-            <button class="btn btn-green" onclick="openTaskWall()">OPEN TASK WALL 💸</button>
+            <h3>CASH PARTNERS 💸</h3>
+            <p>Complete tasks from our global sponsors.</p>
+            <button class="btn-main" onclick="triggerPopunder()">OPEN WALL 🚀</button>
         </div>
         
         <div class="card">
-            <h2>👥 Invite Friends</h2>
-            <p>Share your link and earn 10% of what your friends make!</p>
+            <h3>INVITE FRIENDS 👥</h3>
             <input type="text" id="ref-link" readonly value="Loading link...">
-            <button class="btn btn-green" onclick="copyLink()">COPY LINK 📋</button>
+            <button class="btn-main" style="margin-top:10px" onclick="copyRef()">COPY LINK 📋</button>
         </div>
     </div>
 
-    <div id="withdraw-tab" class="tab-content">
+    <div id="withdraw" class="tab-content">
         <div class="card">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <span style="font-size: 40px;">💸</span>
-                <h2>Your Balance</h2>
-                <h1 style="font-size: 32px; color: var(--primary);">$<span id="withdraw-balance">0.0000</span></h1>
-            </div>
-
-            <p style="text-align: center; font-size: 12px;">Minimum withdrawal is $100.00</p>
-            
-            <input type="text" id="wallet-address" placeholder="Enter USDT (TRC20) Address">
-            <button class="btn btn-green" onclick="handleWithdraw()">WITHDRAW NOW</button>
-        </div>
-
-        <div class="card">
-            <h2>⏳ Recent Transactions</h2>
-            <div id="withdraw-history" style="font-size: 13px; color: var(--text-muted);">
-                No recent transactions.
-            </div>
+            <h3>WITHDRAW CASH 💸</h3>
+            <h2 id="total-val">$0.0000</h2>
+            <p style="font-size: 11px;">Min. Withdrawal: $100</p>
+            <input type="text" id="wallet" placeholder="USDT Address (TRC20)">
+            <button class="btn-main" style="margin-top:15px" onclick="handleWithdraw()">WITHDRAW 🚀</button>
         </div>
     </div>
 
-    <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home-tab', this)">
-            <span>🏠</span>
-            Home
+    <div class="nav-bar">
+        <div class="nav-item active" onclick="switchTab('home', this)">
+            <span>🏠</span>Home
         </div>
-        <div class="nav-item" onclick="switchTab('tasks-tab', this)">
-            <span>🚀</span>
-            Partners
+        <div class="nav-item" onclick="switchTab('partners', this)">
+            <span>🚀</span>Partners
         </div>
-        <div class="nav-item" onclick="switchTab('withdraw-tab', this)">
-            <span>💸</span>
-            Withdraw
+        <div class="nav-item" onclick="switchTab('withdraw', this)">
+            <span>💸</span>Withdraw
         </div>
     </div>
-
-    <div id="toast">Message</div>
 
     <script>
-        // ==========================================
-        // 1. CONFIGURATION (REPLACE WITH YOUR LINKS)
-        // ==========================================
-        const DIRECT_SMART_LINK = "https://your-adsterra-or-monetag-link.com"; // Your Popunder Link
-        const ADSGRAM_BLOCK_ID = "YOUR_ADSGRAM_BLOCK_ID"; // Your Adsgram ID
-        const MY_BOT_USERNAME = "YourBotUsername"; // Without @
+        // CONFIG
+        const SMART_LINK = "YOUR_LINK_HERE";
+        const ADSGRAM_ID = "YOUR_ID_HERE";
+        const BOT_USER = "YourBotName";
 
-        const REWARDS = { video: 2, task: 50 }; // Reward in cents (2 = $0.02)
-        const SESSION_LIMITS = [15, 15, 20]; // The 15, 15, 20 Ad rule
-        const SESSION_NAMES = ["Morning Phase", "Afternoon Phase", "Night Phase"];
-        const COOLDOWN_HOURS = 4; // 4 Hours break
+        // STATE
+        let balance = parseFloat(localStorage.getItem('bal') || '0');
+        let session = parseInt(localStorage.getItem('ses') || '1');
+        let count = parseInt(localStorage.getItem('cnt') || '0');
+        let cooldown = parseInt(localStorage.getItem('cd') || '0');
+        let lastAd = parseInt(localStorage.getItem('la') || '0');
 
-        // ==========================================
-        // 2. CRASH-PROOF STATE MANAGEMENT
-        // ==========================================
-        let balance = parseFloat(localStorage.getItem('balance') || '0');
-        let videoSession = parseInt(localStorage.getItem('videoSession') || '1');
-        let adsInCurrentSession = parseInt(localStorage.getItem('adsInCurrentSession') || '0');
-        let sessionCooldownEndTime = parseInt(localStorage.getItem('sessionCooldownEndTime') || '0');
-        let lastAdTime = parseInt(localStorage.getItem('lastAdTime') || '0');
-        
-        let withdrawHistory = [];
-        try { withdrawHistory = JSON.parse(localStorage.getItem('withdrawHistory') || '[]'); } 
-        catch(e) { localStorage.removeItem('withdrawHistory'); }
+        const limits = [15, 15, 20];
 
-        // Adsgram Initialization
-        let AdController = null;
-        try { 
-            if(window.Adsgram) { AdController = window.Adsgram.init({ blockId: ADSGRAM_BLOCK_ID }); } 
-        } catch(e) { console.log("Adsgram not loaded in this environment."); }
-
-        // ==========================================
-        // 3. CORE FUNCTIONS & UI UPDATES
-        // ==========================================
         function updateUI() {
-            try {
-                let dollarDisplay = (balance / 100).toFixed(4); 
-                document.getElementById('top-balance').innerText = dollarDisplay;
-                document.getElementById('withdraw-balance').innerText = dollarDisplay;
-                
-                document.getElementById('session-name').innerText = SESSION_NAMES[videoSession - 1] || "Extra Phase";
-                document.getElementById('session-ads').innerText = adsInCurrentSession;
-                document.getElementById('session-limit').innerText = SESSION_LIMITS[videoSession - 1] || 15;
-
-                const histDiv = document.getElementById('withdraw-history');
-                if(withdrawHistory.length > 0) {
-                    histDiv.innerHTML = withdrawHistory.map(h => `<div style="padding:10px 0; border-bottom:1px solid #334155;">📅 ${h.date} - <strong style="color:var(--primary);">$${h.amount}</strong> (Pending)</div>`).join('');
-                }
-            } catch(e) { console.error("UI Update Error:", e); }
+            const usd = (balance / 100).toFixed(4);
+            document.getElementById('balance').innerText = usd;
+            document.getElementById('total-val').innerText = "$" + usd;
+            document.getElementById('session-name').innerText = session;
+            document.getElementById('progress').innerText = count + "/" + (limits[session-1] || 15);
         }
 
-        function saveState() {
-            localStorage.setItem('balance', balance);
-            localStorage.setItem('videoSession', videoSession);
-            localStorage.setItem('adsInCurrentSession', adsInCurrentSession);
-            localStorage.setItem('sessionCooldownEndTime', sessionCooldownEndTime);
-            localStorage.setItem('lastAdTime', lastAdTime);
+        function save() {
+            localStorage.setItem('bal', balance);
+            localStorage.setItem('ses', session);
+            localStorage.setItem('cnt', count);
+            localStorage.setItem('cd', cooldown);
+            localStorage.setItem('la', lastAd);
             updateUI();
         }
 
-        function showToast(msg) {
-            const toast = document.getElementById("toast");
-            toast.innerText = msg; 
-            toast.classList.add("show");
-            setTimeout(() => { toast.classList.remove("show"); }, 3000);
+        // TABS (Clean - No Ads)
+        function switchTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            el.classList.add('active');
         }
 
-        // ==========================================
-        // 4. NAVIGATION TAB SWITCHER (BUG-FREE)
-        // ==========================================
-        function switchTab(tabId, element) {
-            triggerPopunder(); // Earn money on tab click!
-            
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            // Remove active class from all nav items
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                nav.classList.remove('active');
-            });
-            
-            // Show target tab
-            const targetTab = document.getElementById(tabId);
-            if(targetTab) targetTab.classList.add('active');
-            
-            // Highlight clicked nav item
-            if(element) element.classList.add('active');
-            
-            window.scrollTo(0,0);
-        }
+        // ADSGRAM
+        let AdController = null;
+        if(window.Adsgram) { AdController = window.Adsgram.init({ blockId: ADSGRAM_ID }); }
 
-        // ==========================================
-        // 5. ADS & EARNING LOGIC
-        // ==========================================
-        function triggerPopunder() {
-            try {
-                if (DIRECT_SMART_LINK && DIRECT_SMART_LINK.startsWith("http")) { 
-                    window.open(DIRECT_SMART_LINK, '_blank'); 
-                }
-            } catch(e) {}
-        }
+        function playVideoAd() {
+            let now = Date.now();
+            if(cooldown > now) return alert("Cooldown active!");
+            if(now - lastAd < 10000) return alert("Wait 10s!");
 
-        function openTaskWall() {
-            triggerPopunder();
-            if(DIRECT_SMART_LINK && DIRECT_SMART_LINK.startsWith("http")) { 
-                window.location.href = DIRECT_SMART_LINK; 
-            } else { 
-                showToast("⚠️ Task link is missing in configuration!"); 
+            if(AdController) {
+                AdController.show().then(() => {
+                    balance += 2; // $0.02
+                    count++;
+                    lastAd = Date.now();
+                    if(count >= (limits[session-1] || 15)) {
+                        count = 0;
+                        session = session >= 3 ? 1 : session + 1;
+                        cooldown = Date.now() + (4 * 60 * 60 * 1000);
+                    }
+                    save();
+                }).catch(() => alert("Ad failed"));
             }
         }
 
-        function handleVideoAd() {
-            let now = Date.now();
-            let currentLimit = SESSION_LIMITS[videoSession - 1] || 15;
-
-            if (sessionCooldownEndTime > now) return showToast("🔒 Session Locked. Wait for the timer!");
-            if (now - lastAdTime < 10000) return showToast("⏳ Wait 10 seconds between ads!");
-            if (!AdController) return showToast("⚠️ Adsgram not connected properly.");
-
-            AdController.show().then(() => {
-                balance += REWARDS.video;
-                adsInCurrentSession++;
-                lastAdTime = Date.now();
-
-                if (adsInCurrentSession >= currentLimit) {
-                    sessionCooldownEndTime = Date.now() + (COOLDOWN_HOURS * 60 * 60 * 1000); 
-                    adsInCurrentSession = 0;
-                    videoSession++;
-                    if (videoSession > 3) videoSession = 1; // Reset to session 1 after 3 sessions
-                    showToast(`✅ Session Complete! ${COOLDOWN_HOURS} Hour cooldown started.`);
-                } else {
-                    showToast("✅ Reward Added! Watch next video.");
-                }
-                saveState();
-            }).catch((err) => { 
-                console.log(err);
-                showToast("⚠️ Ad closed early or failed to load."); 
-            });
+        function triggerPopunder() {
+            window.open(SMART_LINK, '_blank');
         }
 
-        // ==========================================
-        // 6. UTILITIES (COPY LINK, WITHDRAW, TIMERS)
-        // ==========================================
-        function copyLink() {
-            const copyText = document.getElementById("ref-link");
-            copyText.select(); 
+        function copyRef() {
+            const link = document.getElementById('ref-link');
+            link.select();
             document.execCommand('copy');
-            showToast("📋 Referral Link Copied!");
+            alert("Copied!");
         }
 
         function handleWithdraw() {
-            const addr = document.getElementById('wallet-address').value;
-            if(!addr || addr.length < 10) return showToast("🚫 Enter a valid Wallet Address!");
-            if (balance < 10000) {  // 10000 cents = $100
-                showToast("🚫 Minimum $100 balance required!");
-            } else {
-                triggerPopunder();
-                withdrawHistory.unshift({ date: new Date().toLocaleDateString(), amount: (balance/100).toFixed(2) });
-                localStorage.setItem('withdrawHistory', JSON.stringify(withdrawHistory));
-                balance = 0; 
-                saveState();
-                showToast("✅ REQUEST SUBMITTED! PLEASE WAIT 24-48 HOURS.");
-                document.getElementById('wallet-address').value = "";
-            }
+            if(balance < 10000) return alert("Minimum $100 required!");
+            balance = 0;
+            save();
+            alert("Request Sent!");
         }
 
-        // Timer Loop for Video Button
+        // Timer Loop
         setInterval(() => {
+            const btn = document.getElementById('ad-btn');
             let now = Date.now();
-            let vidBtn = document.getElementById('video-btn');
-            
-            if(vidBtn) {
-                if (sessionCooldownEndTime > now) {
-                    vidBtn.disabled = true;
-                    let diff = sessionCooldownEndTime - now;
-                    let h = Math.floor((diff / (1000 * 60 * 60)) % 24);
-                    let m = Math.floor((diff / 1000 / 60) % 60);
-                    let s = Math.floor((diff / 1000) % 60);
-                    vidBtn.innerText = `LOCKED (${h}h ${m}m ${s}s) 🔒`;
-                } else if (now - lastAdTime < 10000) {
-                    vidBtn.disabled = true;
-                    let s = Math.ceil((10000 - (now - lastAdTime)) / 1000);
-                    vidBtn.innerText = `WAIT ${s}s ⏳`;
-                } else {
-                    vidBtn.disabled = false; 
-                    vidBtn.innerText = "PLAY VIDEO 📺";
-                }
+            if(cooldown > now) {
+                btn.disabled = true;
+                btn.innerText = "COOLDOWN ⏳";
+            } else if(now - lastAd < 10000) {
+                btn.disabled = true;
+                btn.innerText = "WAIT " + Math.ceil((10000-(now-lastAd))/1000) + "s";
+            } else {
+                btn.disabled = false;
+                btn.innerText = "PLAY VIDEO 📺";
             }
         }, 1000);
 
-        // ==========================================
-        // 7. TELEGRAM DATA INJECTION
-        // ==========================================
-        try {
-            const tg = window.Telegram.WebApp;
-            tg.expand(); 
-            tg.ready();
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                const user = tg.initDataUnsafe.user;
-                const displayName = user.username ? '@' + user.username : user.first_name;
-                document.getElementById('header-username').innerText = displayName.toUpperCase() + " 👤";
-                document.getElementById('ref-link').value = `https://t.me/${MY_BOT_USERNAME}?start=ref${user.id}`;
-            }
-        } catch(e) { console.log("Not running inside Telegram"); }
+        // TG Init
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        if(tg.initDataUnsafe?.user) {
+            const u = tg.initDataUnsafe.user;
+            document.getElementById('user-display').innerText = (u.username || u.first_name).toUpperCase() + " 👤";
+            document.getElementById('ref-link').value = "https://t.me/" + BOT_USER + "?start=" + u.id;
+        }
 
-        // Initialize display on load
         updateUI();
-
     </script>
 </body>
 </html>
